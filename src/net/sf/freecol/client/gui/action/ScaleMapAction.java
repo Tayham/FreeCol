@@ -27,11 +27,8 @@ import net.sf.freecol.common.model.Game;
 import net.sf.freecol.common.model.Map;
 import net.sf.freecol.common.model.Tile;
 
-/**
- * An action for scaling a map. This action is a part of the map editor.
- */
+/** An action for scaling a map. This action is a part of the map editor. */
 public class ScaleMapAction extends FreeColAction {
-
 	public static final String id = "scaleMapAction";
 
 	/**
@@ -93,22 +90,16 @@ public class ScaleMapAction extends FreeColAction {
 		getGUI().refresh();
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return super.shouldBeEnabled() && freeColClient.isMapEditor() && getGame() != null
 				&& getGame().getMap() != null;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		Dimension ms = getGUI().showScaleMapSizeDialog();

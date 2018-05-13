@@ -26,11 +26,8 @@ import net.miginfocom.swing.MigLayout;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.HistoryEvent;
 
-/**
- * This panel displays the History Report.
- */
+/** This panel displays the History Report. */
 public final class ReportHistoryPanel extends ReportPanel {
-
 	/**
 	 * The constructor that will add the items to this panel.
 	 * 
@@ -44,8 +41,9 @@ public final class ReportHistoryPanel extends ReportPanel {
 
 		// Display Panel
 		reportPanel.removeAll();
-		if (history.isEmpty())
+		if (history.isEmpty()) {
 			return;
+		}
 
 		reportPanel.setLayout(new MigLayout("wrap 2", "[]20[fill]", ""));
 

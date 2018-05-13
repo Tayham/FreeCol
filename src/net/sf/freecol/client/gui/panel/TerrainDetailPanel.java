@@ -45,11 +45,8 @@ import net.sf.freecol.common.model.Modifier;
 import net.sf.freecol.common.model.ResourceType;
 import net.sf.freecol.common.model.TileType;
 
-/**
- * This panel displays details of terrain types in the Colopedia.
- */
+/** This panel displays details of terrain types in the Colopedia. */
 public class TerrainDetailPanel extends ColopediaGameObjectTypePanel<TileType> {
-
 	/**
 	 * Creates a new instance of this TerrainDetailPanel.
 	 *
@@ -62,11 +59,8 @@ public class TerrainDetailPanel extends ColopediaGameObjectTypePanel<TileType> {
 		super(freeColClient, colopediaPanel, PanelType.TERRAIN.getKey());
 	}
 
-	// Implement ColopediaDetailPanel
+	/** Implement ColopediaDetailPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addSubTrees(DefaultMutableTreeNode root) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(new ColopediaTreeItem(this, getId(), getName(), null));
@@ -84,13 +78,11 @@ public class TerrainDetailPanel extends ColopediaGameObjectTypePanel<TileType> {
 		root.add(node);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void buildDetail(String id, JPanel panel) {
-		if (getId().equals(id))
+		if (getId().equals(id)) {
 			return;
+		}
 
 		TileType tileType = getSpecification().getTileType(id);
 		panel.setLayout(new MigLayout("wrap 4, gap 20"));
@@ -148,8 +140,9 @@ public class TerrainDetailPanel extends ColopediaGameObjectTypePanel<TileType> {
 			Iterator<AbstractGoods> it = production.iterator();
 			while (it.hasNext()) {
 				AbstractGoods ag = it.next();
-				if (ag.getAmount() <= 0)
+				if (ag.getAmount() <= 0) {
 					it.remove();
+				}
 			}
 
 			AbstractGoods ag = production.get(0);

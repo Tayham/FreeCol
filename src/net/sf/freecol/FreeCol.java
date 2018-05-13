@@ -72,7 +72,6 @@ import org.apache.commons.cli.PosixParser;
  * @see net.sf.freecol.server.FreeColServer FreeColServer
  */
 public final class FreeCol {
-
 	private static final Logger logger = Logger.getLogger(FreeCol.class.getName());
 
 	/** The FreeCol release version number. */
@@ -97,39 +96,46 @@ public final class FreeCol {
 	public static final String META_SERVER_ADDRESS = "meta.freecol.org";
 	public static final int META_SERVER_PORT = 3540;
 
-	/** Specific revision number (currently the git tag of trunk at release) */
+	/** Specific revision number (currently the git tag of trunk at release). */
 	private static String freeColRevision = null;
 
 	/** The locale, either default or command-line specified. */
 	private static Locale locale = null;
 
-	// Cli defaults.
+	/** Cli defaults. */
 	private static final Advantages ADVANTAGES_DEFAULT = Advantages.SELECTABLE;
 	private static final String DIFFICULTY_DEFAULT = "model.difficulty.medium";
 	private static final int EUROPEANS_DEFAULT = 4;
 	private static final int EUROPEANS_MIN = 1;
 	private static final Level LOGLEVEL_DEFAULT = Level.INFO;
 	private static final String JAVA_VERSION_MIN = "1.8";
-	private static final int MEMORY_MIN = 128; // Mbytes
+	/** Mbytes. */
+	private static final int MEMORY_MIN = 128;
 	private static final int PORT_DEFAULT = 3541;
 	private static final String SPLASH_DEFAULT = "splash.jpg";
 	private static final String TC_DEFAULT = "freecol";
-	public static final int TIMEOUT_DEFAULT = 60; // 1 minute
-	public static final int TIMEOUT_MIN = 10; // 10s
+	/** 1 minute. */
+	public static final int TIMEOUT_DEFAULT = 60;
+	/** 10s. */
+	public static final int TIMEOUT_MIN = 10;
 	private static final int GUI_SCALE_MIN_PCT = 100;
 	private static final int GUI_SCALE_MAX_PCT = 200;
 	private static final int GUI_SCALE_STEP_PCT = 25;
-	// TODO Remove unused code found by UCDetector
-	// public static final float GUI_SCALE_MIN = GUI_SCALE_MIN_PCT / 100.0f;
+	/**
+	 * TODO Remove unused code found by UCDetector
+	 * public static final float GUI_SCALE_MIN = GUI_SCALE_MIN_PCT / 100.0f;
+	 */
 	public static final float GUI_SCALE_MAX = GUI_SCALE_MAX_PCT / 100.0f;
 	public static final float GUI_SCALE_STEP = GUI_SCALE_STEP_PCT / 100.0f;
 	public static final float GUI_SCALE_DEFAULT = 1.0f;
 
-	// Cli values. Often set to null so the default can be applied in
-	// the accessor function.
-	private static boolean checkIntegrity = false, consoleLogging = false, debugStart = false, fastStart = false,
-			headless = false, introVideo = true, javaCheck = true, memoryCheck = true, publicServer = true,
-			sound = true, standAloneServer = false;
+	/**
+	 * Cli values. Often set to null so the default can be applied in
+	 * the accessor function.
+	 */
+	private static boolean checkIntegrity, consoleLogging, debugStart, fastStart,
+			headless, introVideo = true, javaCheck = true, memoryCheck = true, publicServer = true,
+			sound = true, standAloneServer;
 
 	/** The type of advantages. */
 	private static Advantages advantages = null;
@@ -214,8 +220,9 @@ public final class FreeCol {
 		// command line.
 		String dataDirectoryArg = findArg("--freecol-data", args);
 		String err = FreeColDirectories.setDataDirectory(dataDirectoryArg);
-		if (err != null)
-			fatal(err); // This must not fail.
+		if (err != null) {
+			fatal(err);
+		} // This must not fail.
 
 		// Now we have the data directory, establish the base locale.
 		// Beware, the locale may change!
@@ -224,8 +231,9 @@ public final class FreeCol {
 			locale = Locale.getDefault();
 		} else {
 			int index = localeArg.indexOf('.'); // Strip encoding if present
-			if (index > 0)
+			if (index > 0) {
 				localeArg = localeArg.substring(0, index);
+			}
 			locale = Messages.getLocale(localeArg);
 		}
 		Messages.loadMessageBundle(locale);
@@ -292,8 +300,9 @@ public final class FreeCol {
 		Messages.loadModMessageBundle(locale);
 
 		// Report on where we are.
-		if (userMsg != null)
+		if (userMsg != null) {
 			logger.info(Messages.message(userMsg));
+		}
 		logger.info(getConfiguration().toString());
 
 		// Ready to specialize into client or server.
@@ -523,13 +532,8 @@ public final class FreeCol {
 				printUsage(options, 0);
 			}
 
-			if (line.hasOption("default-locale")) {
-
-			}
-			if (line.hasOption("freecol-data")) {
-
-			}
-
+			line.hasOption("default-locale");
+			line.hasOption("freecol-data");
 			if (line.hasOption("advantages")) {
 				String arg = line.getOptionValue("advantages");
 				Advantages a = selectAdvantages(arg);
@@ -568,8 +572,9 @@ public final class FreeCol {
 							FreeColDebugger.getDebugModes()));
 				}
 				// user set log level has precedence
-				if (!line.hasOption("log-level"))
+				if (!line.hasOption("log-level")) {
 					logLevel = Level.FINEST;
+				}
 			}
 			if (line.hasOption("debug-run")) {
 				FreeColDebugger.enableDebugMode(FreeColDebugger.DebugMode.MENUS);
@@ -734,13 +739,13 @@ public final class FreeCol {
 				String arg = line.getOptionValue("windowed");
 				setWindowSize(arg); // Does not fail
 			}
-
 		} catch (ParseException e) {
 			System.err.println("\n" + e.getMessage() + "\n");
 			usageError = true;
 		}
-		if (usageError)
+		if (usageError) {
 			printUsage(options, 1);
+		}
 	}
 
 	/**
@@ -771,13 +776,15 @@ public final class FreeCol {
 	public static Specification loadSpecification(FreeColTcFile tcf, Advantages advantages, String difficulty) {
 		Specification spec = null;
 		try {
-			if (tcf != null)
+			if (tcf != null) {
 				spec = tcf.getSpecification();
+			}
 		} catch (IOException ioe) {
 			System.err.println("Spec read failed in " + tcf.getId() + ": " + ioe.getMessage() + "\n");
 		}
-		if (spec != null)
+		if (spec != null) {
 			spec.prepare(advantages, difficulty);
+		}
 		return spec;
 	}
 
@@ -817,8 +824,9 @@ public final class FreeCol {
 	 */
 	private static Advantages selectAdvantages(String advantages) {
 		Advantages adv = find(Advantages.values(), a -> Messages.getName(a).equals(advantages), null);
-		if (adv != null)
+		if (adv != null) {
 			setAdvantages(adv);
+		}
 		return adv;
 	}
 
@@ -860,8 +868,9 @@ public final class FreeCol {
 	public static String selectDifficulty(String arg) {
 		String difficulty = find(map(DIFFICULTIES, d -> "model.difficulty." + d), k -> Messages.getName(k).equals(arg),
 				null);
-		if (difficulty != null)
+		if (difficulty != null) {
 			setDifficulty(difficulty);
+		}
 		return difficulty;
 	}
 
@@ -896,9 +905,7 @@ public final class FreeCol {
 				.collect(Collectors.joining(","));
 	}
 
-	/**
-	 * Get the number of European nations to enable by default.
-	 */
+	/** Get the number of European nations to enable by default. */
 	public static int getEuropeanCount() {
 		return europeanCount;
 	}
@@ -936,7 +943,7 @@ public final class FreeCol {
 				} else if (n % GUI_SCALE_STEP_PCT != 0) {
 					valid = false;
 				}
-				guiScale = ((float) (n / GUI_SCALE_STEP_PCT)) * GUI_SCALE_STEP;
+				guiScale = (n / GUI_SCALE_STEP_PCT) * GUI_SCALE_STEP;
 			} catch (NumberFormatException nfe) {
 				valid = false;
 				guiScale = GUI_SCALE_MAX;
@@ -952,8 +959,9 @@ public final class FreeCol {
 	 */
 	public static String getValidGUIScales() {
 		String result = "";
-		for (int i = GUI_SCALE_MIN_PCT; i < GUI_SCALE_MAX_PCT; i += GUI_SCALE_STEP_PCT)
+		for (int i = GUI_SCALE_MIN_PCT; i < GUI_SCALE_MAX_PCT; i += GUI_SCALE_STEP_PCT) {
 			result += i + ",";
+		}
 		result += GUI_SCALE_MAX_PCT;
 		return result;
 	}
@@ -1014,7 +1022,7 @@ public final class FreeCol {
 	 * @return The <code>Locale</code> currently in use.
 	 */
 	public static Locale getLocale() {
-		return FreeCol.locale;
+		return locale;
 	}
 
 	/**
@@ -1052,8 +1060,9 @@ public final class FreeCol {
 	 * @return True if the port was set.
 	 */
 	public static boolean setServerPort(String arg) {
-		if (arg == null)
+		if (arg == null) {
 			return false;
+		}
 		try {
 			serverPort = Integer.parseInt(arg);
 		} catch (NumberFormatException nfe) {
@@ -1106,7 +1115,7 @@ public final class FreeCol {
 	 * @return A suitable timeout value.
 	 */
 	public static int getTimeout(boolean singlePlayer) {
-		return (timeout >= TIMEOUT_MIN) ? timeout : (singlePlayer) ? Integer.MAX_VALUE : TIMEOUT_DEFAULT;
+		return (timeout >= TIMEOUT_MIN) ? timeout : singlePlayer ? Integer.MAX_VALUE : TIMEOUT_DEFAULT;
 	}
 
 	/**
@@ -1155,8 +1164,9 @@ public final class FreeCol {
 			} catch (NumberFormatException nfe) {
 			}
 		}
-		if (windowSize == null)
+		if (windowSize == null) {
 			windowSize = new Dimension(-1, -1);
+		}
 	}
 
 	/**
@@ -1196,16 +1206,11 @@ public final class FreeCol {
 		File userData = FreeColDirectories.getUserDataDirectory();
 		File userMods = FreeColDirectories.getUserModsDirectory();
 		StringBuilder sb = new StringBuilder(256);
-		sb.append("Configuration:").append("\n  version     ").append(getRevision()).append("\n  java:       ")
-				.append(JAVA_VERSION).append("\n  memory:     ").append(MEMORY_MAX).append("\n  locale:     ")
-				.append(locale).append("\n  data:       ").append(FreeColDirectories.getDataDirectory().getPath())
-				.append("\n  userConfig: ").append((userConfig == null) ? "NONE" : userConfig.getPath())
-				.append("\n  userData:   ").append((userData == null) ? "NONE" : userData.getPath())
-				.append("\n  autosave:   ").append((autosave == null) ? "NONE" : autosave.getPath())
-				.append("\n  logFile:    ").append(FreeColDirectories.getLogFilePath()).append("\n  options:    ")
-				.append((clientOptionsFile == null) ? "NONE" : clientOptionsFile.getPath()).append("\n  save:       ")
-				.append((save == null) ? "NONE" : save.getPath()).append("\n  userMods:   ")
-				.append((userMods == null) ? "NONE" : userMods.getPath());
+		sb.append("Configuration:" + "\n  version     ").append(getRevision()).append("\n  java:       ").append(JAVA_VERSION).append("\n  memory:     ").append(MEMORY_MAX).append("\n  locale:     ")
+				.append(locale).append("\n  data:       ").append(FreeColDirectories.getDataDirectory().getPath()).append("\n  userConfig: ").append((userConfig == null) ? "NONE" : userConfig.getPath()).append("\n  userData:   ")
+				.append((userData == null) ? "NONE" : userData.getPath()).append("\n  autosave:   ").append((autosave == null) ? "NONE" : autosave.getPath()).append("\n  logFile:    ")
+				.append(FreeColDirectories.getLogFilePath()).append("\n  options:    ").append((clientOptionsFile == null) ? "NONE" : clientOptionsFile.getPath()).append("\n  save:       ")
+				.append((save == null) ? "NONE" : save.getPath()).append("\n  userMods:   ").append((userMods == null) ? "NONE" : userMods.getPath());
 		return sb;
 	}
 
@@ -1221,25 +1226,21 @@ public final class FreeCol {
 		Specification spec = null;
 		File savegame = FreeColDirectories.getSavegameFile();
 		if (debugStart) {
-			spec = FreeCol.getTCSpecification();
-		} else if (fastStart) {
+			spec = getTCSpecification();
+		} else if (fastStart && savegame == null) {
+			// continue last saved game if possible,
+			// otherwise start a new one
+			savegame = FreeColDirectories.getLastSaveGameFile();
 			if (savegame == null) {
-				// continue last saved game if possible,
-				// otherwise start a new one
-				savegame = FreeColDirectories.getLastSaveGameFile();
-				if (savegame == null) {
-					spec = FreeCol.getTCSpecification();
-				}
+				spec = getTCSpecification();
 			}
-			// savegame was specified on command line
 		}
+		// savegame was specified on command line
 		final FreeColClient freeColClient = new FreeColClient(splashStream, fontName, guiScale, headless);
 		freeColClient.startClient(windowSize, userMsg, sound, introVideo, savegame, spec);
 	}
 
-	/**
-	 * Start the server.
-	 */
+	/** Start the server. */
 	private static void startServer() {
 		logger.info("Starting stand-alone server.");
 		final FreeColServer freeColServer;
@@ -1250,17 +1251,18 @@ public final class FreeCol {
 				freeColServer = new FreeColServer(fis, (Specification) null, serverPort, serverName);
 				if (checkIntegrity) {
 					boolean integrityOK = freeColServer.getIntegrity() > 0;
-					gripe((integrityOK) ? "cli.check-savegame.success" : "cli.check-savegame.failure");
-					System.exit((integrityOK) ? 0 : 2);
+					gripe(integrityOK ? "cli.check-savegame.success" : "cli.check-savegame.failure");
+					System.exit(integrityOK ? 0 : 2);
 				}
 			} catch (Exception e) {
-				if (checkIntegrity)
+				if (checkIntegrity) {
 					gripe("cli.check-savegame.failure");
+				}
 				fatal(Messages.message(badLoad(saveGame)) + ": " + e.getMessage());
 				return;
 			}
 		} else {
-			Specification spec = FreeCol.getTCSpecification();
+			Specification spec = getTCSpecification();
 			try {
 				freeColServer = new FreeColServer(publicServer, false, spec, serverPort, serverName);
 			} catch (Exception e) {
@@ -1272,7 +1274,7 @@ public final class FreeCol {
 			}
 		}
 
-		String quit = FreeCol.SERVER_THREAD + "Quit Game";
+		String quit = SERVER_THREAD + "Quit Game";
 		Runtime.getRuntime().addShutdownHook(new Thread(quit) {
 			@Override
 			public void run() {

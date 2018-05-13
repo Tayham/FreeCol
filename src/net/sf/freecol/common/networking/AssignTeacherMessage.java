@@ -27,11 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when assigning a teacher.
- */
+/** The message sent when assigning a teacher. */
 public class AssignTeacherMessage extends DOMMessage {
-
 	/** The identifier of the student. */
 	private final String studentId;
 

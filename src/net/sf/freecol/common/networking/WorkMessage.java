@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent to handle changes in work location.
- */
+/** The message sent to handle changes in work location. */
 public class WorkMessage extends DOMMessage {
-
 	/** The identifier of the unit. */
 	private final String unitId;
 

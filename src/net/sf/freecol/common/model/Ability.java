@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
  * applied to any action within the game, most obviously combat.
  */
 public final class Ability extends Feature {
-
 	/**
 	 * The ability to add the current tax as a bonus to the production of bells.
 	 * Provided by the {@link FoundingFather} Thomas Paine.
@@ -98,9 +97,7 @@ public final class Ability extends Feature {
 	 */
 	public static final String BUILD = "model.ability.build";
 
-	/**
-	 * The ability to build a customs house. Yes this is misspelled.
-	 */
+	/** The ability to build a customs house. Yes this is misspelled. */
 	public static final String BUILD_CUSTOM_HOUSE = "model.ability.buildCustomHouse";
 
 	/** The ability to build a factories. */
@@ -133,9 +130,7 @@ public final class Ability extends Feature {
 	/** The ability of certain units (e.g. wagon trains) to carry goods. */
 	public static final String CARRY_GOODS = "model.ability.carryGoods";
 
-	/**
-	 * The ability of certain units (e.g. treasure trains) to carry treasure.
-	 */
+	/** The ability of certain units (e.g. treasure trains) to carry treasure. */
 	public static final String CARRY_TREASURE = "model.ability.carryTreasure";
 
 	/** The ability of certain units (e.g. ships) to carry other units. */
@@ -180,9 +175,7 @@ public final class Ability extends Feature {
 	/** The ability to evade naval attack. */
 	public static final String EVADE_ATTACK = "model.ability.evadeAttack";
 
-	/**
-	 * The ability of certain units to work as missionaries more effectively.
-	 */
+	/** The ability of certain units to work as missionaries more effectively. */
 	public static final String EXPERT_MISSIONARY = "model.ability.expertMissionary";
 
 	/** The ability of certain units to build TileImprovements faster. */
@@ -225,9 +218,7 @@ public final class Ability extends Feature {
 	/** The ability to incite the natives. */
 	public static final String INCITE_NATIVES = "model.ability.inciteNatives";
 
-	/**
-	 * The ability denoting that a declaration of independence has been made.
-	 */
+	/** The ability denoting that a declaration of independence has been made. */
 	public static final String INDEPENDENCE_DECLARED = "model.ability.independenceDeclared";
 
 	/**
@@ -270,9 +261,7 @@ public final class Ability extends Feature {
 	 */
 	public static final String PIRACY = "model.ability.piracy";
 
-	/**
-	 * An ability that enhances the treasure plundered from native settlements.
-	 */
+	/** An ability that enhances the treasure plundered from native settlements. */
 	public static final String PLUNDER_NATIVES = "model.ability.plunderNatives";
 
 	/** The ability to produce goods (e.g. fish) on water tiles. */
@@ -302,9 +291,7 @@ public final class Ability extends Feature {
 	/** The ability to spy on a colony. */
 	public static final String SPY_ON_COLONY = "model.ability.spyOnColony";
 
-	/**
-	 * Units with this ability can be chosen as support units from the crown.
-	 */
+	/** Units with this ability can be chosen as support units from the crown. */
 	public static final String SUPPORT_UNIT = "model.ability.supportUnit";
 
 	/** Buildings with this ability can be used to teach. */
@@ -415,36 +402,22 @@ public final class Ability extends Feature {
 		this.value = newValue;
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o instanceof Ability) {
-			return this.value == ((Ability) o).value && super.equals(o);
-		}
-		return false;
+		return this == o || (o instanceof Ability && this.value == ((Ability) o).value && super.equals(o));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
-		hash += (value) ? 1 : 0;
+		hash += value ? 1 : 0;
 		return hash;
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -452,9 +425,6 @@ public final class Ability extends Feature {
 		xw.writeAttribute(VALUE_TAG, value);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -462,9 +432,6 @@ public final class Ability extends Feature {
 		value = xr.getAttribute(VALUE_TAG, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
@@ -476,9 +443,6 @@ public final class Ability extends Feature {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

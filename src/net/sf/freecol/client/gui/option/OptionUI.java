@@ -42,11 +42,8 @@ import net.sf.freecol.common.option.StringOption;
 import net.sf.freecol.common.option.TextOption;
 import net.sf.freecol.common.option.UnitListOption;
 
-/**
- * This class provides common methods for various Option UIs.
- */
+/** This class provides common methods for various Option UIs. */
 public abstract class OptionUI<T extends Option<?>> implements OptionUpdater {
-
 	/** Whether the Option should be editable. */
 	private boolean editable;
 
@@ -74,9 +71,7 @@ public abstract class OptionUI<T extends Option<?>> implements OptionUpdater {
 		label.setToolTipText(text);
 	}
 
-	/**
-	 * Set up component.
-	 */
+	/** Set up component. */
 	protected void initialize() {
 		JComponent component = getComponent();
 		component.setToolTipText(label.getToolTipText());
@@ -147,7 +142,7 @@ public abstract class OptionUI<T extends Option<?>> implements OptionUpdater {
 		}
 	}
 
-	// Routines to be implemented/overridden
+	/** Routines to be implemented/overridden. */
 
 	public JLabel getJLabel() {
 		return label;
@@ -173,15 +168,11 @@ public abstract class OptionUI<T extends Option<?>> implements OptionUpdater {
 	 */
 	public abstract JComponent getComponent();
 
-	/**
-	 * Update the value of the Option from the UI's component.
-	 */
+	/** Update the value of the Option from the UI's component. */
 	@Override
 	public abstract void updateOption();
 
-	/**
-	 * Reset the value of the UI's component from the Option.
-	 */
+	/** Reset the value of the UI's component from the Option. */
 	@Override
 	public abstract void reset();
 }

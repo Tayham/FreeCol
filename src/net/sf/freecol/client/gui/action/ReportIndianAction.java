@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying an Indian Relations Report.
- */
+/** An action for displaying an Indian Relations Report. */
 public class ReportIndianAction extends FreeColAction {
-
 	public static final String id = "reportIndianAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ReportIndianAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showReportIndianPanel();

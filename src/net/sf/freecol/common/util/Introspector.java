@@ -31,7 +31,6 @@ import java.lang.reflect.Modifier;
  * representations.
  */
 public class Introspector {
-
 	/** The class whose field we are to operate on. */
 	private final Class<?> theClass;
 
@@ -311,8 +310,9 @@ public class Introspector {
 			constructor = messageClass.getDeclaredConstructor(types);
 		} catch (NoSuchMethodException | SecurityException e) {
 			String p = "Unable to find constructor " + tag + "(";
-			for (Class type : types)
+			for (Class type : types) {
 				p += " " + type;
+			}
 			p += " )";
 			throw new IllegalArgumentException(p, e);
 		}

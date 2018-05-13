@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for ordering the active unit to wait for further orders.
- */
+/** An action for ordering the active unit to wait for further orders. */
 public class WaitAction extends UnitAction {
-
 	public static final String id = "waitAction";
 
 	/**
@@ -42,11 +39,8 @@ public class WaitAction extends UnitAction {
 		addImageIcons("wait");
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().waitUnit();

@@ -19,11 +19,8 @@
 
 package net.sf.freecol.common.model;
 
-/**
- * An object that has a name.
- */
+/** An object that has a name. */
 public interface Named {
-
 	/**
 	 * Gets the name of this named object.
 	 *
@@ -32,5 +29,5 @@ public interface Named {
 	 *
 	 * @return The name of the <code>Named</code>.
 	 */
-	public String getNameKey();
+	String getNameKey();
 }

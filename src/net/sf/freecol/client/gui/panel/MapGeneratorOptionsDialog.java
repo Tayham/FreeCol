@@ -54,7 +54,6 @@ import net.sf.freecol.common.option.OptionGroup;
  * @see OptionGroup
  */
 public final class MapGeneratorOptionsDialog extends OptionsDialog {
-
 	private static final Logger logger = Logger.getLogger(MapGeneratorOptionsDialog.class.getName());
 
 	/**
@@ -87,8 +86,9 @@ public final class MapGeneratorOptionsDialog extends OptionsDialog {
 				JPanel mapPanel = new JPanel();
 				for (final File file : files) {
 					JButton mapButton = makeMapButton(file);
-					if (mapButton == null)
+					if (mapButton == null) {
 						continue;
+					}
 					mapButton.addActionListener((ActionEvent ae) -> {
 						updateFile(file);
 					});
@@ -124,32 +124,37 @@ public final class MapGeneratorOptionsDialog extends OptionsDialog {
 		final GUI gui = freeColClient.getGUI();
 
 		FileOptionUI foui = (FileOptionUI) mgoUI.getOptionUI(MapGeneratorOptions.IMPORT_FILE);
-		if (foui == null)
+		if (foui == null) {
 			foui = (FileOptionUI) OptionUI.getOptionUI(gui, mgo.getOption(MapGeneratorOptions.IMPORT_FILE), true);
+		}
 		foui.setValue(file);
 
 		BooleanOptionUI terrainUI = (BooleanOptionUI) mgoUI.getOptionUI(MapGeneratorOptions.IMPORT_TERRAIN);
-		if (terrainUI == null)
+		if (terrainUI == null) {
 			terrainUI = (BooleanOptionUI) OptionUI.getOptionUI(gui, mgo.getOption(MapGeneratorOptions.IMPORT_TERRAIN),
 					true);
+		}
 		terrainUI.setValue(true);
 
 		BooleanOptionUI bonusesUI = (BooleanOptionUI) mgoUI.getOptionUI(MapGeneratorOptions.IMPORT_BONUSES);
-		if (bonusesUI == null)
+		if (bonusesUI == null) {
 			bonusesUI = (BooleanOptionUI) OptionUI.getOptionUI(gui, mgo.getOption(MapGeneratorOptions.IMPORT_BONUSES),
 					true);
+		}
 		bonusesUI.setValue(false);
 
 		BooleanOptionUI rumourUI = (BooleanOptionUI) mgoUI.getOptionUI(MapGeneratorOptions.IMPORT_RUMOURS);
-		if (rumourUI == null)
+		if (rumourUI == null) {
 			rumourUI = (BooleanOptionUI) OptionUI.getOptionUI(gui, mgo.getOption(MapGeneratorOptions.IMPORT_RUMOURS),
 					true);
+		}
 		rumourUI.setValue(false);
 
 		BooleanOptionUI settlementsUI = (BooleanOptionUI) mgoUI.getOptionUI(MapGeneratorOptions.IMPORT_SETTLEMENTS);
-		if (settlementsUI == null)
+		if (settlementsUI == null) {
 			settlementsUI = (BooleanOptionUI) OptionUI.getOptionUI(gui,
 					mgo.getOption(MapGeneratorOptions.IMPORT_SETTLEMENTS), true);
+		}
 		settlementsUI.setValue(false);
 	}
 
@@ -184,17 +189,13 @@ public final class MapGeneratorOptionsDialog extends OptionsDialog {
 		return mapButton;
 	}
 
-	// Override OptionsDialog
+	/** Override OptionsDialog. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public OptionGroup getResponse() {
 		OptionGroup value = super.getResponse();
-		if (value != null) {
-			if (isEditable())
-				saveDefaultOptions();
+		if (value != null && isEditable()) {
+			saveDefaultOptions();
 		}
 		return value;
 	}

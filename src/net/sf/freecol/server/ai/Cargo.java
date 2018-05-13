@@ -47,19 +47,18 @@ import net.sf.freecol.common.util.LogBuilder;
  * action for a specific transportable.
  */
 public class Cargo {
-
 	private static final Logger logger = Logger.getLogger(Cargo.class.getName());
 
 	/** Abandon cargo after three blockages. */
 	private static final int MAX_TRY = 3;
 
 	/** The actions to perform at the target. */
-	public static enum CargoMode {
-		LOAD, // Go to target and load transportable
-		UNLOAD, // Go to target and unload transportable
-		PICKUP, // Go to drop node target, transportable unit to embark
-		DROPOFF, // Go to drop node target, transportable unit to disembark
-		DUMP; // Just dump this transportable at the next opportunity
+	public enum CargoMode {
+		LOAD, /** Go to target and load transportable. */
+		UNLOAD, /** Go to target and unload transportable. */
+		PICKUP, /** Go to drop node target, transportable unit to embark. */
+		DROPOFF, /** Go to drop node target, transportable unit to disembark. */
+		DUMP; /** Just dump this transportable at the next opportunity. */
 
 		public boolean isCollection() {
 			return this == LOAD || this == PICKUP;
@@ -72,7 +71,6 @@ public class Cargo {
 	 * transportable goes to TDST (may equal CDST).
 	 */
 	public static class CargoPlan {
-
 		/** The key locations along the path taken by cargo and carrier. */
 		public Location twait, cwait, cdst, tdst;
 
@@ -132,8 +130,9 @@ public class Cargo {
 			// Where is the transportable collected? At the first
 			// path node where it is on the carrier.
 			PathNode pick = deliver.getCarrierMove();
-			if (pick == null)
+			if (pick == null) {
 				return "invalid-transport-not-needed";
+			}
 			// The pickup node determines the c/twait locations.
 			if (carrying) {
 				this.twait = this.cwait = null;
@@ -172,7 +171,6 @@ public class Cargo {
 			// maximum of the turns for the transportable and carrier to
 			// reach the collection point, plus the turns from there to
 			// the destination.
-			//
 			// The mode depends whether the carrier and transportable
 			// have the same terminal points.
 			if (carrying) {
@@ -297,8 +295,9 @@ public class Cargo {
 			throws FreeColException {
 		Cargo cargo = new Cargo(t, carrier, new CargoPlan());
 		String reason = cargo.plan.initialize(t, carrier, destination, allowFallback);
-		if (reason != null)
+		if (reason != null) {
 			throw new FreeColException(reason);
+		}
 		return cargo;
 	}
 
@@ -308,14 +307,17 @@ public class Cargo {
 	 * @return A reason for failing to reset, or null on succes.
 	 */
 	public String dump() {
-		if (!isCarried())
+		if (!isCarried()) {
 			return "not-carried";
+		}
 		PathNode path = carrier.getTrivialPath();
-		if (path == null)
+		if (path == null) {
 			return "no-trivial-path";
+		}
 		String reason = initialize(path.getLastNode().getLocation(), false);
-		if (reason != null)
+		if (reason != null) {
 			return reason;
+		}
 		this.plan.mode = CargoMode.DUMP;
 		return null;
 	}
@@ -367,11 +369,11 @@ public class Cargo {
 	}
 
 	public Location getTransportTarget() {
-		return (getMode().isCollection()) ? plan.twait : plan.tdst;
+		return getMode().isCollection() ? plan.twait : plan.tdst;
 	}
 
 	public Location getCarrierTarget() {
-		return (getMode().isCollection()) ? plan.cwait : plan.cdst;
+		return getMode().isCollection() ? plan.cwait : plan.cdst;
 	}
 
 	public void clear() {
@@ -396,9 +398,7 @@ public class Cargo {
 	 * @return True if the cargo can be collected.
 	 */
 	public boolean isCollectable() {
-		if (!getMode().isCollection() || isCarried())
-			return false;
-		return Map.isSameLocation(plan.twait, transportable.getLocation())
+		return getMode().isCollection() && !isCarried() && Map.isSameLocation(plan.twait, transportable.getLocation())
 				&& Map.isSameLocation(plan.cwait, carrier.getLocation());
 	}
 
@@ -409,9 +409,7 @@ public class Cargo {
 	 * @return True if the cargo can be delivered to the target.
 	 */
 	public boolean isDeliverable() {
-		if (getMode().isCollection() || !isCarried())
-			return false;
-		return Map.isSameLocation(plan.cdst, carrier.getLocation());
+		return !getMode().isCollection() && isCarried() && Map.isSameLocation(plan.cdst, carrier.getLocation());
 	}
 
 	/**
@@ -449,8 +447,9 @@ public class Cargo {
 	 * @return The <code>Direction</code> to leave by.
 	 */
 	public Direction getLeaveDirection() {
-		if (!carrier.hasTile() || plan.cdst == plan.tdst)
+		if (!carrier.hasTile() || plan.cdst == plan.tdst) {
 			return null;
+		}
 		TransportableAIObject t = getTransportable();
 		PathNode path = t.getDeliveryPath(getCarrier(), plan.tdst);
 		return (path == null || path.next == null) ? null : path.next.getDirection();
@@ -462,10 +461,11 @@ public class Cargo {
 	 * @return The extra space required.
 	 */
 	public int getNewSpace() {
-		if (!isValid())
+		if (!isValid()) {
 			return 0;
+		}
 		int ret = 0;
-		ret += (getMode().isCollection()) ? getTransportable().getSpaceTaken() : -getTransportable().getSpaceTaken();
+		ret += getMode().isCollection() ? getTransportable().getSpaceTaken() : -getTransportable().getSpaceTaken();
 		if (hasWrapped()) {
 			ret += wrapped.stream().mapToInt(c -> c.getNewSpace()).sum();
 		}
@@ -503,8 +503,9 @@ public class Cargo {
 		if (other == this) {
 			throw new IllegalStateException("Autowrap at" + this);
 		}
-		if (wrapped == null)
+		if (wrapped == null) {
 			wrapped = new ArrayList<>();
+		}
 		wrapped.add(other);
 	}
 
@@ -534,9 +535,7 @@ public class Cargo {
 		return tries++ < MAX_TRY;
 	}
 
-	/**
-	 * Reset the tries counter.
-	 */
+	/** Reset the tries counter. */
 	public void resetTries() {
 		this.tries = 0;
 	}
@@ -598,13 +597,14 @@ public class Cargo {
 	 */
 	public boolean canQueueAt(Unit carrier, int index, List<Cargo> cargoes) {
 		final int maxHolds = carrier.getCargoCapacity();
-		final int newSpace = this.getNewSpace();
+		final int newSpace = getNewSpace();
 		Cargo tr = cargoes.get(index);
 		for (int j = index; j < cargoes.size(); j++) {
 			int holds = (j == 0) ? carrier.getCargoSpaceTaken() : maxHolds - cargoes.get(j - 1).getSpaceLeft();
 			holds += newSpace;
-			if (holds < 0 || holds > maxHolds)
+			if (holds < 0 || holds > maxHolds) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -618,23 +618,21 @@ public class Cargo {
 		LogBuilder lb = new LogBuilder(32);
 		lb.add(getModeString(), " ", transportable);
 		Location lt = getTransportTarget();
-		lb.add(" @ ", ((lt == null) ? "null" : lt.toShortString()));
+		lb.add(" @ ", (lt == null) ? "null" : lt.toShortString());
 		Location ct = getCarrierTarget();
-		if (ct != lt)
+		if (ct != lt) {
 			lb.add("/", ct.toShortString());
+		}
 		return lb.toString();
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		LogBuilder lb = new LogBuilder(64);
 		lb.add("[", transportable, " ", getModeString(), " ", getTurns(), "/", tries, " space=", spaceLeft,
-				((wrapped == null) ? "" : " wrap"));
+				(wrapped == null) ? "" : " wrap");
 		if (plan.twait != null && plan.cwait != null) {
 			lb.add(" ", plan.twait.toShortString(), "/", plan.cwait.toShortString());
 		}
@@ -645,8 +643,10 @@ public class Cargo {
 		return lb.toString();
 	}
 
-	// Serialization
-	// Cargo is not yet an AIObject or FreeColObject, but that may happen.
+	/**
+	 * Serialization
+	 * Cargo is not yet an AIObject or FreeColObject, but that may happen.
+	 */
 
 	private static final String CDST_TAG = "cdst";
 	private static final String CWAIT_TAG = "cwait";
@@ -658,7 +658,7 @@ public class Cargo {
 	private static final String TRIES_TAG = "tries";
 	private static final String TURNS_TAG = "turns";
 	private static final String TWAIT_TAG = "twait";
-	// Used to use TARGET_TAG = "target"
+	/** Used to use TARGET_TAG = "target". */
 
 	public void toXML(FreeColXMLWriter xw) throws XMLStreamException {
 		xw.writeStartElement(getXMLElementTagName());

@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying a Production Report.
- */
+/** An action for displaying a Production Report. */
 public class ReportProductionAction extends FreeColAction {
-
 	public static final String id = "reportProductionAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ReportProductionAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showReportProductionPanel();

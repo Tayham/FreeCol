@@ -30,12 +30,9 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-/**
- * Represents the type of one of the nations present in the game.
- */
+/** Represents the type of one of the nations present in the game. */
 public abstract class NationType extends FreeColGameObjectType {
-
-	public static enum SettlementNumber {
+	public enum SettlementNumber {
 		LOW, AVERAGE, HIGH;
 
 		/**
@@ -48,7 +45,7 @@ public abstract class NationType extends FreeColGameObjectType {
 		}
 	}
 
-	public static enum AggressionLevel {
+	public enum AggressionLevel {
 		LOW, AVERAGE, HIGH;
 
 		/**
@@ -98,8 +95,9 @@ public abstract class NationType extends FreeColGameObjectType {
 	 *            The <code>SettlementType</code> to add.
 	 */
 	private void addSettlementType(SettlementType settlementType) {
-		if (settlementTypes == null)
+		if (settlementTypes == null) {
 			settlementTypes = new ArrayList<>();
+		}
 		settlementTypes.add(settlementType);
 	}
 
@@ -110,8 +108,9 @@ public abstract class NationType extends FreeColGameObjectType {
 	 *            A list of <code>SettlementType</code>s to add.
 	 */
 	private void addSettlementTypes(List<SettlementType> types) {
-		if (settlementTypes == null)
+		if (settlementTypes == null) {
 			settlementTypes = new ArrayList<>();
+		}
 		settlementTypes.addAll(types);
 	}
 
@@ -185,15 +184,12 @@ public abstract class NationType extends FreeColGameObjectType {
 	 */
 	public abstract boolean isREF();
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String AGGRESSION_TAG = "aggression";
 	private static final String NUMBER_OF_SETTLEMENTS_TAG = "number-of-settlements";
 	private static final String SETTLEMENT_TAG = "settlement";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -203,9 +199,6 @@ public abstract class NationType extends FreeColGameObjectType {
 		xw.writeAttribute(AGGRESSION_TAG, aggression);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -215,9 +208,6 @@ public abstract class NationType extends FreeColGameObjectType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -232,9 +222,6 @@ public abstract class NationType extends FreeColGameObjectType {
 		aggression = xr.getAttribute(AGGRESSION_TAG, AggressionLevel.class, parent.aggression);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -258,9 +245,6 @@ public abstract class NationType extends FreeColGameObjectType {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -268,7 +252,6 @@ public abstract class NationType extends FreeColGameObjectType {
 
 		if (SETTLEMENT_TAG.equals(tag)) {
 			addSettlementType(new SettlementType(xr, spec));
-
 		} else {
 			super.readChild(xr);
 		}

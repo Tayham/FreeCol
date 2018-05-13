@@ -28,11 +28,8 @@ import java.util.logging.Logger;
 import net.sf.freecol.common.debug.FreeColDebugger;
 import net.sf.freecol.common.model.Location;
 
-/**
- * A class to wrap a StringBuilder for log generation purposes.
- */
+/** A class to wrap a StringBuilder for log generation purposes. */
 public class LogBuilder {
-
 	/** The string builder to use. */
 	private final StringBuilder sb;
 
@@ -93,8 +90,9 @@ public class LogBuilder {
 	 *            The objects to add.
 	 */
 	public void add(Object... objects) {
-		if (sb != null)
+		if (sb != null) {
 			add(sb, objects);
+		}
 	}
 
 	/**
@@ -107,23 +105,24 @@ public class LogBuilder {
 	 */
 	public <T> void addCollection(String delim, Collection<T> c) {
 		if (sb != null) {
-			for (T t : c)
+			for (T t : c) {
 				add(sb, t, delim);
+			}
 				sbShrink(delim, c);
 		}
 	}
 
 	private <T> void sbShrink(String delim, Collection<T> c) {
-		if (!c.isEmpty())
+		if (!c.isEmpty()) {
 			shrink(delim);
+		}
 	}
 
-	/**
-	 * Add a stack trace to the buffer.
-	 */
+	/** Add a stack trace to the buffer. */
 	public void addStackTrace() {
-		if (sb != null)
+		if (sb != null) {
 			FreeColDebugger.addStackTrace(this);
+		}
 	}
 
 	/**
@@ -133,13 +132,12 @@ public class LogBuilder {
 	 *            The size to truncate to.
 	 */
 	public void truncate(int size) {
-		if (sb != null && sb.length() > size)
+		if (sb != null && sb.length() > size) {
 			sb.setLength(size);
+		}
 	}
 
-	/**
-	 * Remember a position in a buffer.
-	 */
+	/** Remember a position in a buffer. */
 	public void mark() {
 		if (sb != null) {
 			this.points.add(0, sb.length());
@@ -155,11 +153,13 @@ public class LogBuilder {
 	 * @return True if the buffer grew (before inserting).
 	 */
 	public boolean grew(Object... objects) {
-		if (sb == null)
+		if (sb == null) {
 			return false;
+		}
 		int p = this.points.remove(0);
-		if (sb.length() <= p)
+		if (sb.length() <= p) {
 			return false;
+		}
 		sbInsert(objects, p);
 		return true;
 	}
@@ -216,23 +216,28 @@ public class LogBuilder {
 	 *            The <code>Object</code>s to add.
 	 */
 	public static String wide(int size, Object... objects) {
-		if (size == 0)
+		if (size == 0) {
 			return "";
+		}
 		boolean left = size > 0;
-		if (!left)
+		if (!left) {
 			size = -size;
+		}
 		StringBuilder s2 = new StringBuilder(size);
 		add(s2, objects);
 		int delta = size - s2.length();
 		if (left) {
-			for (; delta > 0; delta--)
+			for (; delta > 0; delta--) {
 				s2.append(" ");
+			}
 		} else {
-			for (; delta > 0; delta--)
+			for (; delta > 0; delta--) {
 				s2.insert(0, " ");
+			}
 		}
-		if (delta < 0)
+		if (delta < 0) {
 			s2.setLength(size);
+		}
 		return s2.toString();
 	}
 

@@ -59,16 +59,11 @@ import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 import net.sf.freecol.server.model.ServerPlayer;
 
-/**
- * The server version of a colony.
- */
+/** The server version of a colony. */
 public class ServerColony extends Colony implements ServerModelObject {
-
 	private static final Logger logger = Logger.getLogger(ServerColony.class.getName());
 
-	/**
-	 * Trivial constructor required for all ServerModelObjects.
-	 */
+	/** Trivial constructor required for all ServerModelObjects. */
 	public ServerColony(Game game, String id) {
 		super(game, id);
 	}
@@ -163,8 +158,9 @@ public class ServerColony extends Colony implements ServerModelObject {
 		for (WorkLocation workLocation : getCurrentWorkLocations()) {
 			((ServerModelObject) workLocation).csNewTurn(random, lb, cs);
 			ProductionInfo productionInfo = getProductionInfo(workLocation);
-			if (productionInfo == null)
+			if (productionInfo == null) {
 				continue;
+			}
 			if (!workLocation.isEmpty()) {
 				for (AbstractGoods goods : productionInfo.getProduction()) {
 					UnitType expert = spec.getExpertForProducing(goods.getType());
@@ -191,8 +187,9 @@ public class ServerColony extends Colony implements ServerModelObject {
 		List<BuildQueue<? extends BuildableType>> built = new ArrayList<>();
 		for (BuildQueue<?> queue : queues) {
 			ProductionInfo info = getProductionInfo(queue);
-			if (info == null)
+			if (info == null) {
 				continue;
+			}
 			if (info.getConsumption().isEmpty()) {
 				BuildableType build = queue.getCurrentlyBuilding();
 				if (build != null) {
@@ -212,24 +209,24 @@ public class ServerColony extends Colony implements ServerModelObject {
 			} else {
 				// Ready to build something. FIXME: OO!
 				BuildableType buildable = csNextBuildable(queue, cs);
-				if (buildable == null) {
-					; // It was invalid, ignore.
-				} else if (buildable instanceof UnitType) {
-					Unit newUnit = csBuildUnit(queue, random, cs);
-					if (newUnit.hasAbility(Ability.BORN_IN_COLONY)) {
-						newUnitBorn = true;
-					}
-					built.add(queue);
-				} else if (buildable instanceof BuildingType) {
-					int unitCount = getUnitCount();
-					if (csBuildBuilding(queue, cs)) {
+				if (buildable != null) {
+					if (buildable instanceof UnitType) {
+						Unit newUnit = csBuildUnit(queue, random, cs);
+						if (newUnit.hasAbility(Ability.BORN_IN_COLONY)) {
+							newUnitBorn = true;
+						}
 						built.add(queue);
-						// Visible change if building changed the
-						// stockade level or ejected units.
-						tileDirty = ((BuildingType) buildable).isDefenceType() || unitCount != getUnitCount();
+					} else if (buildable instanceof BuildingType) {
+						int unitCount = getUnitCount();
+						if (csBuildBuilding(queue, cs)) {
+							built.add(queue);
+							// Visible change if building changed the
+							// stockade level or ejected units.
+							tileDirty = ((BuildingType) buildable).isDefenceType() || unitCount != getUnitCount();
+						}
+					} else {
+						throw new IllegalStateException("Bogus buildable: " + buildable);
 					}
-				} else {
-					throw new IllegalStateException("Bogus buildable: " + buildable);
 				}
 			}
 		}
@@ -317,11 +314,13 @@ public class ServerColony extends Colony implements ServerModelObject {
 			for (Goods goods : getCompactGoods()) {
 				GoodsType type = goods.getType();
 				ExportData data = getExportData(type);
-				if (!data.getExported() || !owner.canTrade(goods.getType(), Market.Access.CUSTOM_HOUSE))
+				if (!data.getExported() || !owner.canTrade(goods.getType(), Market.Access.CUSTOM_HOUSE)) {
 					continue;
+				}
 				int amount = goods.getAmount() - data.getExportLevel();
-				if (amount <= 0)
+				if (amount <= 0) {
 					continue;
+				}
 				int oldGold = owner.getGold();
 				int marketAmount = owner.sell(container, type, amount);
 				if (marketAmount > 0) {
@@ -329,7 +328,7 @@ public class ServerColony extends Colony implements ServerModelObject {
 				}
 				StringTemplate st = StringTemplate.template("model.colony.customs.saleData")
 						.addAmount("%amount%", amount).addNamed("%goods%", type)
-						.addAmount("%gold%", (owner.getGold() - oldGold));
+						.addAmount("%gold%", owner.getGold() - oldGold);
 				lb2.add(Messages.message(st), ", ");
 			}
 			if (lb2.grew()) {
@@ -348,23 +347,25 @@ public class ServerColony extends Colony implements ServerModelObject {
 		int adjustment = limit / GoodsContainer.CARGO_SIZE;
 		for (Goods goods : getCompactGoods()) {
 			GoodsType type = goods.getType();
-			if (!type.isStorable())
+			if (!type.isStorable()) {
 				continue;
+			}
 			ExportData exportData = getExportData(type);
 			int low = exportData.getLowLevel() * adjustment;
 			int high = exportData.getHighLevel() * adjustment;
 			int amount = goods.getAmount();
 			int oldAmount = container.getOldGoodsCount(type);
 
-			if (amount < low && oldAmount >= low && !(type == spec.getPrimaryFoodType() && newUnitBorn)) {
+			if (amount < low && oldAmount >= low && (type != spec.getPrimaryFoodType() || !newUnitBorn)) {
 				cs.addMessage(See.only(owner),
 						new ModelMessage(ModelMessage.MessageType.WAREHOUSE_CAPACITY, "model.colony.warehouseEmpty",
 								this, type).addNamed("%goods%", type).addAmount("%level%", low).addName("%colony%",
 										getName()));
 				continue;
 			}
-			if (type.limitIgnored())
+			if (type.limitIgnored()) {
 				continue;
+			}
 
 			String messageId = null;
 			int waste = 0;
@@ -388,8 +389,7 @@ public class ServerColony extends Colony implements ServerModelObject {
 			}
 
 			// No problem this turn, but what about the next?
-			if (!(exportData.getExported() && hasAbility(Ability.EXPORT)
-					&& owner.canTrade(type, Market.Access.CUSTOM_HOUSE)) && amount <= limit) {
+			if ((!exportData.getExported() || !hasAbility(Ability.EXPORT) || !owner.canTrade(type, Market.Access.CUSTOM_HOUSE)) && amount <= limit) {
 				int loss = amount + getNetProductionOf(type) - limit;
 				if (loss > 0) {
 					cs.addMessage(See.only(owner),
@@ -527,12 +527,14 @@ public class ServerColony extends Colony implements ServerModelObject {
 	 * @return True if units were ejected.
 	 */
 	public boolean ejectUnits(WorkLocation workLocation, List<Unit> units) {
-		if (units == null || units.isEmpty())
+		if (units == null || units.isEmpty()) {
 			return false;
+		}
 		unit: for (Unit u : units) {
 			for (WorkLocation wl : getAvailableWorkLocations()) {
-				if (wl == workLocation || !wl.canAdd(u))
+				if (wl == workLocation || !wl.canAdd(u)) {
 					continue;
+				}
 				u.setLocation(wl);// -vis: safe/colony
 				continue unit;
 			}
@@ -566,8 +568,9 @@ public class ServerColony extends Colony implements ServerModelObject {
 			success = eject != null;
 			if (success) {
 				ejectUnits(building, eject);// -til
-				if (!eject.isEmpty())
-					getTile().cacheUnseen(copied);// +til
+				if (!eject.isEmpty()) {
+					getTile().cacheUnseen(copied);
+				}// +til
 			} else {
 				cs.addMessage(See.only((ServerPlayer) owner), getUnbuildableMessage(type));
 			}
@@ -634,8 +637,9 @@ public class ServerColony extends Colony implements ServerModelObject {
 			queue.remove(0);
 			invalidate = true;
 		}
-		if (invalidate)
+		if (invalidate) {
 			invalidateCache();
+		}
 		return null;
 	}
 
@@ -652,12 +656,14 @@ public class ServerColony extends Colony implements ServerModelObject {
 		ServerPlayer serverPlayer = (ServerPlayer) getOwner();
 		Tile tile = enemyUnit.getTile();
 		ServerColonyTile ct = (ServerColonyTile) getColonyTile(tile);
-		if (ct == null)
+		if (ct == null) {
 			return;
+		}
 		Tile colonyTile = ct.getColony().getTile();
 		Tile copied = colonyTile.getTileToCache();
-		if (!ejectUnits(ct, ct.getUnitList()))
-			return;// -til
+		if (!ejectUnits(ct, ct.getUnitList())) {
+			return;
+		}// -til
 		colonyTile.cacheUnseen(copied);// +til
 		cs.addMessage(See.only(serverPlayer),
 				new ModelMessage(ModelMessage.MessageType.WARNING, "model.colony.workersEvicted", this, this)
@@ -682,12 +688,13 @@ public class ServerColony extends Colony implements ServerModelObject {
 	public Set<Tile> csChangeOwner(ServerPlayer newOwner, ChangeSet cs) {
 		final ServerPlayer owner = (ServerPlayer) getOwner();
 
-		for (Tile t : getOwnedTiles())
-			t.cacheUnseen(newOwner);// +til
+		for (Tile t : getOwnedTiles()) {
+			t.cacheUnseen(newOwner);
+		}// +til
 
 		changeOwner(newOwner);// -vis(both),-til
 
-		ChangeType change = (newOwner.isUndead()) ? ChangeType.UNDEAD : ChangeType.CAPTURE;
+		ChangeType change = newOwner.isUndead() ? ChangeType.UNDEAD : ChangeType.CAPTURE;
 		List<Unit> units = getUnitList();
 		units.addAll(getTile().getUnitList());
 		for (Unit u : units) {// -vis(both)
@@ -746,9 +753,10 @@ public class ServerColony extends Colony implements ServerModelObject {
 	public boolean buildBuilding(Building building) {
 		net.sf.freecol.common.debug.FreeColDebugger.debugLog(
 				"BUILD " + building + "\n" + net.sf.freecol.common.debug.FreeColDebugger.stackTraceToString());
-		Tile copied = (building.getType().isDefenceType()) ? getTile().getTileToCache() : null;
-		if (!addBuilding(building))
+		Tile copied = building.getType().isDefenceType() ? getTile().getTileToCache() : null;
+		if (!addBuilding(building)) {
 			return false;
+		}
 		getTile().cacheUnseen(copied);
 		invalidateCache();
 		return true;
@@ -773,8 +781,9 @@ public class ServerColony extends Colony implements ServerModelObject {
 		boolean ret = equipForRole(unit, role, roleCount);
 
 		if (ret) {
-			if (unit.isOnCarrier())
+			if (unit.isOnCarrier()) {
 				unit.setMovesLeft(0);
+			}
 			Tile tile = getTile();
 			tile.cacheUnseen();// +til
 			unit.setLocation(tile);
@@ -792,8 +801,9 @@ public class ServerColony extends Colony implements ServerModelObject {
 	 *            A <code>ChangeSet</code> to update.
 	 */
 	public void csAddConvert(Unit brave, ChangeSet cs) {
-		if (brave == null)
+		if (brave == null) {
 			return;
+		}
 		ServerPlayer newOwner = (ServerPlayer) getOwner();
 		ServerPlayer oldOwner = (ServerPlayer) brave.getOwner();
 		if (oldOwner.csChangeOwner(brave, newOwner, ChangeType.CONVERSION, getTile(), cs)) { // -vis(other)
@@ -819,9 +829,10 @@ public class ServerColony extends Colony implements ServerModelObject {
 	 * @return True if the building was destroyed.
 	 */
 	public boolean destroyBuilding(Building building) {
-		Tile copied = (building.getType().isDefenceType()) ? getTile().getTileToCache() : null;
-		if (!removeBuilding(building))
+		Tile copied = building.getType().isDefenceType() ? getTile().getTileToCache() : null;
+		if (!removeBuilding(building)) {
 			return false;
+		}
 		getTile().cacheUnseen(copied);
 		invalidateCache();
 		checkBuildQueueIntegrity(true);

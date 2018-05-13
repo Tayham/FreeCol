@@ -48,11 +48,8 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.TradeRoute;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * Allows the user to edit trade routes.
- */
+/** Allows the user to edit trade routes. */
 public final class TradeRoutePanel extends FreeColPanel {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(TradeRoutePanel.class.getName());
 
@@ -195,16 +192,12 @@ public final class TradeRoutePanel extends FreeColPanel {
 		getGUI().restoreSavedSize(this, getPreferredSize());
 	}
 
-	/**
-	 * Gets the currently selected route.
-	 */
+	/** Gets the currently selected route. */
 	private TradeRoute getRoute() {
 		return this.tradeRoutes.getSelectedValue();
 	}
 
-	/**
-	 * Handle a new route request.
-	 */
+	/** Handle a new route request. */
 	private void newRoute() {
 		final Player player = getMyPlayer();
 		final Unit u = this.unit;
@@ -226,9 +219,7 @@ public final class TradeRoutePanel extends FreeColPanel {
 		});
 	}
 
-	/**
-	 * Update the buttons on the panel.
-	 */
+	/** Update the buttons on the panel. */
 	private void updateButtons() {
 		newRouteButton.setEnabled(true);
 		if (tradeRoutes.getSelectedIndex() < 0) {
@@ -290,16 +281,14 @@ public final class TradeRoutePanel extends FreeColPanel {
 		igc().setTradeRoutes(routes);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final String command = ae.getActionCommand();
-		if (null == command)
+		if (null == command) {
 			return;
+		}
 		final TradeRoute route = getRoute();
 		switch (command) {
 		case DEASSIGN:
@@ -328,11 +317,8 @@ public final class TradeRoutePanel extends FreeColPanel {
 		}
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		this.listModel.clear();

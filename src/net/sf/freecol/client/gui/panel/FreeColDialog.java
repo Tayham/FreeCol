@@ -57,16 +57,13 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.StringTemplate;
 
-/**
- * Superclass for all dialogs in FreeCol.
- */
+/** Superclass for all dialogs in FreeCol. */
 public class FreeColDialog<T> extends JDialog implements PropertyChangeListener {
-
 	private static final Logger logger = Logger.getLogger(FreeColDialog.class.getName());
 
-	public static enum DialogType {
+	public enum DialogType {
 		PLAIN, QUESTION,
-	};
+	}
 
 	/** The enclosing client. */
 	protected final FreeColClient freeColClient;
@@ -134,12 +131,13 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 	private int selectDefault(List<ChoiceItem<T>> options) {
 		int def = -1, can = -1, ok = -1, i = 0;
 		for (ChoiceItem<T> ci : options) {
-			if (ci.isDefault())
+			if (ci.isDefault()) {
 				def = i;
-			else if (ci.isCancel())
+			} else if (ci.isCancel()) {
 				can = i;
-			else if (ci.isOK())
+			} else if (ci.isOK()) {
 				ok = i;
+			}
 			i++;
 		}
 		return (def >= 0) ? def : (can >= 0) ? can : (ok >= 0) ? ok : options.size() - 1;
@@ -218,7 +216,7 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 		setLocationRelativeTo(frame);
 
 		WindowAdapter adapter = new WindowAdapter() {
-			private boolean gotFocus = false;
+			private boolean gotFocus;
 
 			@Override
 			public void windowClosing(WindowEvent we) {
@@ -249,11 +247,13 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 		addMouseListener(new MouseAdapter() {
 			private Point loc;
 
-			// @Override
-			// public void mouseDragged(MouseEvent e) {}
+			/**
+			 * @Override
+			 * public void mouseDragged(MouseEvent e) {}
 
-			// @Override
-			// public void mouseMoved(MouseEvent e) {}
+			 * @Override
+			 * public void mouseMoved(MouseEvent e) {}
+			 */
 
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -262,8 +262,9 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (loc == null)
+				if (loc == null) {
 					return;
+				}
 				Point now = SwingUtilities.convertPoint((Component) e.getSource(), e.getX(), e.getY(), null);
 				int dx = now.x - loc.x;
 				int dy = now.y - loc.y;
@@ -406,8 +407,9 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 		if (responded()) {
 			Object value = getValue();
 			for (ChoiceItem<T> ci : this.options) {
-				if (ci.equals(value))
+				if (ci.equals(value)) {
 					return ci.getObject();
+				}
 			}
 		}
 		return null;
@@ -432,17 +434,14 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 		return new ArrayList<>();
 	}
 
-	// Interface PropertyChangeListener
+	/** Interface PropertyChangeListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
 		// Let the defaultCloseOperation handle the closing if the
 		// user closed the window without selecting a button (in which
 		// case the new value will be null). Otherwise, close the dialog.
-		if (this.isVisible() && e.getSource() == pane
+		if (isVisible() && e.getSource() == pane
 				&& (JOptionPane.VALUE_PROPERTY.equals(e.getPropertyName())
 						|| JOptionPane.INPUT_VALUE_PROPERTY.equals(e.getPropertyName()))
 				&& e.getNewValue() != null && e.getNewValue() != JOptionPane.UNINITIALIZED_VALUE) {
@@ -450,23 +449,18 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 		}
 	}
 
-	// Override Dialog
+	/** Override Dialog. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setVisible(boolean val) {
-		if (val)
+		if (val) {
 			this.pane.selectInitialValue();
+		}
 		super.setVisible(val); // This is where the thread blocks when modal.
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
@@ -484,9 +478,6 @@ public class FreeColDialog<T> extends JDialog implements PropertyChangeListener 
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void requestFocus() {
 		if (this.pane != null && this.pane.getUI() instanceof FreeColOptionPaneUI) {

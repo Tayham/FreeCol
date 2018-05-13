@@ -35,7 +35,6 @@ import org.w3c.dom.Element;
  * server has it's own {@link MetaItem} object.
  */
 public final class MetaRegister {
-
 	private static final Logger logger = Logger.getLogger(MetaRegister.class.getName());
 
 	private final ArrayList<MetaItem> items = new ArrayList<>();
@@ -78,9 +77,7 @@ public final class MetaRegister {
 		return -1;
 	}
 
-	/**
-	 * Removes servers that have not sent an update for some time.
-	 */
+	/** Removes servers that have not sent an update for some time. */
 	public synchronized void removeDeadServers() {
 		logger.info("Removing dead servers.");
 
@@ -118,7 +115,7 @@ public final class MetaRegister {
 		MetaItem mi = getItem(address, port);
 		if (mi == null) {
 			// Check connection before adding the server:
-			try (Connection mc = new Connection(address, port, null, FreeCol.METASERVER_THREAD);) {
+			try (Connection mc = new Connection(address, port, null, FreeCol.METASERVER_THREAD)) {
 				mc.send(DOMMessage.createMessage("disconnect"));
 			} catch (IOException e) {
 				logger.log(Level.WARNING, "Server rejected disconnect.", e);
@@ -155,10 +152,10 @@ public final class MetaRegister {
 	public synchronized void updateServer(String name, String address, int port, int slotsAvailable,
 			int currentlyPlaying, boolean isGameStarted, String version, int gameState) throws IOException {
 		MetaItem mi = getItem(address, port);
-		if (mi == null) {
-			addServer(name, address, port, slotsAvailable, currentlyPlaying, isGameStarted, version, gameState);
-		} else {
+		if (mi != null) {
 			updateServer(mi, name, address, port, slotsAvailable, currentlyPlaying, isGameStarted, version, gameState);
+		} else {
+			addServer(name, address, port, slotsAvailable, currentlyPlaying, isGameStarted, version, gameState);
 		}
 	}
 
@@ -221,6 +218,6 @@ public final class MetaRegister {
 	private void updateServer(MetaItem mi, String name, String address, int port, int slotsAvailable,
 			int currentlyPlaying, boolean isGameStarted, String version, int gameState) {
 		mi.update(name, address, port, slotsAvailable, currentlyPlaying, isGameStarted, version, gameState);
-		logger.info("Server updated:" + mi.toString());
+		logger.info("Server updated:" + mi);
 	}
 }

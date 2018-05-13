@@ -28,11 +28,8 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicPanelUI;
 
-/**
- * Draws with partial transparency. Used in Europe.
- */
+/** Draws with partial transparency. Used in Europe. */
 public class FreeColTransparentPanelUI extends BasicPanelUI {
-
 	private static final FreeColTransparentPanelUI sharedInstance = new FreeColTransparentPanelUI();
 
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
@@ -40,7 +37,7 @@ public class FreeColTransparentPanelUI extends BasicPanelUI {
 	}
 
 	@Override
-	public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+	public void paint(java.awt.Graphics g, JComponent c) {
 		if (c.isOpaque()) {
 			throw new IllegalStateException(
 					"FreeColTransparentPanelUI can only be used on components which are !isOpaque()");
@@ -56,5 +53,4 @@ public class FreeColTransparentPanelUI extends BasicPanelUI {
 		g2.fillRect(0, 0, width, height);
 		g2.setComposite(oldComposite);
 	}
-
 }

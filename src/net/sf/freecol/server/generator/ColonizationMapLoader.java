@@ -53,7 +53,6 @@ import net.sf.freecol.common.model.Specification;
  * river (never seen)
  */
 public class ColonizationMapLoader implements MapLoader {
-
 	public static final int WIDTH = 0;
 	public static final int HEIGHT = 2;
 	public static final int OCEAN = 25;
@@ -69,14 +68,12 @@ public class ColonizationMapLoader implements MapLoader {
 	private static byte[] layer1;
 
 	public ColonizationMapLoader(File file) throws Exception {
-
 		RandomAccessFile reader = new RandomAccessFile(file, "r");
 		reader.read(header);
 
 		int size = header[WIDTH] * header[HEIGHT];
 		layer1 = new byte[size];
 		reader.read(layer1);
-
 	}
 
 	@Override
@@ -106,10 +103,17 @@ public class ColonizationMapLoader implements MapLoader {
 
 					if (terrain < tiletypes.length) {
 						tileType = spec.getTileType("model.tile." + tiletypes[terrain]);
-					} else if (overlay == 1 || overlay == 3) {
-						tileType = spec.getTileType("model.tile.hills");
-					} else if (overlay == 5 || overlay == 7) {
-						tileType = spec.getTileType("model.tile.mountains");
+					} else {
+						switch (overlay) {
+						case 1:
+						case 3:
+							tileType = spec.getTileType("model.tile.hills");
+							break;
+						case 5:
+						case 7:
+							tileType = spec.getTileType("model.tile.mountains");
+							break;
+						}
 					}
 					tiles[x][y] = new Tile(game, tileType, x, y);
 					if (highestLayer == Layer.RIVERS
@@ -131,5 +135,4 @@ public class ColonizationMapLoader implements MapLoader {
 	public Layer getHighestLayer() {
 		return Layer.RIVERS;
 	}
-
 }

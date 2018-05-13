@@ -29,7 +29,6 @@ import net.sf.freecol.client.FreeColClient;
  * @see net.sf.freecol.client.gui.panel.MapControls
  */
 public class EndTurnAction extends MapboardAction {
-
 	public static final String id = "endTurnAction";
 
 	/**
@@ -42,11 +41,8 @@ public class EndTurnAction extends MapboardAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().endTurn(true);

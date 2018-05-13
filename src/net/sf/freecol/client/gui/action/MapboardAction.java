@@ -26,7 +26,6 @@ import net.sf.freecol.client.FreeColClient;
  * selected.
  */
 public abstract class MapboardAction extends FreeColAction {
-
 	/**
 	 * Creates a new <code>MapboardAction</code>.
 	 *
@@ -37,11 +36,8 @@ public abstract class MapboardAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return super.shouldBeEnabled() && getGUI().isMapboardActionsEnabled()

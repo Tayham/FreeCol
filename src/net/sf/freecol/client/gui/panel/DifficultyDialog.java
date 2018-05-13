@@ -45,7 +45,6 @@ import net.sf.freecol.common.option.OptionGroup;
  * @see OptionGroup
  */
 public final class DifficultyDialog extends OptionsDialog implements TreeSelectionListener {
-
 	private static final Logger logger = Logger.getLogger(DifficultyDialog.class.getName());
 
 	/** File filters array to filter for XML files. */
@@ -166,9 +165,7 @@ public final class DifficultyDialog extends OptionsDialog implements TreeSelecti
 		});
 	}
 
-	/**
-	 * Initialize the XML file filter.
-	 */
+	/** Initialize the XML file filter. */
 	private void initializeFilters() {
 		synchronized (filters) {
 			if (filters[0] == null) {
@@ -178,7 +175,7 @@ public final class DifficultyDialog extends OptionsDialog implements TreeSelecti
 		}
 	}
 
-	// Implement TreeSelectionListener
+	/** Implement TreeSelectionListener. */
 
 	@Override
 	public void valueChanged(TreeSelectionEvent event) {
@@ -189,11 +186,8 @@ public final class DifficultyDialog extends OptionsDialog implements TreeSelecti
 		}
 	}
 
-	// Override OptionsDialog
+	/** Override OptionsDialog. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public OptionGroup getResponse() {
 		OptionGroup value = super.getResponse();

@@ -24,11 +24,8 @@ import net.sf.freecol.client.ClientOptions;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * Change view in on the minimap.
- */
+/** Change view in on the minimap. */
 public class MiniMapToggleViewAction extends MapboardAction {
-
 	public static final String id = "miniMapToggleBordersAction";
 
 	/**
@@ -57,11 +54,8 @@ public class MiniMapToggleViewAction extends MapboardAction {
 		addImageIcons("toggle_view_politics");
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().miniMapToggleViewControls();

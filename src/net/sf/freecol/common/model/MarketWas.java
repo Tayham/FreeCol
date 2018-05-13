@@ -24,19 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-
-
-
-
-
-
-
 /**
  * Helper container to remember the Market state prior to some change, and fire
  * off any consequent property changes.
  */
 public class MarketWas {
-
 	private static final Logger logger = Logger.getLogger(MarketWas.class.getName());
 
 	private final Market market;
@@ -66,8 +58,9 @@ public class MarketWas {
 	 *            A list of <code>AbstractGoods</code> that changed hands.
 	 */
 	public void fireChanges(List<AbstractGoods> req) {
-		for (AbstractGoods ag : req)
+		for (AbstractGoods ag : req) {
 			fireChanges(ag.getType(), ag.getAmount());
+		}
 	}
 
 	/**
@@ -81,11 +74,11 @@ public class MarketWas {
 	public void fireChanges(GoodsType type, int amount) {
 		for (TransactionListener l : this.market.getTransactionListener()) {
 			if (amount > 0) {
-				int buy = (this.costToBuy.containsKey(type)) ? this.costToBuy.get(type)
+				int buy = this.costToBuy.containsKey(type) ? this.costToBuy.get(type)
 						: this.market.getCostToBuy(type);
 				l.logPurchase(type, amount, buy);
 			} else if (amount < 0) {
-				int sell = (this.paidForSale.containsKey(type)) ? this.paidForSale.get(type)
+				int sell = this.paidForSale.containsKey(type) ? this.paidForSale.get(type)
 						: this.market.getPaidForSale(type);
 				l.logSale(type, -amount, sell, this.tax);
 			}

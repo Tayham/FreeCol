@@ -57,26 +57,21 @@ import net.sf.freecol.common.model.StringTemplate;
  * if appropriate.
  */
 public final class FindSettlementPanel extends FreeColPanel implements ListSelectionListener, ItemListener {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(FindSettlementPanel.class.getName());
 
 	private class SettlementRenderer extends FreeColComboBoxRenderer<Settlement> {
-
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void setLabelValues(JLabel label, Settlement value) {
 			StringTemplate template = StringTemplate.template("findSettlementPanel.settlement")
-					.addName("%name%", value.getName()).addName("%capital%", ((value.isCapital()) ? "*" : ""))
+					.addName("%name%", value.getName()).addName("%capital%", value.isCapital() ? "*" : "")
 					.addStringTemplate("%nation%", value.getOwner().getNationLabel());
 			label.setText(Messages.message(template));
 			label.setIcon(new ImageIcon(ImageLibrary.getSettlementImage(value, new Dimension(64, -1))));
 		}
 	}
 
-	private static enum DisplayListOption {
+	private enum DisplayListOption {
 		ALL, ONLY_NATIVES, ONLY_EUROPEAN
 	}
 
@@ -186,7 +181,7 @@ public final class FindSettlementPanel extends FreeColPanel implements ListSelec
 		}
 	}
 
-	// Interface ItemListener
+	/** Interface ItemListener. */
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
@@ -203,11 +198,8 @@ public final class FindSettlementPanel extends FreeColPanel implements ListSelec
 		}
 	}
 
-	// Interface ListSelectionListener
+	/** Interface ListSelectionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		Settlement settlement = this.settlementList.getSelectedValue();
@@ -216,19 +208,13 @@ public final class FindSettlementPanel extends FreeColPanel implements ListSelec
 		}
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void requestFocus() {
 		this.settlementList.requestFocus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

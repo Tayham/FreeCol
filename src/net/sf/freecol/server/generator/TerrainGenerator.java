@@ -56,7 +56,6 @@ import net.sf.freecol.server.model.ServerRegion;
  * FIXME: dynamic lakes, mountains and hills
  */
 public class TerrainGenerator {
-
 	private static final Logger logger = Logger.getLogger(TerrainGenerator.class.getName());
 
 	public static final int LAND_REGIONS_SCORE_VALUE = 1000;
@@ -107,9 +106,7 @@ public class TerrainGenerator {
 		this.spec = game.getSpecification();
 	}
 
-	// Utilities
-
-	// FIXME: this might be useful elsewhere, too
+	/** Utilities FIXME: this might be useful elsewhere, too */
 	private int limitToRange(int value, int lower, int upper) {
 		return Math.max(lower, Math.min(value, upper));
 	}
@@ -139,7 +136,7 @@ public class TerrainGenerator {
 	 * @return The created tile.
 	 */
 	private Tile createTile(int x, int y, LandMap landMap, int latitude) {
-		return (landMap.isLand(x, y)) ? new Tile(game, getRandomLandTileType(latitude), x, y)
+		return landMap.isLand(x, y) ? new Tile(game, getRandomLandTileType(latitude), x, y)
 				: new Tile(game, getRandomOceanTileType(latitude), x, y);
 	}
 
@@ -335,8 +332,9 @@ public class TerrainGenerator {
 					// Exclude existing regions (arctic/antarctic, mountains,
 					// rivers).
 					landmap[x][y] = tile.isLand() && tile.getRegion() == null;
-					if (tile.isLand())
+					if (tile.isLand()) {
 						landsize++;
+					}
 				}
 			}
 		}
@@ -441,7 +439,7 @@ public class TerrainGenerator {
 					LAND_REGION_MIN_SCORE);
 			sr.setScoreValue(score);
 			lb.add("Created land region ", sr.toString(), " (size ", sr.getSize(), ", score ", sr.getScoreValue(),
-					", parent ", ((sr.getParent() == null) ? "(null)" : sr.getParent().toString()), ")\n");
+					", parent ", (sr.getParent() == null) ? "(null)" : sr.getParent().toString(), ")\n");
 		}
 		return Arrays.asList(Arrays.copyOfRange(landregions, 1, continents + 1));
 	}
@@ -509,8 +507,9 @@ public class TerrainGenerator {
 		int counter = 0;
 		for (int tries = 0; tries < 100; tries++) {
 			Tile startTile = getGoodMountainTile(map);
-			if (startTile == null)
+			if (startTile == null) {
 				break;
+			}
 
 			ServerRegion mountainRegion = new ServerRegion(game, RegionType.MOUNTAIN);
 			startTile.setType(mountains);
@@ -519,14 +518,16 @@ public class TerrainGenerator {
 			int length = maximumLength - randomInt(logger, "MLen", random, maximumLength / 2);
 			for (int index = 0; index < length; index++) {
 				Tile nextTile = startTile.getNeighbourOrNull(direction);
-				if (nextTile == null || !nextTile.isLand())
+				if (nextTile == null || !nextTile.isLand()) {
 					continue;
+				}
 				nextTile.setType(mountains);
 				mountainRegion.addTile(nextTile);
 				counter++;
 				for (Tile neighbour : nextTile.getSurroundingTiles(1)) {
-					if (!neighbour.isLand() || neighbour.getType() == mountains)
+					if (!neighbour.isLand() || neighbour.getType() == mountains) {
 						continue;
+					}
 					int r = randomInt(logger, "MSiz", random, 8);
 					if (r == 0) {
 						neighbour.setType(mountains);
@@ -543,8 +544,9 @@ public class TerrainGenerator {
 			result.add(mountainRegion);
 			lb.add("Created mountain region (direction ", direction, ", length ", length, ", size ",
 					mountainRegion.getSize(), ", score value ", scoreValue, ").\n");
-			if (counter >= number)
+			if (counter >= number) {
 				break;
+			}
 		}
 		lb.add("Added ", counter, " mountain range tiles.\n");
 
@@ -554,14 +556,16 @@ public class TerrainGenerator {
 		counter = 0;
 		for (int tries = 0; tries < 1000; tries++) {
 			Tile t = getGoodMountainTile(map);
-			if (t == null)
+			if (t == null) {
 				break;
+			}
 
 			// 25% mountains, 75% hills
 			boolean m = randomInt(logger, "MorH", random, 4) == 0;
-			t.setType((m) ? mountains : hills);
-			if (++counter >= number)
+			t.setType(m ? mountains : hills);
+			if (++counter >= number) {
 				break;
+			}
 		}
 		lb.add("Added ", counter, " random hilly tiles.\n");
 		return result;
@@ -588,16 +592,15 @@ public class TerrainGenerator {
 		outer: for (int i = 0; i < number; i++) {
 			for (int tries = 0; tries < 100; tries++) {
 				Tile tile = map.getRandomLandTile(random);
-				if (tile == null)
+				if (tile == null) {
 					break outer;
+				}
 
-				if (!riverType.isTileTypeAllowed(tile.getType()))
+				if (!riverType.isTileTypeAllowed(tile.getType()) || !all(tile.getSurroundingTiles(1, 2), Tile::isLand)) {
 					continue;
+				}
 
 				// check the river source/spring is not too close to the ocean
-				if (!all(tile.getSurroundingTiles(1, 2), Tile::isLand))
-					continue;
-
 				if (riverMap.get(tile) == null) {
 					// no river here yet
 					ServerRegion riverRegion = new ServerRegion(game, RegionType.RIVER);
@@ -606,8 +609,9 @@ public class TerrainGenerator {
 						lb.add("Created new river with length ", river.getLength(), "\n");
 						result.add(riverRegion);
 						rivers.add(river);
-						if (++counter >= number)
+						if (++counter >= number) {
 							break;
+						}
 					} else {
 						lb.add("Failed to generate river.\n");
 					}
@@ -678,8 +682,9 @@ public class TerrainGenerator {
 		int lakeCount = 0;
 		while (!lakes.isEmpty()) {
 			Tile tile = lakes.get(0);
-			if (tile.getRegion() != null)
+			if (tile.getRegion() != null) {
 				continue;
+			}
 
 			ServerRegion lakeRegion = new ServerRegion(game, RegionType.LAKE);
 			// Pretend lakes are discovered with the surrounding terrain?
@@ -698,8 +703,9 @@ public class TerrainGenerator {
 					// use the above code.
 					for (Direction d : Direction.allDirections) {
 						Tile t0 = map.getAdjacentTile(t, d);
-						if (t0 != null)
+						if (t0 != null) {
 							todo.add(t0);
+						}
 					}
 				}
 			}
@@ -759,11 +765,9 @@ public class TerrainGenerator {
 						&& randomInt(logger, "Sea resource", random, 10 - adjacentLand) == 0) {
 					t.addResource(createResource(t));
 				}
-			} else {
-				if (randomInt(logger, "Water resource", random, 100) < bonusNumber) {
-					// Create random Bonus Resource
-					t.addResource(createResource(t));
-				}
+			} else if (randomInt(logger, "Water resource", random, 100) < bonusNumber) {
+				// Create random Bonus Resource
+				t.addResource(createResource(t));
 			}
 		}
 	}
@@ -776,12 +780,14 @@ public class TerrainGenerator {
 	 * @return The created resource, or null if it is not possible.
 	 */
 	private Resource createResource(Tile tile) {
-		if (tile == null)
+		if (tile == null) {
 			return null;
+		}
 		ResourceType resourceType = RandomChoice.getWeightedRandom(null, null, tile.getType().getWeightedResources(),
 				random);
-		if (resourceType == null)
+		if (resourceType == null) {
 			return null;
+		}
 		int minValue = resourceType.getMinValue();
 		int maxValue = resourceType.getMaxValue();
 		int quantity = (minValue == maxValue) ? maxValue
@@ -823,13 +829,15 @@ public class TerrainGenerator {
 		int result = 0;
 		int index = 0;
 		for (Direction d : Direction.corners) {
-			if (connections.get(d))
+			if (connections.get(d)) {
 				result += (int) Math.pow(2, index);
+			}
 			index++;
 		}
 		for (Direction d : Direction.longSides) {
-			if (connections.get(d))
+			if (connections.get(d)) {
 				result += (int) Math.pow(2, index);
+			}
 			index++;
 		}
 		tile.setStyle(result);
@@ -849,8 +857,8 @@ public class TerrainGenerator {
 	public Map createMap(LandMap landMap, LogBuilder lb) {
 		final int width = landMap.getWidth();
 		final int height = landMap.getHeight();
-		final boolean importTerrain = (importGame != null) && mapOptions.getBoolean(MapGeneratorOptions.IMPORT_TERRAIN);
-		final boolean importBonuses = (importGame != null) && mapOptions.getBoolean(MapGeneratorOptions.IMPORT_BONUSES);
+		final boolean importTerrain = importGame != null && mapOptions.getBoolean(MapGeneratorOptions.IMPORT_TERRAIN);
+		final boolean importBonuses = importGame != null && mapOptions.getBoolean(MapGeneratorOptions.IMPORT_BONUSES);
 
 		boolean mapHasLand = false;
 		Map map = new Map(game, width, height);
@@ -874,13 +882,15 @@ public class TerrainGenerator {
 			for (Region r : importGame.getMap().getRegions()) {
 				ServerRegion region = regionMap.get(r.getId());
 				Region x = r.getParent();
-				if (x != null)
+				if (x != null) {
 					x = regionMap.get(x.getId());
+				}
 				region.setParent(x);
 				for (Region c : r.getChildren()) {
 					x = regionMap.get(c.getId());
-					if (x != null)
+					if (x != null) {
 						region.addChild(x);
+					}
 				}
 			}
 			lb.add("\n");
@@ -890,8 +900,9 @@ public class TerrainGenerator {
 		for (int y = 0; y < height; y++) {
 			int latitude = map.getLatitude(y);
 			for (int x = 0; x < width; x++) {
-				if (landMap.isLand(x, y))
+				if (landMap.isLand(x, y)) {
 					mapHasLand = true;
+				}
 				Tile t, importTile = null;
 				if (importTerrain && importGame.getMap().isValid(x, y)
 						&& (importTile = importGame.getMap().getTile(x, y)) != null
@@ -953,8 +964,9 @@ public class TerrainGenerator {
 		// the map.
 		List<ServerRegion> geographic = new ArrayList<>();
 		for (ServerRegion sr : fixed) {
-			if (sr.isGeographic())
+			if (sr.isGeographic()) {
 				geographic.add(sr);
+			}
 		}
 		for (ServerRegion sr : newRegions) {
 			for (ServerRegion gr : geographic) {

@@ -32,7 +32,6 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 public class RiverMaker {
-
 	private static final int BASE_WIDTH = 128;
 	private static final int BASE_HEIGHT = 64;
 	private static final int HALF_WIDTH = BASE_WIDTH / 2;
@@ -52,7 +51,6 @@ public class RiverMaker {
 	private static final Point2D.Float[] POINTS = { NE, SE, SW, NW };
 
 	public static void main(String[] args) throws Exception {
-
 		String riverName = "data/rules/classic/resources/images/terrain/" + "ocean/center0.png";
 		String riverDir = "data/rules/classic/resources/images/river";
 		BufferedImage river = ImageIO.read(new File(riverName));
@@ -128,7 +126,6 @@ public class RiverMaker {
 			ImageIO.write(result, "png", new File(riverDir, "river" + name + ".png"));
 			branches = nextBranch(branches);
 		}
-
 	}
 
 	private static int[] nextBranch(int[] branches) {

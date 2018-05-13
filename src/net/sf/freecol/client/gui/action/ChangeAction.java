@@ -35,7 +35,6 @@ import net.sf.freecol.common.model.Unit;
  * cases: switch to another unit on the same tile.
  */
 public class ChangeAction extends UnitAction {
-
 	public static final String id = "changeAction";
 
 	/**
@@ -50,19 +49,13 @@ public class ChangeAction extends UnitAction {
 		update();
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return super.shouldBeEnabled() && getGUI().getActiveUnit().hasTile();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final void update() {
 		super.update();
@@ -79,11 +72,8 @@ public class ChangeAction extends UnitAction {
 		}
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final Unit unit = getGUI().getActiveUnit();

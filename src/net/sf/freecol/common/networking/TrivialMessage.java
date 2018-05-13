@@ -21,11 +21,8 @@ package net.sf.freecol.common.networking;
 
 import org.w3c.dom.Element;
 
-/**
- * A trivial message. That is, it contains only simple string attributes.
- */
+/** A trivial message. That is, it contains only simple string attributes. */
 class TrivialMessage extends DOMMessage {
-
 	/** The tag for the trivial message. */
 	private final String tag;
 

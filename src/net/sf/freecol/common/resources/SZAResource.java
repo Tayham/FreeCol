@@ -50,9 +50,7 @@ public class SZAResource extends Resource implements Resource.Preloadable {
 		super(resourceLocator);
 	}
 
-	/**
-	 * Preloading the animation.
-	 */
+	/** Preloading the animation. */
 	@Override
 	public void preload() {
 		synchronized (loadingLock) {

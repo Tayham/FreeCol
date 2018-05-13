@@ -41,11 +41,12 @@ import net.sf.freecol.client.gui.ImageLibrary;
  * image on tool tip popups.
  */
 public class FreeColToolTipUI extends BasicToolTipUI {
-
 	private static final FreeColToolTipUI sharedInstance = new FreeColToolTipUI();
 
-	// FIXME: find out why we can't use the FontRenderContext of the
-	// component. And should we use fractional metrics?
+	/**
+	 * FIXME: find out why we can't use the FontRenderContext of the
+	 * component. And should we use fractional metrics?
+	 */
 	private static final FontRenderContext frc = new FontRenderContext(null, true, false);
 
 	private static final int margin = 5;
@@ -55,7 +56,6 @@ public class FreeColToolTipUI extends BasicToolTipUI {
 	private static final Pattern lineBreak = Pattern.compile("\n");
 
 	private FreeColToolTipUI() {
-		super();
 	}
 
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
@@ -87,10 +87,9 @@ public class FreeColToolTipUI extends BasicToolTipUI {
 			LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, frc);
 
 			while (measurer.getPosition() < styledText.getEndIndex()) {
-
 				TextLayout layout = measurer.nextLayout(maximumWidth);
 
-				y += (layout.getAscent());
+				y += layout.getAscent();
 				float dx = layout.isLeftToRight() ? 0 : (maximumWidth - layout.getAdvance());
 
 				layout.draw(graphics, x + dx, y);
@@ -117,16 +116,13 @@ public class FreeColToolTipUI extends BasicToolTipUI {
 			LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, frc);
 
 			while (measurer.getPosition() < styledText.getEndIndex()) {
-
 				TextLayout layout = measurer.nextLayout(maximumWidth);
 
 				x = Math.max(x, layout.getVisibleAdvance());
 				y += layout.getAscent() + layout.getDescent() + layout.getLeading();
-
 			}
 		}
 		return new Dimension((int) (x + 2 * margin), (int) (y + 2 * margin));
-
 	}
 
 	@Override

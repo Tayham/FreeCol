@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
  * {@link net.sf.freecol.common.model.WorkLocation}.
  */
 public class WorkLocationPlan extends AIObject {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(WorkLocationPlan.class.getName());
 
@@ -117,12 +116,11 @@ public class WorkLocationPlan extends AIObject {
 		return goodsType.isFoodType();
 	}
 
-	// Serialization
-	// WorkLocationPlans are not currently saved so this is a no-op.
-
 	/**
-	 * {@inheritDoc}
+	 * Serialization
+	 * WorkLocationPlans are not currently saved so this is a no-op.
 	 */
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
@@ -131,9 +129,6 @@ public class WorkLocationPlan extends AIObject {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

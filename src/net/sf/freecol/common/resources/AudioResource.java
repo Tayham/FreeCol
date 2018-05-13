@@ -30,7 +30,6 @@ import net.sf.freecol.common.sound.SoundPlayer;
  * @see Resource
  */
 public class AudioResource extends Resource {
-
 	private File file;
 
 	public AudioResource(File file) {
@@ -48,8 +47,9 @@ public class AudioResource extends Resource {
 	public AudioResource(URI resourceLocator) throws Exception {
 		super(resourceLocator);
 		File f = new File(resourceLocator);
-		if (SoundPlayer.getAudioInputStream(f) != null)
+		if (SoundPlayer.getAudioInputStream(f) != null) {
 			this.file = f;
+		}
 	}
 
 	/**

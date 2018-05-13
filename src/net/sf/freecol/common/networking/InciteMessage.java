@@ -31,11 +31,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when inciting a native settlement.
- */
+/** The message sent when inciting a native settlement. */
 public class InciteMessage extends DOMMessage {
-
 	/** The identifier of the unit inciting. */
 	private final String unitId;
 

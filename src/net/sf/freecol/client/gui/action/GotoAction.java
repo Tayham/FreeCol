@@ -30,7 +30,6 @@ import net.sf.freecol.common.model.Unit;
  * move towards.
  */
 public class GotoAction extends UnitAction {
-
 	public static final String id = "gotoAction";
 
 	/**
@@ -43,21 +42,15 @@ public class GotoAction extends UnitAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return super.shouldBeEnabled() && !getGUI().isShowingSubPanel();
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		Unit unit = getGUI().getActiveUnit();

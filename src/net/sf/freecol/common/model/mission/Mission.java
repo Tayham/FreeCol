@@ -31,33 +31,26 @@ import net.sf.freecol.common.model.Unit;
  * combine a number of simpler Missions.
  */
 public interface Mission {
-
-	public static enum MissionState {
-		/**
-		 * Mission is in progress.
-		 */
+	public enum MissionState {
+		/** Mission is in progress. */
 		OK,
-		/**
-		 * Mission has been completed.
-		 */
+		/** Mission has been completed. */
 		COMPLETED,
-		/**
-		 * Mission is temporarily blocked, e.g. by another Unit.
-		 */
+		/** Mission is temporarily blocked, e.g. by another Unit. */
 		BLOCKED,
 		/**
 		 * Mission has been aborted, e.g. because a target or destination has been
 		 * destroyed.
 		 */
 		ABORTED
-	};
+	}
 
 	/**
 	 * Attempts to carry out the mission and returns an appropriate MissionState.
 	 *
 	 * @return a <code>MissionState</code> value
 	 */
-	public MissionState doMission();
+	MissionState doMission();
 
 	/**
 	 * Returns true if the mission is still valid. This might not be the case if its
@@ -66,14 +59,14 @@ public interface Mission {
 	 *
 	 * @return a <code>boolean</code> value
 	 */
-	public boolean isValid();
+	boolean isValid();
 
 	/**
 	 * Return the Unit this mission was assigned to.
 	 *
 	 * @return an <code>Unit</code> value
 	 */
-	public Unit getUnit();
+	Unit getUnit();
 
 	/**
 	 * This method writes an XML-representation of this object to the given stream.
@@ -83,5 +76,5 @@ public interface Mission {
 	 * @throws XMLStreamException
 	 *             if there are any problems writing to the stream.
 	 */
-	public void toXML(FreeColXMLWriter xw) throws XMLStreamException;
+	void toXML(FreeColXMLWriter xw) throws XMLStreamException;
 }

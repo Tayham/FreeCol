@@ -45,7 +45,6 @@ import java.util.Map;
  * the overlays can vary.
  */
 public class TileImprovementStyle {
-
 	/** Cache all TileImprovementStyles. */
 	private static final Map<String, TileImprovementStyle> cache = new HashMap<>();
 
@@ -67,8 +66,9 @@ public class TileImprovementStyle {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < style.length(); i++) {
 			char c = style.charAt(i);
-			if (Character.digit(c, Character.MAX_RADIX) < 0)
+			if (Character.digit(c, Character.MAX_RADIX) < 0) {
 				break;
+			}
 			sb.append((c == '0') ? "0" : "1");
 		}
 		this.mask = sb.toString();
@@ -103,8 +103,9 @@ public class TileImprovementStyle {
 	 * @return The style in the new format.
 	 */
 	public static String decodeOldStyle(String input, int pad) {
-		if (pad <= 0)
+		if (pad <= 0) {
 			return null;
+		}
 		boolean isZero = true;
 		StringBuilder sb = new StringBuilder();
 		try {
@@ -118,8 +119,9 @@ public class TileImprovementStyle {
 		} catch (NumberFormatException nfe) {
 			return null;
 		}
-		if (isZero)
+		if (isZero) {
 			return null;
+		}
 		while (sb.length() < pad) {
 			sb.append('0');
 		}
@@ -135,8 +137,9 @@ public class TileImprovementStyle {
 	 * @return The corresponding <code>TileImprovementStyle</code>.
 	 */
 	public static TileImprovementStyle getInstance(String key) {
-		if (key == null || key.isEmpty() || "0".equals(key))
+		if (key == null || key.isEmpty() || "0".equals(key)) {
 			return null;
+		}
 
 		TileImprovementStyle result = cache.get(key);
 		if (result == null) {
@@ -149,9 +152,6 @@ public class TileImprovementStyle {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return style;

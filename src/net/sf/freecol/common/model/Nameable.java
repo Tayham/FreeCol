@@ -19,17 +19,14 @@
 
 package net.sf.freecol.common.model;
 
-/**
- * An object with a name that can be changed.
- */
+/** An object with a name that can be changed. */
 public interface Nameable {
-
 	/**
 	 * Gets the name of this <code>Nameable</code>.
 	 *
 	 * @return The name of the <code>Nameable</code>.
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Sets the name for this <code>Nameable</code>.
@@ -37,6 +34,5 @@ public interface Nameable {
 	 * @param newName
 	 *            The new name for the <code>Nameable</code>.
 	 */
-	public void setName(String newName);
-
+	void setName(String newName);
 }

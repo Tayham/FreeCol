@@ -43,14 +43,13 @@ import net.sf.freecol.common.util.Utils;
  * the value of the Operand itself if the OperandType is NONE.
  */
 public class Operand extends Scope {
-
 	private static final Logger logger = Logger.getLogger(Operand.class.getName());
 
-	public static enum OperandType {
+	public enum OperandType {
 		UNITS, BUILDINGS, SETTLEMENTS, FOUNDING_FATHERS, YEAR, OPTION, NONE
 	}
 
-	public static enum ScopeLevel {
+	public enum ScopeLevel {
 		SETTLEMENT, PLAYER, GAME, NONE
 	}
 
@@ -63,9 +62,7 @@ public class Operand extends Scope {
 	/** The operand amount. */
 	private Integer value = null;
 
-	/**
-	 * Deliberately empty constructor.
-	 */
+	/** Deliberately empty constructor. */
 	public Operand() {
 	}
 
@@ -222,8 +219,9 @@ public class Operand extends Scope {
 	 * @return The operand value, or null if inapplicable.
 	 */
 	public Integer getValue(Player player) {
-		if (value != null)
+		if (value != null) {
 			return value;
+		}
 		switch (scopeLevel) {
 		case GAME:
 			return getValue(player.getGame());
@@ -252,8 +250,9 @@ public class Operand extends Scope {
 				int result = 0;
 				for (Settlement settlement : player.getSettlements()) {
 					Boolean b = settlement.invokeMethod(methodName, Boolean.class, Boolean.FALSE);
-					if (String.valueOf(b).equals(methodValue))
+					if (String.valueOf(b).equals(methodValue)) {
 						result++;
+					}
 				}
 				return result;
 			}
@@ -315,11 +314,8 @@ public class Operand extends Scope {
 		return result;
 	}
 
-	// Interface Object
+	/** Interface Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
 		return this == o || (o instanceof Operand && operandType == ((Operand) o).operandType
@@ -327,18 +323,15 @@ public class Operand extends Scope {
 				&& super.equals(o));
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String OPERAND_TYPE_TAG = "operand-type";
 	private static final String SCOPE_LEVEL_TAG = "scope-level";
-	// @compat 0.11.3
+	/** @compat 0.11.3 */
 	private static final String OLD_OPERAND_TYPE_TAG = "operandType";
 	private static final String OLD_SCOPE_LEVEL_TAG = "scopeLevel";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -352,9 +345,6 @@ public class Operand extends Scope {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -362,30 +352,29 @@ public class Operand extends Scope {
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_OPERAND_TYPE_TAG)) {
 			operandType = xr.getAttribute(OLD_OPERAND_TYPE_TAG, OperandType.class, OperandType.NONE);
-		} else
-			// end @compat 0.11.3
+		} else {
 			operandType = xr.getAttribute(OPERAND_TYPE_TAG, OperandType.class, OperandType.NONE);
+		}
 
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_SCOPE_LEVEL_TAG)) {
 			scopeLevel = xr.getAttribute(OLD_SCOPE_LEVEL_TAG, ScopeLevel.class, ScopeLevel.NONE);
-		} else
-			// end @compat 0.11.3
+		} else {
 			scopeLevel = xr.getAttribute(SCOPE_LEVEL_TAG, ScopeLevel.class, ScopeLevel.NONE);
+		}
 
 		int val = xr.getAttribute(VALUE_TAG, INFINITY);
-		if (val != INFINITY)
+		if (val != INFINITY) {
 			value = val;
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
-		if (value != null)
+		if (value != null) {
 			return Integer.toString(value);
-		StringBuffer sb = new StringBuffer();
+		}
+		StringBuilder sb = new StringBuilder();
 		sb.append("[Operand type=").append(operandType).append(" scopeLevel=").append(scopeLevel);
 		return super.toString().replaceFirst("^[^ ]*", sb.toString());
 	}

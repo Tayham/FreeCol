@@ -39,7 +39,6 @@ import org.w3c.dom.Element;
  * @see Tile
  */
 public class TileImprovementPlan extends ValuedAIObject {
-
 	private static final Logger logger = Logger.getLogger(TileImprovementPlan.class.getName());
 
 	/** The type of improvement, from TileImprovementTypes. */
@@ -225,8 +224,9 @@ public class TileImprovementPlan extends ValuedAIObject {
 	 */
 	public boolean update(GoodsType goodsType) {
 		TileImprovementType type = getBestTileImprovementType(target, goodsType);
-		if (type == null)
+		if (type == null) {
 			return false;
+		}
 		setType(type);
 		setValue(type.getImprovementValue(target, goodsType));
 		return true;
@@ -292,29 +292,25 @@ public class TileImprovementPlan extends ValuedAIObject {
 		if (pioneer != null) {
 			result = Math.min(result, pioneer.checkIntegrity(fix));
 		}
-		if (type == null || target == null)
+		if (type == null || target == null) {
 			result = -1;
+		}
 		return result;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String PIONEER_TAG = "pioneer";
 	private static final String TARGET_TAG = "target";
 	private static final String TYPE_TAG = "type";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void toXML(FreeColXMLWriter xw) throws XMLStreamException {
-		if (validate())
+		if (validate()) {
 			toXML(xw, getXMLTagName());
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -328,9 +324,6 @@ public class TileImprovementPlan extends ValuedAIObject {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -340,27 +333,22 @@ public class TileImprovementPlan extends ValuedAIObject {
 
 		type = xr.getType(spec, TYPE_TAG, TileImprovementType.class, (TileImprovementType) null);
 
-		pioneer = (xr.hasAttribute(PIONEER_TAG))
+		pioneer = xr.hasAttribute(PIONEER_TAG)
 				? xr.makeAIObject(aiMain, PIONEER_TAG, AIUnit.class, (AIUnit) null, true)
 				: null;
 
 		target = xr.getAttribute(getGame(), TARGET_TAG, Tile.class, (Tile) null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		super.readChildren(xr);
 
-		if (type != null && target != null)
+		if (type != null && target != null) {
 			uninitialized = false;
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
@@ -369,9 +357,6 @@ public class TileImprovementPlan extends ValuedAIObject {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

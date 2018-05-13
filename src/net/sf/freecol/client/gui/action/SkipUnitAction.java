@@ -24,11 +24,8 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * An action for skipping the active unit.
- */
+/** An action for skipping the active unit. */
 public class SkipUnitAction extends UnitAction {
-
 	public static final String id = "skipUnitAction";
 
 	/**
@@ -43,11 +40,8 @@ public class SkipUnitAction extends UnitAction {
 		addImageIcons("done");
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().changeState(getGUI().getActiveUnit(), Unit.UnitState.SKIPPED);

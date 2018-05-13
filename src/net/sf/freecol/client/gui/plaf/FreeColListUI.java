@@ -32,14 +32,8 @@ import net.sf.freecol.client.gui.ImageLibrary;
  * panel.
  */
 public class FreeColListUI extends BasicListUI {
-
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
 		return new FreeColListUI();
-	}
-
-	@Override
-	public void installUI(JComponent c) {
-		super.installUI(c);
 	}
 
 	@Override

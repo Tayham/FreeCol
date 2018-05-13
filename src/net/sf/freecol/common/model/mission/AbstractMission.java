@@ -29,19 +29,12 @@ import net.sf.freecol.common.model.Unit;
 
 import org.w3c.dom.Element;
 
-/**
- * The AbstractMission provides basic methods for building Missions.
- */
+/** The AbstractMission provides basic methods for building Missions. */
 public abstract class AbstractMission extends FreeColGameObject implements Mission {
-
-	/**
-	 * The Unit this mission was assigned to. Must not be null.
-	 */
+	/** The Unit this mission was assigned to. Must not be null. */
 	private Unit unit;
 
-	/**
-	 * The number of times this mission should be repeated. Defaults to 1.
-	 */
+	/** The number of times this mission should be repeated. Defaults to 1. */
 	private int repeatCount = 1;
 
 	/**
@@ -183,15 +176,12 @@ public abstract class AbstractMission extends FreeColGameObject implements Missi
 		return false;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String REPEAT_COUNT_TAG = "repeatCount";
 	private static final String TURN_COUNT_TAG = "turnCount";
 	private static final String UNIT_TAG = "unit";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -203,9 +193,6 @@ public abstract class AbstractMission extends FreeColGameObject implements Missi
 		xw.writeAttribute(REPEAT_COUNT_TAG, repeatCount);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);

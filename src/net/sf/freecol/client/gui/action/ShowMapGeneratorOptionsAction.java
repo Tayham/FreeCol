@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying the Map Generator Options.
- */
+/** An action for displaying the Map Generator Options. */
 public class ShowMapGeneratorOptionsAction extends FreeColAction {
-
 	public static final String id = "mapGeneratorOptionsAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ShowMapGeneratorOptionsAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showMapGeneratorOptionsDialog(false);

@@ -37,7 +37,6 @@ import net.sf.freecol.common.util.Utils;
  * to load at a certain Location.
  */
 public class AbstractGoods extends FreeColObject implements Named {
-
 	/**
 	 * A comparator to sort by descending goods amount and then by a predictable
 	 * goods type order.
@@ -56,9 +55,7 @@ public class AbstractGoods extends FreeColObject implements Named {
 	/** The amount of goods. */
 	private int amount;
 
-	/**
-	 * Empty constructor.
-	 */
+	/** Empty constructor. */
 	public AbstractGoods() {
 	}
 
@@ -143,7 +140,7 @@ public class AbstractGoods extends FreeColObject implements Named {
 	 * @return A label for these goods.
 	 */
 	public StringTemplate getLabel(boolean sellable) {
-		return (sellable) ? getLabel()
+		return sellable ? getLabel()
 				: StringTemplate.template("model.abstractGoods.boycotted").addNamed("%goods%", getType())
 						.addAmount("%amount%", getAmount());
 	}
@@ -186,9 +183,11 @@ public class AbstractGoods extends FreeColObject implements Named {
 	 * @return The <code>AbstractGoods</code> found, or null if not.
 	 */
 	public static AbstractGoods findByType(GoodsType type, Collection<? extends AbstractGoods> goods) {
-		for (AbstractGoods ag : goods)
-			if (ag.getType() == type)
+		for (AbstractGoods ag : goods) {
+			if (ag.getType() == type) {
 				return ag;
+			}
+		}
 		return null;
 	}
 
@@ -232,25 +231,20 @@ public class AbstractGoods extends FreeColObject implements Named {
 				: market.getSalePrice(getType(), getAmount());
 	}
 
-	// Interface Named
+	/** Interface Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getNameKey() {
 		return getType().getNameKey();
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof AbstractGoods) {
 			AbstractGoods ag = (AbstractGoods) o;
 			return type == ag.type && amount == ag.amount;
@@ -258,25 +252,18 @@ public class AbstractGoods extends FreeColObject implements Named {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
 		hash = 31 * hash + Utils.hashCode(this.type);
-		hash = 31 * hash + this.amount;
-		return hash;
+		return 31 * hash + this.amount;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String AMOUNT_TAG = "amount";
 	private static final String TYPE_TAG = "type";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -286,9 +273,6 @@ public class AbstractGoods extends FreeColObject implements Named {
 		xw.writeAttribute(AMOUNT_TAG, amount);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -305,12 +289,9 @@ public class AbstractGoods extends FreeColObject implements Named {
 		amount = xr.getAttribute(AMOUNT_TAG, 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
-		return AbstractGoods.toString(this);
+		return toString(this);
 	}
 
 	/**
@@ -337,9 +318,6 @@ public class AbstractGoods extends FreeColObject implements Named {
 		return amount + " " + ((goodsType == null) ? "(null)" : goodsType.getSuffix());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

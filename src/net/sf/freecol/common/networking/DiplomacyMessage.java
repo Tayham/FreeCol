@@ -35,11 +35,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * The message sent when executing a diplomatic trade.
- */
+/** The message sent when executing a diplomatic trade. */
 public class DiplomacyMessage extends DOMMessage {
-
 	/**
 	 * The identifier of our entity that is conducting diplomacy (either a unit or a
 	 * settlement).
@@ -141,8 +138,9 @@ public class DiplomacyMessage extends DOMMessage {
 			Element ue = (Element) nodes.item(1);
 			String id = FreeColObject.readId(ue);
 			this.extraUnit = game.getFreeColGameObject(id, Unit.class);
-			if (this.extraUnit == null)
+			if (this.extraUnit == null) {
 				this.extraUnit = new Unit(game, ue);
+			}
 		}
 	}
 
@@ -283,7 +281,7 @@ public class DiplomacyMessage extends DOMMessage {
 			return DOMMessage.clientError("Null sender in agreement.");
 		} else if (recipientPlayer == null) {
 			return DOMMessage.clientError("Null recipient in agreement.");
-		} else if (senderPlayer != (Player) serverPlayer) {
+		} else if (senderPlayer != serverPlayer) {
 			return DOMMessage.clientError("Sender is not our player: " + senderPlayer.getId());
 		} else if (recipientPlayer != otherPlayer) {
 			return DOMMessage.clientError("Recipient is not other player: " + recipientPlayer.getId());
@@ -299,23 +297,23 @@ public class DiplomacyMessage extends DOMMessage {
 							: igc.europeanFirstContact(serverPlayer, ourUnit, otherColony, agreement);
 		case DIPLOMATIC:
 			return (ourUnit != null)
-					? ((!ourUnit.hasAbility(Ability.NEGOTIATE))
+					? (!ourUnit.hasAbility(Ability.NEGOTIATE)
 							? DOMMessage.clientError("Unit lacks ability" + " to negotiate: " + ourUnit)
 							: (otherColony == null) ? DOMMessage.clientError("Null other settlement")
 									: igc.diplomacy(serverPlayer, ourUnit, otherColony, agreement))
-					: ((!otherUnit.hasAbility(Ability.NEGOTIATE))
+					: (!otherUnit.hasAbility(Ability.NEGOTIATE)
 							? DOMMessage.clientError("Unit lacks ability" + " to negotiate: " + otherUnit)
 							: igc.diplomacy(serverPlayer, ourColony, otherUnit, agreement));
 		case TRADE:
 			return (ourUnit != null)
-					? ((!ourUnit.isCarrier()) ? DOMMessage.clientError("Unit is not a carrier: " + ourUnit)
-							: (!serverPlayer.hasAbility(Ability.TRADE_WITH_FOREIGN_COLONIES))
+					? (!ourUnit.isCarrier() ? DOMMessage.clientError("Unit is not a carrier: " + ourUnit)
+							: !serverPlayer.hasAbility(Ability.TRADE_WITH_FOREIGN_COLONIES)
 									? DOMMessage.clientError(
 											"Player lacks ability" + " to trade with other Europeans: " + serverPlayer)
 									: (otherColony == null) ? DOMMessage.clientError("Null other settlement")
 											: igc.diplomacy(serverPlayer, ourUnit, otherColony, agreement))
-					: ((!otherUnit.isCarrier()) ? DOMMessage.clientError("Unit is not a carrier: " + otherUnit)
-							: (!otherPlayer.hasAbility(Ability.TRADE_WITH_FOREIGN_COLONIES))
+					: (!otherUnit.isCarrier() ? DOMMessage.clientError("Unit is not a carrier: " + otherUnit)
+							: !otherPlayer.hasAbility(Ability.TRADE_WITH_FOREIGN_COLONIES)
 									? DOMMessage.clientError(
 											"Player lacks ability" + " to trade with other Europeans: " + otherPlayer)
 									: igc.diplomacy(serverPlayer, ourColony, otherUnit, agreement));
@@ -344,8 +342,9 @@ public class DiplomacyMessage extends DOMMessage {
 		Element result = createMessage(getXMLElementTagName(), "ourId", ourId, "otherId", otherId);
 		Document doc = result.getOwnerDocument();
 		result.appendChild(agreement.toXMLElement(doc));
-		if (extraUnit != null)
+		if (extraUnit != null) {
 			result.appendChild(extraUnit.toXMLElement(doc));
+		}
 		return result;
 	}
 

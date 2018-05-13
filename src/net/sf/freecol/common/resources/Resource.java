@@ -27,18 +27,13 @@ import java.net.URI;
  * having the same (as in URI's equals, not the identity) <code>URI</code>.
  */
 public abstract class Resource {
-
 	/**
 	 * Implement the Preloadable interface if a Resource has a use for calls to a
 	 * preload method.
 	 */
 	public interface Preloadable {
-
-		/**
-		 * Preload the resource.
-		 */
-		public void preload();
-
+		/** Preload the resource. */
+		void preload();
 	}
 
 	/**
@@ -46,17 +41,11 @@ public abstract class Resource {
 	 * clean method.
 	 */
 	public interface Cleanable {
-
-		/**
-		 * Clean the caches inside the resource.
-		 */
-		public void clean();
-
+		/** Clean the caches inside the resource. */
+		void clean();
 	}
 
-	/**
-	 * The <code>URI</code> used when loading this resource.
-	 */
+	/** The <code>URI</code> used when loading this resource. */
 	private final URI resourceLocator;
 
 	protected Resource() {

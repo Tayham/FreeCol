@@ -49,42 +49,27 @@ import net.sf.freecol.common.model.UnitTypeChange.ChangeType;
  * goods.
  */
 public class ProductionCache {
-
 	private final Colony colony;
 
-	/**
-	 * The units available in the colony.
-	 */
+	/** The units available in the colony. */
 	private final Set<Unit> units;
 
-	/**
-	 * The available colony tiles.
-	 */
+	/** The available colony tiles. */
 	private final Set<ColonyTile> colonyTiles;
 
-	/**
-	 * Sorted entries per goods type.
-	 */
+	/** Sorted entries per goods type. */
 	private final Map<GoodsType, List<Entry>> entries;
 
-	/**
-	 * The assigned entries.
-	 */
+	/** The assigned entries. */
 	private final List<Entry> assigned = new ArrayList<>();
 
-	/**
-	 * The reserved entries.
-	 */
+	/** The reserved entries. */
 	private final List<Entry> reserved = new ArrayList<>();
 
-	/**
-	 * Compares entries by production.
-	 */
+	/** Compares entries by production. */
 	private static final Comparator<Entry> defaultComparator = new CacheEntryComparator();
 
-	/**
-	 * Compares entries by market value of production.
-	 */
+	/** Compares entries by market value of production. */
 	private static final Comparator<Entry> marketValueComparator = new CacheEntryComparator() {
 		@Override
 		public int compareProduction(Entry entry1, Entry entry2) {
@@ -98,14 +83,10 @@ public class ProductionCache {
 		}
 	};
 
-	/**
-	 * The number of units available.
-	 */
+	/** The number of units available. */
 	private int unitCount;
 
-	/**
-	 * The number of Units in various buildings.
-	 */
+	/** The number of Units in various buildings. */
 	private final TypeCountMap<BuildingType> unitCounts = new TypeCountMap<>();
 
 	public ProductionCache(Colony colony) {
@@ -138,8 +119,9 @@ public class ProductionCache {
 			}
 		} else {
 			for (WorkLocation wl : colony.getWorkLocationsForProducing(goodsType)) {
-				if (!(wl instanceof Building))
+				if (!(wl instanceof Building)) {
 					continue;
+				}
 				Building building = (Building) wl;
 				if (building.getType().getWorkPlaces() > 0) {
 					for (Unit unit : units) {
@@ -226,15 +208,13 @@ public class ProductionCache {
 			units.remove(unit);
 			assigned.add(entry);
 			removeEntries(unit, colonyTile, reserved);
-		} else {
-			if (colonyTile == null) {
-				if (unitCounts.getCount(building.getType()) == 1) {
-					// only add building once
-					reserved.addAll(entries.get(entry.getGoodsType()));
-				}
-			} else {
-				reserved.addAll(removeEntries(null, colonyTile, entries.get(entry.getGoodsType())));
+		} else if (colonyTile == null) {
+			if (unitCounts.getCount(building.getType()) == 1) {
+				// only add building once
+				reserved.addAll(entries.get(entry.getGoodsType()));
 			}
+		} else {
+			reserved.addAll(removeEntries(null, colonyTile, entries.get(entry.getGoodsType())));
 		}
 		// if work location is a colony tile, remove it from all other
 		// lists, because it only supports a single unit
@@ -282,17 +262,16 @@ public class ProductionCache {
 	 * a certain work location. It records information on the type and amount of
 	 * goods produced, as well as on whether the unit is an expert for producing
 	 * this type of goods, or can be upgraded to one.
-	 *
 	 */
 	public static class Entry {
 		private final GoodsType goodsType;
 		private final WorkLocation workLocation;
 		private final Unit unit;
 		private final int production;
-		private boolean isExpert = false;
-		private boolean isOtherExpert = false;
-		private boolean unitUpgrades = false;
-		private boolean unitUpgradesToExpert = false;
+		private boolean isExpert;
+		private boolean isOtherExpert;
+		private boolean unitUpgrades;
+		private boolean unitUpgradesToExpert;
 
 		public Entry(GoodsType g, WorkLocation w, Unit u) {
 			goodsType = g;
@@ -394,13 +373,10 @@ public class ProductionCache {
 			return unitUpgradesToExpert;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder(64);
-			sb.append("Cache entry: ").append(unit.toString());
+			sb.append("Cache entry: ").append(unit);
 			if (goodsType != null) {
 				sb.append(" ").append(goodsType.getSuffix());
 			}

@@ -37,7 +37,6 @@ import net.sf.freecol.common.util.Utils;
  * file in the format offered by TextFormatter.
  */
 public final class DefaultHandler extends Handler {
-
 	private final Writer writer;
 
 	private final boolean consoleLogging;
@@ -67,13 +66,9 @@ public final class DefaultHandler extends Handler {
 		} catch (IOException e) {
 			throw new FreeColException("Log file \"" + fileName + "\" could not be created.", e);
 		}
-		if (!file.canWrite()) {
+		if (!file.canWrite() || ((writer = Utils.getFileUTF8Writer(file)) == null)) {
 			throw new FreeColException("Can not write in log file \"" + fileName + "\".");
 		}
-		if ((writer = Utils.getFileUTF8Writer(file)) == null) {
-			throw new FreeColException("Can not write in log file \"" + fileName + "\".");
-		}
-
 		// We should use XMLFormatter here in the future
 		// or maybe a self-made HTMLFormatter.
 		setFormatter(new TextFormatter());
@@ -96,9 +91,7 @@ public final class DefaultHandler extends Handler {
 		}
 	}
 
-	/**
-	 * Closes this handler so that it will stop handling log records.
-	 */
+	/** Closes this handler so that it will stop handling log records. */
 	@Override
 	public void close() {
 		try {
@@ -108,9 +101,7 @@ public final class DefaultHandler extends Handler {
 		}
 	}
 
-	/**
-	 * Flushes the data that this handler has logged.
-	 */
+	/** Flushes the data that this handler has logged. */
 	@Override
 	public void flush() {
 		try {

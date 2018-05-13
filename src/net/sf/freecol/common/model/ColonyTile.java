@@ -37,7 +37,6 @@ import net.sf.freecol.common.model.Player.NoClaimReason;
  * goods, one food type and one new world raw material.
  */
 public class ColonyTile extends WorkLocation {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(ColonyTile.class.getName());
 
@@ -188,16 +187,19 @@ public class ColonyTile extends WorkLocation {
 		final Colony colony = getColony();
 		if (tile == null // Colony has not claimed the tile
 				|| tile.getOwningSettlement() != colony // Not our tile
-				|| tile.hasTileImprovement(ti)) // Pointless work
+				|| tile.hasTileImprovement(ti)) {
 			return 0;
+		}
 
 		final TileType oldType = tile.getType();
-		if (!ti.isTileTypeAllowed(oldType))
-			return 0; // Impossible
+		if (!ti.isTileTypeAllowed(oldType)) {
+			return 0;
+		} // Impossible
 
 		final ProductionType productionType = getProductionType();
-		if (productionType == null)
-			return 0; // Not using the tile
+		if (productionType == null) {
+			return 0;
+		} // Not using the tile
 
 		final Resource resource = tile.getResource();
 		final TileType newType = ti.getChange(oldType);
@@ -260,106 +262,83 @@ public class ColonyTile extends WorkLocation {
 				+ getProductionInfo().getProduction().stream().mapToInt(ag -> ag.evaluateFor(player)).sum();
 	}
 
-	// Interface Location
-	// Inheriting
-	// FreeColObject.getId
-	// WorkLocation.getTile (Beware this returns the colony center tile!),
-	// UnitLocation.getLocationLabelFor
-	// UnitLocation.contains
-	// UnitLocation.canAdd
-	// WorkLocation.remove
-	// UnitLocation.getUnitCount
-	// final UnitLocation.getUnitIterator
-	// UnitLocation.getUnitList
-	// UnitLocation.getGoodsContainer
-	// final WorkLocation getSettlement
-	// final WorkLocation getColony
-	// final int getRank
-
 	/**
-	 * {@inheritDoc}
+	 * Interface Location
+	 * Inheriting
+	 * FreeColObject.getId
+	 * WorkLocation.getTile (Beware this returns the colony center tile!),
+	 * UnitLocation.getLocationLabelFor
+	 * UnitLocation.contains
+	 * UnitLocation.canAdd
+	 * WorkLocation.remove
+	 * UnitLocation.getUnitCount
+	 * final UnitLocation.getUnitIterator
+	 * UnitLocation.getUnitList
+	 * UnitLocation.getGoodsContainer
+	 * final WorkLocation getSettlement
+	 * final WorkLocation getColony
+	 * final int getRank
 	 */
+
 	@Override
 	public StringTemplate getLocationLabel() {
 		return (workTile == null) ? null : workTile.getColonyTileLocationLabel(getColony());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location up() {
 		return getColony();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toShortString() {
 		return getColony().getName() + "-" + getWorkTile().getType().getSuffix() + "-"
 				+ getTile().getDirection(getWorkTile());
 	}
 
-	// Interface UnitLocation
-	// Inherits:
-	// UnitLocation.getSpaceTaken
-	// UnitLocation.moveToFront
-	// UnitLocation.clearUnitList
-	// UnitLocation.equipForRole
-
 	/**
-	 * {@inheritDoc}
+	 * Interface UnitLocation
+	 * Inherits:
+	 * UnitLocation.getSpaceTaken
+	 * UnitLocation.moveToFront
+	 * UnitLocation.clearUnitList
+	 * UnitLocation.equipForRole
 	 */
+
 	@Override
 	public NoAddReason getNoAddReason(Locatable locatable) {
 		NoAddReason reason = super.getNoAddReason(locatable);
 		return (reason != NoAddReason.NONE) ? reason : getNoWorkReason();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getUnitCapacity() {
-		return (isColonyCenterTile()) ? 0 : UNIT_CAPACITY;
+		return isColonyCenterTile() ? 0 : UNIT_CAPACITY;
 	}
 
-	// Interface WorkLocation
+	/** Interface WorkLocation. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public StringTemplate getLabel() {
 		return (workTile == null) ? null : workTile.getLabel();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isAvailable() {
 		return isCurrent() || getOwner().canClaimForSettlement(getWorkTile());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isCurrent() {
 		return getWorkTile().getOwningSettlement() == getColony();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public NoAddReason getNoWorkReason() {
 		Tile tile = getWorkTile();
 		NoClaimReason claim;
 
-		return (isColonyCenterTile()) ? NoAddReason.COLONY_CENTER
+		return isColonyCenterTile() ? NoAddReason.COLONY_CENTER
 				: (!getColony().hasAbility(Ability.PRODUCE_IN_WATER) && !tile.isLand()) ? NoAddReason.MISSING_ABILITY
 						: (tile.getOwningSettlement() == getColony()) ? NoAddReason.NONE
 								: ((claim = getOwner().canClaimForSettlementReason(tile)) == NoClaimReason.NONE)
@@ -368,7 +347,7 @@ public class ColonyTile extends WorkLocation {
 												|| claim == NoClaimReason.WATER)
 														? NoAddReason.MISSING_ABILITY
 														: (claim == NoClaimReason.SETTLEMENT)
-																? ((getOwner().owns(tile.getSettlement()))
+																? (getOwner().owns(tile.getSettlement())
 																		? NoAddReason.ANOTHER_COLONY
 																		: NoAddReason.OWNED_BY_ENEMY)
 																: (claim == NoClaimReason.OCCUPIED)
@@ -382,35 +361,23 @@ public class ColonyTile extends WorkLocation {
 																								: NoAddReason.WRONG_TYPE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canAutoProduce() {
 		return isColonyCenterTile();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canProduce(GoodsType goodsType, UnitType unitType) {
 		final Tile workTile = getWorkTile();
 		return workTile != null && workTile.canProduce(goodsType, unitType);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getBaseProduction(ProductionType productionType, GoodsType goodsType, UnitType unitType) {
 		Tile tile = getWorkTile();
 		return (tile == null) ? 0 : tile.getBaseProduction(productionType, goodsType, unitType);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Modifier> getProductionModifiers(GoodsType goodsType, UnitType unitType) {
 		if (!canProduce(goodsType, unitType)) {
@@ -434,7 +401,6 @@ public class ColonyTile extends WorkLocation {
 					mods.addAll(owner.getModifiers(id, type, turn));
 				}
 			}
-
 		} else {
 			mods.addAll(workTile.getProductionModifiers(goodsType, unitType));
 			mods.addAll(colony.getProductionModifiers(goodsType));
@@ -446,9 +412,6 @@ public class ColonyTile extends WorkLocation {
 		return mods;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<ProductionType> getAvailableProductionTypes(boolean unattended) {
 		return (workTile == null || workTile.getType() == null || unattended != isColonyCenterTile())
@@ -456,23 +419,17 @@ public class ColonyTile extends WorkLocation {
 				: workTile.getType().getAvailableProductionTypes(unattended);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public StringTemplate getClaimTemplate() {
-		return (isColonyCenterTile()) ? super.getClaimTemplate()
-				: (StringTemplate.template("model.colonyTile.claim").addNamed("%direction%",
-						getTile().getDirection(workTile)));
+		return isColonyCenterTile() ? super.getClaimTemplate()
+				: StringTemplate.template("model.colonyTile.claim").addNamed("%direction%",
+						getTile().getDirection(workTile));
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String WORK_TILE_TAG = "workTile";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -480,9 +437,6 @@ public class ColonyTile extends WorkLocation {
 		xw.writeAttribute(WORK_TILE_TAG, workTile);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -490,9 +444,6 @@ public class ColonyTile extends WorkLocation {
 		workTile = xr.makeFreeColGameObject(getGame(), WORK_TILE_TAG, Tile.class, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
@@ -501,9 +452,6 @@ public class ColonyTile extends WorkLocation {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

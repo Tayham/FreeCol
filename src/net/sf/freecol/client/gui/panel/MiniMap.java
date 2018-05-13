@@ -48,7 +48,6 @@ import net.sf.freecol.common.resources.ResourceManager;
  * part of the map and to relocate the viewport by clicking on it.
  */
 public final class MiniMap extends JPanel implements MouseInputListener {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(MiniMap.class.getName());
 
@@ -60,7 +59,8 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 
 	private final GUI gui;
 
-	private int tileSize; // tileSize is the size (in pixels) that each tile will take up on the mini map
+	/** TileSize is the size (in pixels) that each tile will take up on the mini map. */
+	private int tileSize;
 
 	/**
 	 * The top left tile on the mini map represents the tile. (firstColumn,
@@ -73,7 +73,7 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 	 * 
 	 * @see #paintMap
 	 */
-	private int adjustX = 0, adjustY = 0;
+	private int adjustX, adjustY;
 
 	/**
 	 * The constructor that will initialize this component.
@@ -93,18 +93,14 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 		addMouseMotionListener(this);
 	}
 
-	/**
-	 * Zooms in the mini map.
-	 */
+	/** Zooms in the mini map. */
 	public void zoomIn() {
 		tileSize = Math.min(tileSize + SCALE_STEP, MAX_TILE_SIZE);
 		setZoomOption(tileSize);
 		repaint();
 	}
 
-	/**
-	 * Zooms out the mini map.
-	 */
+	/** Zooms out the mini map. */
 	public void zoomOut() {
 		tileSize = Math.max(tileSize - SCALE_STEP, MIN_TILE_SIZE);
 		setZoomOption(tileSize);
@@ -130,8 +126,8 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 	 * @return a <code>boolean</code> value
 	 */
 	public boolean canZoomIn() {
-		return (freeColClient.getGame() != null && freeColClient.getGame().getMap() != null
-				&& tileSize < MAX_TILE_SIZE);
+		return freeColClient.getGame() != null && freeColClient.getGame().getMap() != null
+				&& tileSize < MAX_TILE_SIZE;
 	}
 
 	/**
@@ -140,8 +136,8 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 	 * @return a <code>boolean</code> value
 	 */
 	public boolean canZoomOut() {
-		return (freeColClient.getGame() != null && freeColClient.getGame().getMap() != null
-				&& tileSize > MIN_TILE_SIZE);
+		return freeColClient.getGame() != null && freeColClient.getGame().getMap() != null
+				&& tileSize > MIN_TILE_SIZE;
 	}
 
 	private void setZoomOption(int tileSize) {
@@ -187,7 +183,6 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 	 *            The <code>Graphics</code> context in which to draw this component.
 	 */
 	public void paintMap(Graphics graphics) {
-
 		int width = getWidth();
 		int height = getHeight();
 		final Graphics2D g = (Graphics2D) graphics;
@@ -212,8 +207,8 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 		int ySize = (height / tileSize) * 4;
 
 		/* Center the mini map correctly based on the map's focus */
-		firstColumn = gui.getFocus().getX() - (xSize / 2);
-		firstRow = gui.getFocus().getY() - (ySize / 2);
+		firstColumn = gui.getFocus().getX() - xSize / 2;
+		firstRow = gui.getFocus().getY() - ySize / 2;
 
 		/*
 		 * Make sure the mini map won't try to display tiles off the bounds of the world
@@ -332,7 +327,6 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 						g.setColor(blackTransparent);
 						g.fill(paintFull);
 					}
-
 				}
 				g.translate(tileWidth, 0);
 			}
@@ -394,11 +388,11 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 		// jump than previous ones.
 		// This if statement adjusts for the last larger jump in focus out.
 		if (adjustX > 0 && adjustY > 0) {
-			tileX = ((x - adjustX) / tileSize) + firstColumn + adjustX / MIN_TILE_SIZE;
-			tileY = ((y - adjustY) / tileSize * MIN_TILE_SIZE) + firstRow + adjustY;
+			tileX = (x - adjustX) / tileSize + firstColumn + adjustX / MIN_TILE_SIZE;
+			tileY = (y - adjustY) / tileSize * MIN_TILE_SIZE + firstRow + adjustY;
 		} else {
-			tileX = ((x - adjustX) / tileSize) + firstColumn;
-			tileY = ((y - adjustY) / tileSize * 4) + firstRow;
+			tileX = (x - adjustX) / tileSize + firstColumn;
+			tileY = (y - adjustY) / tileSize * 4 + firstRow;
 		}
 
 		gui.setFocus(freeColClient.getGame().getMap().getTile(tileX, tileY));
@@ -416,7 +410,7 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 
 	/**
 	 * If the user clicks on the mini map, refocus the map to center on the tile
-	 * that he clicked on
+	 * that he clicked on.
 	 * 
 	 * @param e
 	 *            a <code>MouseEvent</code> value
@@ -446,5 +440,4 @@ public final class MiniMap extends JPanel implements MouseInputListener {
 	@Override
 	public void mouseMoved(MouseEvent e) {
 	}
-
 }

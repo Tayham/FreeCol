@@ -32,7 +32,6 @@ import net.sf.freecol.common.option.LanguageOption.Language;
  * to be both seen and changed.
  */
 public final class LanguageOptionUI extends OptionUI<LanguageOption> {
-
 	private final JComboBox<Language> box = new JComboBox<>();
 
 	/**
@@ -55,27 +54,18 @@ public final class LanguageOptionUI extends OptionUI<LanguageOption> {
 		initialize();
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JComboBox getComponent() {
 		return box;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValue((Language) box.getSelectedItem());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		box.setSelectedItem(getOption().getValue());

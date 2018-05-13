@@ -60,11 +60,8 @@ import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.option.BooleanOption;
 
-/**
- * This panel displays the Turn Report.
- */
+/** This panel displays the Turn Report. */
 public final class ReportTurnPanel extends ReportPanel {
-
 	private static final Logger logger = Logger.getLogger(ReportTurnPanel.class.getName());
 
 	/** The messages to display. */
@@ -98,8 +95,9 @@ public final class ReportTurnPanel extends ReportPanel {
 	 */
 	public void setMessages(List<ModelMessage> messages) {
 		this.messages = messages;
-		if (messages != null)
+		if (messages != null) {
 			displayMessages();
+		}
 	}
 
 	private void displayMessages() {
@@ -109,8 +107,9 @@ public final class ReportTurnPanel extends ReportPanel {
 
 		// Sort if requested
 		final Comparator<ModelMessage> comparator = options.getModelMessageComparator(game);
-		if (comparator != null)
+		if (comparator != null) {
 			Collections.sort(messages, comparator);
+		}
 
 		Object source = this;
 		ModelMessage.MessageType type = null;

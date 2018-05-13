@@ -24,11 +24,8 @@ import java.util.Map;
 
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-/**
- * This class handles zero or one rule for each number category.
- */
+/** This class handles zero or one rule for each number category. */
 public class DefaultNumberRule extends Number {
-
 	final Map<Category, Rule> rules = new EnumMap<>(Category.class);
 
 	/**
@@ -75,9 +72,6 @@ public class DefaultNumberRule extends Number {
 		return rules.get(category);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Category getCategory(double input) {
 		return find(Category.values(), category -> rules.containsKey(category) && rules.get(category).matches(input),

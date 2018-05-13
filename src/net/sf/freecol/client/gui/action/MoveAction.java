@@ -25,11 +25,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.GUI;
 import net.sf.freecol.common.model.Direction;
 
-/**
- * An action for chosing the next unit as the active unit.
- */
+/** An action for chosing the next unit as the active unit. */
 public class MoveAction extends MapboardAction {
-
 	public static final String id = "moveAction.";
 
 	private final Direction direction;
@@ -64,11 +61,8 @@ public class MoveAction extends MapboardAction {
 		this.direction = direction;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		switch (getGUI().getViewMode()) {

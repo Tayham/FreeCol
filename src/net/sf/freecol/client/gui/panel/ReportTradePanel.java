@@ -48,11 +48,8 @@ import net.sf.freecol.common.model.TypeCountMap;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * This panel displays the Trade Report.
- */
+/** This panel displays the Trade Report. */
 public final class ReportTradePanel extends ReportPanel {
-
 	private final List<Colony> colonies;
 
 	/**
@@ -85,7 +82,7 @@ public final class ReportTradePanel extends ReportPanel {
 
 		String layoutConstraints = "insets 0, gap 0 0";
 		String columnConstraints = "[25%!, fill]["
-				+ Math.round(lib.getScaleFactor() * (ImageLibrary.ICON_SIZE.width * 1.25f)) + "!, fill]";
+				+ Math.round(lib.getScaleFactor() * ImageLibrary.ICON_SIZE.width * 1.25f) + "!, fill]";
 		String rowConstraints = "[fill]";
 
 		reportPanel.setLayout(new MigLayout(layoutConstraints, columnConstraints, rowConstraints));
@@ -96,9 +93,7 @@ public final class ReportTradePanel extends ReportPanel {
 		emptyLabel.setBorder(Utility.TOPLEFTCELLBORDER);
 		goodsHeader.add(emptyLabel, "cell 0 0");
 
-		/**
-		 * Total Units Sold by Player
-		 */
+		/* Total Units Sold by Player */
 		JLabel jl = createLeftLabel("report.trade.unitsSold");
 		jl.setBorder(Utility.TOPLEFTCELLBORDER);
 		reportPanel.add(jl, "cell 0 0");
@@ -152,7 +147,7 @@ public final class ReportTradePanel extends ReportPanel {
 			if (colony.hasAbility(Ability.EXPORT)) {
 				colonyButton.setText(colonyButton.getText() + "*");
 			}
-			colonyButton.setBorder((first) ? Utility.TOPLEFTCELLBORDER : Utility.LEFTCELLBORDER);
+			colonyButton.setBorder(first ? Utility.TOPLEFTCELLBORDER : Utility.LEFTCELLBORDER);
 			reportPanel.add(colonyButton, "cell 0 " + row + " 1 2");
 
 			column = 0;
@@ -160,7 +155,7 @@ public final class ReportTradePanel extends ReportPanel {
 				column++;
 				int amount = colony.getGoodsCount(goodsType);
 				JLabel goodsLabel = new JLabel(String.valueOf(amount), JLabel.TRAILING);
-				goodsLabel.setBorder((first) ? Utility.TOPCELLBORDER : Utility.CELLBORDER);
+				goodsLabel.setBorder(first ? Utility.TOPCELLBORDER : Utility.CELLBORDER);
 				goodsLabel.setForeground(GoodsLabel.getColor(goodsType, amount, colony));
 				ExportData ed = colony.getExportData(goodsType);
 				if (ed.getExported()) {

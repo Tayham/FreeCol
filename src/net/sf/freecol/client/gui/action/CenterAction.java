@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for centering the view on the active unit.
- */
+/** An action for centering the view on the active unit. */
 public class CenterAction extends UnitAction {
-
 	public static final String id = "centerAction";
 
 	/**
@@ -40,11 +37,8 @@ public class CenterAction extends UnitAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().centerActiveUnit();

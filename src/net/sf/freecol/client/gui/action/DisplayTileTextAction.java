@@ -30,21 +30,18 @@ import net.sf.freecol.client.FreeColClient;
 
 import static net.sf.freecol.common.util.StringUtils.*;
 
-/**
- * Display text over tiles.
- */
+/** Display text over tiles. */
 public class DisplayTileTextAction extends SelectableAction {
-
 	public static final String id = "displayTileTextAction.";
 
-	// FIXME: make ClientOptions use enum
-	public static enum DisplayText {
+	/** FIXME: make ClientOptions use enum */
+	public enum DisplayText {
 		EMPTY, NAMES, OWNERS, REGIONS;
 
 		public String getKey() {
 			return getEnumKey(this);
 		}
-	};
+	}
 
 	private static final int[] accelerators = { KeyEvent.VK_E, KeyEvent.VK_N, KeyEvent.VK_O, KeyEvent.VK_R };
 
@@ -64,22 +61,16 @@ public class DisplayTileTextAction extends SelectableAction {
 		setAccelerator(KeyStroke.getKeyStroke(accelerators[type.ordinal()], KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK));
 	}
 
-	// Override SelectableAction
+	/** Override SelectableAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean shouldBeSelected() {
 		return super.shouldBeEnabled() && freeColClient.getClientOptions() != null && display != null
 				&& freeColClient.getClientOptions().getDisplayTileText() == display.ordinal();
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (((JRadioButtonMenuItem) ae.getSource()).isSelected()) {

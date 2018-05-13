@@ -67,7 +67,6 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
  * attached to JPanels or custom JLabels.
  */
 public final class DefaultTransferHandler extends TransferHandler {
-
 	private static final Logger logger = Logger.getLogger(DefaultTransferHandler.class.getName());
 
 	/**
@@ -75,14 +74,11 @@ public final class DefaultTransferHandler extends TransferHandler {
 	 * <code>TransferHandler</code>.
 	 */
 	private static class FreeColDragHandler implements DragGestureListener, DragSourceListener {
-
 		private boolean scrolls;
 
 		// --- DragGestureListener methods -----------------------------------
 
-		/**
-		 * A Drag gesture has been recognized.
-		 */
+		/** A Drag gesture has been recognized. */
 		@Override
 		public void dragGestureRecognized(DragGestureEvent dge) {
 			JComponent c = (JComponent) dge.getComponent();
@@ -95,7 +91,7 @@ public final class DefaultTransferHandler extends TransferHandler {
 				try {
 					if (c instanceof JLabel && ((JLabel) c).getIcon() instanceof ImageIcon) {
 						Toolkit tk = Toolkit.getDefaultToolkit();
-						ImageIcon imageIcon = ((ImageIcon) ((JLabel) c).getIcon());
+						ImageIcon imageIcon = (ImageIcon) ((JLabel) c).getIcon();
 						Dimension bestSize = tk.getBestCursorSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
 
 						if (bestSize.width == 0 || bestSize.height == 0) {
@@ -104,10 +100,10 @@ public final class DefaultTransferHandler extends TransferHandler {
 						}
 
 						if (bestSize.width > bestSize.height) {
-							bestSize.height = (int) ((((double) bestSize.width) / ((double) imageIcon.getIconWidth()))
+							bestSize.height = (int) (((double) bestSize.width / imageIcon.getIconWidth())
 									* imageIcon.getIconHeight());
 						} else {
-							bestSize.width = (int) ((((double) bestSize.height) / ((double) imageIcon.getIconHeight()))
+							bestSize.width = (int) (((double) bestSize.height / imageIcon.getIconHeight())
 									* imageIcon.getIconWidth());
 						}
 						BufferedImage scaled = ImageLibrary.createResizedImage(imageIcon.getImage(), bestSize.width,
@@ -137,30 +133,22 @@ public final class DefaultTransferHandler extends TransferHandler {
 
 		// --- DragSourceListener methods -----------------------------------
 
-		/**
-		 * As the hotspot enters a platform dependent drop site.
-		 */
+		/** As the hotspot enters a platform dependent drop site. */
 		@Override
 		public void dragEnter(DragSourceDragEvent dsde) {
 		}
 
-		/**
-		 * As the hotspot moves over a platform dependent drop site.
-		 */
+		/** As the hotspot moves over a platform dependent drop site. */
 		@Override
 		public void dragOver(DragSourceDragEvent dsde) {
 		}
 
-		/**
-		 * As the hotspot exits a platform dependent drop site.
-		 */
+		/** As the hotspot exits a platform dependent drop site. */
 		@Override
 		public void dragExit(DragSourceEvent dsde) {
 		}
 
-		/**
-		 * As the operation completes.
-		 */
+		/** As the operation completes. */
 		@Override
 		public void dragDropEnd(DragSourceDropEvent dsde) {
 			DragSourceContext dsc = dsde.getDragSourceContext();
@@ -190,7 +178,6 @@ public final class DefaultTransferHandler extends TransferHandler {
 	}
 
 	private static class FreeColDragGestureRecognizer extends DragGestureRecognizer {
-
 		FreeColDragGestureRecognizer(DragGestureListener dgl) {
 			super(DragSource.getDefaultDragSource(), null, NONE, dgl);
 		}
@@ -203,9 +190,7 @@ public final class DefaultTransferHandler extends TransferHandler {
 			fireDragGestureRecognized(action, e.getPoint());
 		}
 
-		/**
-		 * Register this DragGestureRecognizer's Listeners with the Component.
-		 */
+		/** Register this DragGestureRecognizer's Listeners with the Component. */
 		@Override
 		protected void registerListeners() {
 		}
@@ -308,21 +293,22 @@ public final class DefaultTransferHandler extends TransferHandler {
 			UnitLabel oldSelectedUnit = null;
 
 			// Check flavor.
-			if (t.isDataFlavorSupported(DefaultTransferHandler.flavor)) {
-				data = (JLabel) t.getTransferData(DefaultTransferHandler.flavor);
+			if (t.isDataFlavorSupported(flavor)) {
+				data = (JLabel) t.getTransferData(flavor);
 			} else {
 				logger.warning("Data flavor is not supported for " + t);
 				return false;
 			}
 
 			// Do not allow a transferable to be dropped upon itself:
-			if (comp == data)
+			if (comp == data) {
 				return false;
+			}
 
 			// Make sure we don't drop onto other Labels.
 			if (comp instanceof UnitLabel) {
 				UnitLabel unitLabel = (UnitLabel) comp;
-				/**
+				/*
 				 * If the unit/cargo is dropped on a carrier in port then the ship is selected
 				 * and the unit is added to its cargo. If the unit is not a carrier, but can be
 				 * equipped, and the goods can be converted to equipment, equip the unit.
@@ -338,17 +324,16 @@ public final class DefaultTransferHandler extends TransferHandler {
 					}
 					portPanel.setSelectedUnitLabel(unitLabel);
 					comp = portPanel.getCargoPanel();
-				} else if (unitLabel.canUnitBeEquippedWith(data)) {
-					// don't do anything before partial amount has been checked
-				} else {
+				} else if (!unitLabel.canUnitBeEquippedWith(data)) {
 					comp = getDropTarget(comp);
 				}
 			} else if (comp instanceof AbstractGoodsLabel) {
 				comp = getDropTarget(comp);
 			}
 			// Ignore if data is already in comp.
-			if (data.getParent() == comp)
+			if (data.getParent() == comp) {
 				return false;
+			}
 
 			if (data instanceof GoodsLabel) {
 				// Check if the goods can be dragged to comp.
@@ -374,41 +359,41 @@ public final class DefaultTransferHandler extends TransferHandler {
 						}
 					}
 					int amount = getAmount(goods.getType(), goods.getAmount(), defaultAmount, false);
-					if (amount <= 0)
+					if (amount <= 0) {
 						return false;
+					}
 					goods.setAmount(amount);
-				} else if (label.isFullChosen()) {
-				} else if (goods.getAmount() > GoodsContainer.CARGO_SIZE) {
+				} else if (!label.isFullChosen() && goods.getAmount() > GoodsContainer.CARGO_SIZE) {
 					goods.setAmount(GoodsContainer.CARGO_SIZE);
 				}
 
 				if (comp instanceof UnitLabel) {
 					return equipUnitIfPossible((UnitLabel) comp, goods);
-
 				} else if (comp instanceof DropTarget) {
 					DropTarget target = (DropTarget) comp;
-					if (!target.accepts(goods))
+					if (!target.accepts(goods)) {
 						return false;
+					}
 					target.add(data, true);
 					restoreSelection(oldSelectedUnit);
 					comp.revalidate();
 					return true;
-
 				} else if (comp instanceof JLabel) {
 					logger.warning("Failed to handle: " + comp);
 				}
-
 			} else if (data instanceof MarketLabel) {
 				MarketLabel label = (MarketLabel) data;
 				if (label.isPartialChosen()) {
 					int amount = getAmount(label.getType(), label.getAmount(), -1, true);
-					if (amount <= 0)
+					if (amount <= 0) {
 						return false;
+					}
 					label.setAmount(amount);
 				}
 				if (comp instanceof UnitLabel) {
-					if (equipUnitIfPossible((UnitLabel) comp, label.getAbstractGoods()))
+					if (equipUnitIfPossible((UnitLabel) comp, label.getAbstractGoods())) {
 						return true;
+					}
 					// Try again with parent
 					if (comp.getParent() instanceof JComponent) {
 						comp = (JComponent) comp.getParent();
@@ -426,16 +411,17 @@ public final class DefaultTransferHandler extends TransferHandler {
 				} else {
 					logger.warning("Invalid type for receiving component: " + comp);
 				}
-
 			} else if (data instanceof UnitLabel) {
 				// Check if the unit can be dragged to comp.
 				Unit unit = ((UnitLabel) data).getUnit();
-				if (!(comp instanceof DropTarget))
+				if (!(comp instanceof DropTarget)) {
 					return false;
+				}
 
 				DropTarget target = (DropTarget) comp;
-				if (!target.accepts(unit))
+				if (!target.accepts(unit)) {
 					return false;
+				}
 				target.add(data, true);
 
 				// Update unit selection.
@@ -444,7 +430,6 @@ public final class DefaultTransferHandler extends TransferHandler {
 				restoreSelection(oldSelectedUnit);
 				comp.revalidate();
 				return true;
-
 			} else {
 				logger.warning("Invalid type for dragged component: " + data);
 			}
@@ -476,8 +461,9 @@ public final class DefaultTransferHandler extends TransferHandler {
 		}
 
 		for (Role role : unit.getAvailableRoles(null)) {
-			if (role.isDefaultRole())
+			if (role.isDefaultRole()) {
 				continue;
+			}
 			List<AbstractGoods> required = unit.getGoodsDifference(role, 1);
 			int count;
 			if (required.size() == 1 && required.get(0).getType() == goods.getType()

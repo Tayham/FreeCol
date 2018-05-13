@@ -45,11 +45,8 @@ import static net.sf.freecol.common.util.StringUtils.*;
 import net.sf.freecol.server.FreeColServer;
 import net.sf.freecol.server.model.ServerPlayer;
 
-/**
- * The main AI-class. Keeps references to all other AI-classes.
- */
+/** The main AI-class. Keeps references to all other AI-classes. */
 public class AIMain extends FreeColObject implements FreeColGameObjectListener {
-
 	private static final Logger logger = Logger.getLogger(AIMain.class.getName());
 
 	/** The server that this AI is operating within. */
@@ -116,7 +113,7 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 	 * @return A unique identifier.
 	 */
 	public String getNextId() {
-		String id = "am" + Integer.toString(nextId);
+		String id = "am" + nextId;
 		nextId++;
 		return id;
 	}
@@ -146,8 +143,7 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 	 * @return True if a corresponding AI object is needed.
 	 */
 	private boolean shouldHaveAIObject(FreeColGameObject fcgo) {
-		return (fcgo instanceof Colony) ? true
-				: (fcgo instanceof Player) ? ((Player) fcgo).isAI() : (fcgo instanceof Unit) ? true : false;
+		return fcgo instanceof Colony || fcgo instanceof Player ? ((Player) fcgo).isAI() : (fcgo instanceof Unit);
 	}
 
 	/**
@@ -160,8 +156,9 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 	 */
 	public void findNewObjects(boolean overwrite) {
 		for (FreeColGameObject fcgo : freeColServer.getGame().getFreeColGameObjects()) {
-			if (!shouldHaveAIObject(fcgo))
+			if (!shouldHaveAIObject(fcgo)) {
 				continue;
+			}
 			if (overwrite || getAIObject(fcgo) == null) {
 				setFreeColGameObject(fcgo.getId(), fcgo);
 			}
@@ -210,8 +207,9 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 		boolean present;
 		synchronized (aiObjects) {
 			present = aiObjects.containsKey(id);
-			if (!present)
+			if (!present) {
 				aiObjects.put(id, aiObject);
+			}
 		}
 		if (present) {
 			throw new RuntimeException("AIObject already created: " + id);
@@ -230,8 +228,9 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 		synchronized (aiObjects) {
 			result = aiObjects.remove(id) != null;
 		}
-		if (result)
+		if (result) {
 			logger.finest("Removed AI object: " + id);
+		}
 		return result;
 	}
 
@@ -300,7 +299,7 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 
 	/**
 	 * Computes how many objects of each class have been created, to track memory
-	 * leaks over time
+	 * leaks over time.
 	 */
 	public Map<String, String> getAIStatistics() {
 		Map<String, String> stats = new HashMap<>();
@@ -378,8 +377,9 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 	 */
 	@Override
 	public void setFreeColGameObject(String id, FreeColGameObject fcgo) {
-		if (getAIObject(id) != null || !shouldHaveAIObject(fcgo))
+		if (getAIObject(id) != null || !shouldHaveAIObject(fcgo)) {
 			return;
+		}
 		if (!id.equals(fcgo.getId())) {
 			throw new IllegalArgumentException("!id.equals(fcgo.getId())");
 		}
@@ -416,8 +416,9 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 	@Override
 	public void removeFreeColGameObject(String id) {
 		AIObject o = getAIObject(id);
-		if (o != null)
+		if (o != null) {
 			o.dispose();
+		}
 		removeAIObject(id);
 	}
 
@@ -449,33 +450,31 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 		}
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Specification getSpecification() {
 		return getGame().getSpecification();
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String NEXT_ID_TAG = "nextId";
-	// @compat 0.10.3
+	/** @compat 0.10.3 */
 	private static final String COLONIAL_AI_PLAYER_TAG = "colonialAIPlayer";
 	private static final String GOODS_WISH_TAG = "GoodsWish";
-	// end @compat
-	// @compat 0.10.7
-	private static final String OLD_NEXT_ID_TAG = "nextID";
-	// end @compat
-	// @compat 0.11.3
-	private static final String OLD_TILE_IMPROVEMENT_PLAN_TAG = "tileimprovementplan";
-	// end @compat 0.11.3
-
 	/**
-	 * {@inheritDoc}
+	 * End @compat
+	 * @compat 0.10.7
 	 */
+	private static final String OLD_NEXT_ID_TAG = "nextID";
+	/**
+	 * End @compat
+	 * @compat 0.11.3
+	 */
+	private static final String OLD_TILE_IMPROVEMENT_PLAN_TAG = "tileimprovementplan";
+	/** End @compat 0.11.3 */
+
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		// Does not have an identifier, so no need for
@@ -484,9 +483,6 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 		xw.writeAttribute(NEXT_ID_TAG, nextId);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -503,16 +499,15 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 				aio.dispose();
 				continue;
 			}
-			if (aio instanceof Wish) {
-				if (!((Wish) aio).shouldBeStored())
-					continue;
+			if (aio instanceof Wish && !((Wish) aio).shouldBeStored()) {
+				continue;
 			}
 
 			try {
-				if (aio.getId() == null) {
-					logger.warning("Null AI identifier for: " + aio.getClass().getName());
-				} else {
+				if (aio.getId() != null) {
 					aio.toXML(xw);
+				} else {
+					logger.warning("Null AI identifier for: " + aio.getClass().getName());
 				}
 			} catch (Exception e) {
 				logger.log(Level.WARNING, "Failed to write AI object: " + aio, e);
@@ -520,21 +515,16 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		nextId = xr.getAttribute(NEXT_ID_TAG, -1);
 		// @compat 0.10.x
-		if (nextId < 0)
+		if (nextId < 0) {
 			nextId = xr.getAttribute(OLD_NEXT_ID_TAG, 0);
+		}
 		// end @compat
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -543,9 +533,6 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -567,13 +554,10 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 			} else if (COLONIAL_AI_PLAYER_TAG.equals(tag)) {
 				new EuropeanAIPlayer(this, xr);
 				// end @compat
-
 			} else if (AIColony.getXMLElementTagName().equals(tag)) {
 				new AIColony(this, xr);
-
 			} else if (AIGoods.getXMLElementTagName().equals(tag)) {
 				new AIGoods(this, xr);
-
 			} else if (AIPlayer.getXMLElementTagName().equals(tag)) {
 				Player p = getGame().getFreeColGameObject(oid, Player.class);
 				if (p != null) {
@@ -587,50 +571,42 @@ public class AIMain extends FreeColObject implements FreeColGameObjectListener {
 						throw new RuntimeException("Bogus AIPlayer: " + p);
 					}
 				}
-
 			} else if (AIUnit.getXMLElementTagName().equals(tag)) {
 				new AIUnit(this, xr);
-
 			} else if (GoodsWish.getXMLElementTagName().equals(tag)
 					// @compat 0.10.3
 					|| GOODS_WISH_TAG.equals(tag)
 			// end @compat
 			) {
 				wish = new GoodsWish(this, xr);
-
 			} else if (TileImprovementPlan.getXMLElementTagName().equals(tag)
 					// @compat 0.10.3
 					|| OLD_TILE_IMPROVEMENT_PLAN_TAG.equals(tag)
 			// end @compat
 			) {
 				new TileImprovementPlan(this, xr);
-
 			} else if (WorkerWish.getXMLElementTagName().equals(tag)) {
 				wish = new WorkerWish(this, xr);
-
 			} else {
 				super.readChild(xr);
 			}
 
 			if (wish != null) {
 				AIColony ac = wish.getDestinationAIColony();
-				if (ac != null)
+				if (ac != null) {
 					ac.addWish(wish);
+				}
 			}
-
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Exception reading AIObject: " + tag + ", id=" + oid, e);
 			// We are hosed. Try to resynchronize at the end of the tag
 			// or aiMain.
 			final String mainTag = getXMLElementTagName();
-			while (xr.nextTag() != XMLStreamConstants.END_ELEMENT || !(xr.atTag(tag) || xr.atTag(mainTag)))
-				;
+			while (xr.nextTag() != XMLStreamConstants.END_ELEMENT || (!xr.atTag(tag) && !xr.atTag(mainTag))) {
+			}
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

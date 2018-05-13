@@ -26,11 +26,8 @@ import net.sf.freecol.client.ClientOptions;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Direction;
 
-/**
- * The outline of a canvas listener.
- */
+/** The outline of a canvas listener. */
 public class AbstractCanvasListener {
-
 	/** Space to auto-scroll. */
 	protected static final int AUTO_SCROLL_SPACE = 1;
 
@@ -86,9 +83,7 @@ public class AbstractCanvasListener {
 		}
 	}
 
-	/**
-	 * Stop scrolling.
-	 */
+	/** Stop scrolling. */
 	protected void stopScrollIfScrollIsActive() {
 		if (scrollThread != null) {
 			scrollThread.interrupt();

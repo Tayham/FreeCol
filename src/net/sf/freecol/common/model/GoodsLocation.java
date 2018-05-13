@@ -40,7 +40,6 @@ import org.w3c.dom.Element;
  * @see Locatable
  */
 public abstract class GoodsLocation extends UnitLocation {
-
 	private static final Logger logger = Logger.getLogger(GoodsLocation.class.getName());
 
 	/** The container for the goods. */
@@ -81,7 +80,7 @@ public abstract class GoodsLocation extends UnitLocation {
 		super(game, id);
 	}
 
-	// getGoodsContainer() is part of the Location interface.
+	/** GetGoodsContainer() is part of the Location interface. */
 
 	public final void setGoodsContainer(final GoodsContainer goodsContainer) {
 		this.goodsContainer = goodsContainer;
@@ -106,9 +105,11 @@ public abstract class GoodsLocation extends UnitLocation {
 	 * @return True if the goods were all added.
 	 */
 	public final boolean addGoods(List<AbstractGoods> goods) {
-		for (AbstractGoods ag : goods)
-			if (!addGoods(ag))
+		for (AbstractGoods ag : goods) {
+			if (!addGoods(ag)) {
 				return false;
+			}
+		}
 		return true;
 	}
 
@@ -189,70 +190,60 @@ public abstract class GoodsLocation extends UnitLocation {
 		return (goodsContainer == null) ? Collections.<Goods>emptyList() : goodsContainer.getCompactGoods();
 	}
 
-	// Interface Location (from UnitLocation)
-	// Inheriting
-	// FreeColObject.getId()
-	// UnitLocation.getTile()
-	// UnitLocation.getLocationLabel
-	// UnitLocation.getLocationLabelFor
-	// UnitLocation.canAdd
-	// UnitLocation.getUnitCount
-	// UnitLocation.getUnitList
-	// UnitLocation.getSettlement
-	// Does not implement getRank
-
 	/**
-	 * {@inheritDoc}
+	 * Interface Location (from UnitLocation)
+	 * Inheriting
+	 * FreeColObject.getId()
+	 * UnitLocation.getTile()
+	 * UnitLocation.getLocationLabel
+	 * UnitLocation.getLocationLabelFor
+	 * UnitLocation.canAdd
+	 * UnitLocation.getUnitCount
+	 * UnitLocation.getUnitList
+	 * UnitLocation.getSettlement
+	 * Does not implement getRank
 	 */
+
 	@Override
 	public boolean add(Locatable locatable) {
 		return (locatable instanceof Goods) ? addGoods((Goods) locatable) : super.add(locatable);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean remove(Locatable locatable) {
 		return (locatable instanceof Goods) ? removeGoods((Goods) locatable) != null : super.remove(locatable);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean contains(Locatable locatable) {
 		return (locatable instanceof Goods) ? goodsContainer.contains((Goods) locatable) : super.contains(locatable);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final GoodsContainer getGoodsContainer() {
 		// Marked final, as this is where the goods container is.
 		return goodsContainer;
 	}
 
-	// Interface UnitLocation
-	// Inheriting
-	// UnitLocation.getSpaceTaken
-	// UnitLocation.moveToFront
-	// UnitLocation.clearUnitList,
-	// UnitLocation.getUnitCapacity
-	// UnitLocation.priceGoods
-	// UnitLocation.equipForRole
-
 	/**
-	 * {@inheritDoc}
+	 * Interface UnitLocation
+	 * Inheriting
+	 * UnitLocation.getSpaceTaken
+	 * UnitLocation.moveToFront
+	 * UnitLocation.clearUnitList,
+	 * UnitLocation.getUnitCapacity
+	 * UnitLocation.priceGoods
+	 * UnitLocation.equipForRole
 	 */
+
 	@Override
 	public NoAddReason getNoAddReason(Locatable locatable) {
 		if (locatable instanceof Goods) {
 			Goods goods = (Goods) locatable;
 			if (goods.getSpaceTaken()
-					+ ((goodsContainer == null) ? 0 : goodsContainer.getSpaceTaken()) > getGoodsCapacity())
+					+ ((goodsContainer == null) ? 0 : goodsContainer.getSpaceTaken()) > getGoodsCapacity()) {
 				return NoAddReason.CAPACITY_EXCEEDED;
+			}
 			return NoAddReason.NONE;
 		}
 		return super.getNoAddReason(locatable);
@@ -297,11 +288,8 @@ public abstract class GoodsLocation extends UnitLocation {
 		return (goodsContainer == null) ? null : goodsContainer.removeGoods(type, amount);
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<FreeColGameObject> getDisposeList() {
 		List<FreeColGameObject> objects = new ArrayList<>();
@@ -312,34 +300,27 @@ public abstract class GoodsLocation extends UnitLocation {
 		return objects;
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
-		if (goodsContainer != null)
+		if (goodsContainer != null) {
 			goodsContainer.toXML(xw);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
-		if (goodsContainer != null)
+		if (goodsContainer != null) {
 			goodsContainer.removeAll();
+		}
 
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -347,7 +328,6 @@ public abstract class GoodsLocation extends UnitLocation {
 		if (GoodsContainer.getXMLElementTagName().equals(tag)) {
 			goodsContainer = xr.readFreeColGameObject(getGame(), GoodsContainer.class);
 			goodsContainer.setLocation(this);
-
 		} else {
 			super.readChild(xr);
 		}

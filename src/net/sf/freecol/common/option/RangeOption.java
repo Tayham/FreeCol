@@ -37,7 +37,6 @@ import net.sf.freecol.common.model.Specification;
  * values.
  */
 public class RangeOption extends SelectOption {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(RangeOption.class.getName());
 
@@ -60,8 +59,9 @@ public class RangeOption extends SelectOption {
 	public int getValueRank() {
 		int rank = 0;
 		for (Integer i : getItemValues().keySet()) {
-			if (i == getValue())
+			if (i == getValue()) {
 				return rank;
+			}
 			rank++;
 		}
 		return 0; // Actually invalid
@@ -79,8 +79,9 @@ public class RangeOption extends SelectOption {
 		Iterator<Integer> iterator = getItemValues().keySet().iterator();
 
 		while (rank >= 0) {
-			if (!iterator.hasNext())
+			if (!iterator.hasNext()) {
 				break;
+			}
 			curValue = iterator.next();
 			rank--;
 		}
@@ -98,11 +99,8 @@ public class RangeOption extends SelectOption {
 		return "rangeValue";
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

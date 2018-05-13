@@ -47,11 +47,8 @@ import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 import net.sf.freecol.common.model.WorkLocation;
 
-/**
- * This panel displays the Labour Report.
- */
+/** This panel displays the Labour Report. */
 public final class CompactLabourReport extends ReportPanel {
-
 	private final int COLONY_COLUMN = 0;
 	private final int UNIT_TYPE_COLUMN = 1;
 	private final int WORKING_COLUMN = 2;
@@ -98,7 +95,7 @@ public final class CompactLabourReport extends ReportPanel {
 	 *            The <code>UnitData</code> to display in this report.
 	 */
 	public CompactLabourReport(FreeColClient freeColClient, LabourData.UnitData data) {
-		super(freeColClient, ((data == null) ? "reportLabourAction" : "report.labour.details"));
+		super(freeColClient, (data == null) ? "reportLabourAction" : "report.labour.details");
 
 		this.unitData = data;
 
@@ -110,18 +107,8 @@ public final class CompactLabourReport extends ReportPanel {
 	@Override
 	public JButton createColonyButton(final Colony colony) {
 		String text = colony.getName();
-		if (!unitData.isSummary()) {
-			/*
-			 * int unitIndex = unitData.getUnitType().getIndex();
-			 * 
-			 * int skillLevel = Unit.getSkillLevel(unitIndex); if (skillLevel <= 0 &&
-			 * skillLevel > -2) { //settlers and servants can be trained anywwhere a farmer
-			 * can unitIndex = Unit.EXPERT_FARMER; }
-			 */
-
-			if (colony.canTrain(unitData.getUnitType())) {
-				text = text + "*";
-			}
+		if (!unitData.isSummary() && colony.canTrain(unitData.getUnitType())) {
+			text = text + "*";
 		}
 
 		return createButton(text, (ActionEvent ae) -> {
@@ -175,11 +162,8 @@ public final class CompactLabourReport extends ReportPanel {
 		return new EmptyBorder(0, 20, 20, 20);
 	}
 
-	/**
-	 * adds the header rows
-	 */
+	/** Adds the header rows. */
 	private void addHeader() {
-
 		JLabel empty = new JLabel();
 		empty.setBorder(Utility.TOPLEFTCELLBORDER);
 		headerRow.add(empty, "cell " + COLONY_COLUMN + " 1");
@@ -235,7 +219,7 @@ public final class CompactLabourReport extends ReportPanel {
 	}
 
 	/**
-	 * add unit data for a given location
+	 * Add unit data for a given location.
 	 *
 	 * @param data
 	 * @param row
@@ -399,14 +383,14 @@ public final class CompactLabourReport extends ReportPanel {
 	 * 
 	 * @return distribution of {@code value}
 	 */
-	/*
-	 * private int[] distribute(int value, int pocketCount) { int[] pockets = new
+	/**
+	 * Private int[] distribute(int value, int pocketCount) { int[] pockets = new
 	 * int[pocketCount];
 	 * 
 	 * int pocketIndex = 0; for (int i = value; i > 0; i--) {
 	 * pockets[pocketIndex]++;
 	 * 
-	 * pocketIndex++; pocketIndex = pocketIndex % pocketCount; } return pockets; }
+	 * pocketIndex++; pocketIndex = pocketIndex % pocketCount; } return pockets; }.
 	 */
 
 	private void addLocationSummary(LabourData.LocationData data, int row) {
@@ -564,8 +548,9 @@ public final class CompactLabourReport extends ReportPanel {
 		JLabel label = new JLabel(String.valueOf(number));
 		label.setHorizontalAlignment(SwingConstants.TRAILING);
 		label.setBorder(Utility.CELLBORDER);
-		if (toolTipKey != null)
+		if (toolTipKey != null) {
 			Utility.localizeToolTip(this, toolTipKey);
+		}
 		return label;
 	}
 
@@ -582,7 +567,7 @@ public final class CompactLabourReport extends ReportPanel {
 	}
 
 	private GoodsType getGoodsType() {
-		return (isSummary()) ? null : unitData.getUnitType().getExpertProduction();
+		return isSummary() ? null : unitData.getUnitType().getExpertProduction();
 	}
 
 	/**

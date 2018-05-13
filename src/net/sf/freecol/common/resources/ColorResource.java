@@ -32,7 +32,6 @@ import java.util.logging.Logger;
  * @see Color
  */
 public class ColorResource extends Resource {
-
 	private static final Logger logger = Logger.getLogger(ColorResource.class.getName());
 
 	public static final Color REPLACEMENT_COLOR = Color.MAGENTA;
@@ -68,8 +67,9 @@ public class ColorResource extends Resource {
 	}
 
 	private static boolean isHexString(String str) {
-		if (str == null || !(str.startsWith("0x") || str.startsWith("0X")) || str.length() <= 2)
+		if (str == null || (!str.startsWith("0x") && !str.startsWith("0X")) || str.length() <= 2) {
 			return false;
+		}
 		for (int i = 2; i < str.length(); i++) {
 			if (!"0123456789ABCDEFabcdef".contains(str.substring(i, i + 1))) {
 				return false;

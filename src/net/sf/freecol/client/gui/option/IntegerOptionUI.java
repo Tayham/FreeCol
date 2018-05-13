@@ -31,7 +31,6 @@ import net.sf.freecol.common.option.IntegerOption;
  * to be both seen and changed.
  */
 public final class IntegerOptionUI extends OptionUI<IntegerOption> {
-
 	private final JSpinner spinner = new JSpinner();
 
 	/**
@@ -64,27 +63,18 @@ public final class IntegerOptionUI extends OptionUI<IntegerOption> {
 		initialize();
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JComponent getComponent() {
 		return spinner;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValue((Integer) spinner.getValue());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		spinner.setValue(getOption().getValue());

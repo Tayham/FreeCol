@@ -40,7 +40,6 @@ import net.miginfocom.swing.MigLayout;
  * board the currently selected ship.
  */
 public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChangeListener {
-
 	private static final Logger logger = Logger.getLogger(CargoPanel.class.getName());
 
 	/** The carrier that contains cargo. */
@@ -62,21 +61,18 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 		this.carrier = null;
 		this.defaultTransferHandler = new DefaultTransferHandler(getFreeColClient(), this);
 
-		if (withTitle)
+		if (withTitle) {
 			setBorder(Utility.localizedBorder("cargoOnCarrier"));
+		}
 	}
 
-	/**
-	 * Initialize this CargoPanel.
-	 */
+	/** Initialize this CargoPanel. */
 	public void initialize() {
 		addPropertyChangeListeners();
 		update();
 	}
 
-	/**
-	 * Clean up this CargoPanel.
-	 */
+	/** Clean up this CargoPanel. */
 	public void cleanup() {
 		removePropertyChangeListeners();
 	}
@@ -95,9 +91,7 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 		}
 	}
 
-	/**
-	 * Update this CargoPanel.
-	 */
+	/** Update this CargoPanel. */
 	public void update() {
 		removeAll();
 
@@ -164,9 +158,7 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 		}
 	}
 
-	/**
-	 * Update the title of this CargoPanel.
-	 */
+	/** Update the title of this CargoPanel. */
 	private void updateTitle() {
 		Utility.localizeBorder(this,
 				(carrier == null) ? StringTemplate.key("cargoOnCarrier")
@@ -177,33 +169,29 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 
 	// Interface DropTarget
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean accepts(Unit unit) {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean accepts(Goods goods) {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public Component add(Component comp, boolean editState) {
-		if (carrier == null)
+		if (carrier == null) {
 			return null;
+		}
 
 		if (editState) {
 			if (comp instanceof GoodsLabel) {
 				Goods goods = ((GoodsLabel) comp).getGoods();
 				int loadableAmount = carrier.getLoadableAmount(goods.getType());
-				if (loadableAmount == 0)
+				if (loadableAmount == 0) {
 					return null;
+				}
 				if (loadableAmount > goods.getAmount()) {
 					loadableAmount = goods.getAmount();
 				}
@@ -212,7 +200,6 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 				igc().loadCargo(toAdd, carrier);
 				update();
 				return comp;
-
 			} else if (comp instanceof MarketLabel) {
 				MarketLabel label = (MarketLabel) comp;
 				Player player = carrier.getOwner();
@@ -224,15 +211,15 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 				igc().nextModelMessage();
 				update();
 				return comp;
-
 			} else if (comp instanceof UnitLabel) {
 				Unit unit = ((UnitLabel) comp).getUnit();
 				if (carrier.canAdd(unit)) {
 					Container oldParent = comp.getParent();
 					if (igc().boardShip(unit, carrier)) {
 						((UnitLabel) comp).setSmall(false);
-						if (oldParent != null)
+						if (oldParent != null) {
 							oldParent.remove(comp);
+						}
 						update();
 						return comp;
 					}
@@ -244,14 +231,12 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public int suggested(GoodsType type) {
 		return carrier.getLoadableAmount(type);
 	}
 
-	// Interface PropertyChangeListener
+	/** Interface PropertyChangeListener. */
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
@@ -260,21 +245,15 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 		update();
 	}
 
-	// Override JLabel
+	/** Override JLabel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getUIClassID() {
 		return "CargoPanelUI";
 	}
 
-	// Override Container
+	/** Override Container. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void remove(Component comp) {
 		if (comp instanceof UnitLabel) {
@@ -288,11 +267,8 @@ public class CargoPanel extends FreeColPanel implements DropTarget, PropertyChan
 		}
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

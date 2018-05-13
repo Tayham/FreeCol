@@ -52,10 +52,9 @@ import net.sf.freecol.server.ai.AIUnit;
  * be created, and the unit be moved there.
  */
 public class ManageMissionariesGoal extends Goal {
-
 	private static final Logger logger = Logger.getLogger(ManageMissionariesGoal.class.getName());
 
-	// Since all our subgoals are the same, we're keeping them on a simple list
+	/** Since all our subgoals are the same, we're keeping them on a simple list. */
 	private final List<Goal> subGoalList;
 
 	public ManageMissionariesGoal(AIPlayer p, Goal g, float w) {
@@ -156,7 +155,7 @@ public class ManageMissionariesGoal extends Goal {
 		return descr + ":" + availableUnitsList.size();
 	}
 
-	/* INTERNAL *******************************************************************/
+	/** INTERNAL. */
 
 	private IndianSettlement findSettlement(Tile tile) {
 		return (tile == null)
@@ -179,9 +178,6 @@ public class ManageMissionariesGoal extends Goal {
 		// FIXME
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

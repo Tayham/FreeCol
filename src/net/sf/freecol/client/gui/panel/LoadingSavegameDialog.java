@@ -38,11 +38,8 @@ import net.sf.freecol.client.gui.FontLibrary;
 import net.sf.freecol.client.gui.LoadingSavegameInfo;
 import net.sf.freecol.common.i18n.Messages;
 
-/**
- * Dialog for setting some options when loading a game.
- */
+/** Dialog for setting some options when loading a game. */
 public final class LoadingSavegameDialog extends FreeColConfirmDialog {
-
 	private static final Logger logger = Logger.getLogger(LoadingSavegameDialog.class.getName());
 
 	private final JRadioButton singlePlayer;
@@ -132,7 +129,7 @@ public final class LoadingSavegameDialog extends FreeColConfirmDialog {
 	 * @return The port number.
 	 */
 	public int getPort() {
-		return ((Integer) portField.getValue());
+		return (Integer) portField.getValue();
 	}
 
 	/**

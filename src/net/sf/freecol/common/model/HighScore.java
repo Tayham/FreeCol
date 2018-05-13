@@ -43,11 +43,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 
 import org.w3c.dom.Element;
 
-/**
- * A FreeCol high score record.
- */
+/** A FreeCol high score record. */
 public class HighScore extends FreeColObject {
-
 	private static final Logger logger = Logger.getLogger(HighScore.class.getName());
 
 	/** The number of high scores to allow in the high scores list. */
@@ -57,7 +54,7 @@ public class HighScore extends FreeColObject {
 	 * On retirement, an object will be named in honour of the player. The nature of
 	 * the object depends on the player's score.
 	 */
-	public static enum ScoreLevel {
+	public enum ScoreLevel {
 		CONTINENT(40000), COUNTRY(35000), STATE(30000), CITY(25000), MOUNTAIN_RANGE(20000), RIVER(15000), INSTITUTE(
 				12000), UNIVERSITY(10000), STREET(8000), SCHOOL(7000), BIRD_OF_PREY(6000), TREE(5000), FLOWER(
 						4000), RODENT(3200), FOUL_SMELLING_PLANT(2400), POISONOUS_PLANT(1600), SLIME_MOLD_BEETLE(
@@ -298,8 +295,10 @@ public class HighScore extends FreeColObject {
 		return date;
 	}
 
-	// Utilities for manipulating lists of high scores, and serialization
-	// with the high scores file.
+	/**
+	 * Utilities for manipulating lists of high scores, and serialization
+	 * with the high scores file.
+	 */
 
 	private static final String HIGH_SCORES_TAG = "highScores";
 
@@ -327,9 +326,7 @@ public class HighScore extends FreeColObject {
 	 * @return True if the given score can be added to the list.
 	 */
 	public static boolean checkHighScore(int score, List<HighScore> scores) {
-		return /*
-				 * !FreeColDebugger.isInDebugMode() &&
-				 */score >= 0
+		return /* !FreeColDebugger.isInDebugMode() && */score >= 0
 				&& (scores.size() < NUMBER_OF_HIGH_SCORES || score > scores.get(scores.size() - 1).getScore());
 	}
 
@@ -342,8 +339,9 @@ public class HighScore extends FreeColObject {
 	 */
 	public static boolean newHighScore(Player player) {
 		List<HighScore> scores = loadHighScores();
-		if (!checkHighScore(player.getScore(), scores))
+		if (!checkHighScore(player.getScore(), scores)) {
 			return false;
+		}
 		HighScore hs = new HighScore(player, new Date());
 		scores.add(hs);
 		tidyScores(scores);
@@ -370,12 +368,12 @@ public class HighScore extends FreeColObject {
 			return scores;
 		}
 
-		try (FileInputStream fis = new FileInputStream(hsf); FreeColXMLReader xr = new FreeColXMLReader(fis);) {
+		try (FileInputStream fis = new FileInputStream(hsf); FreeColXMLReader xr = new FreeColXMLReader(fis)) {
 			xr.nextTag();
 
 			while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
 				final String tag = xr.getLocalName();
-				if (HighScore.getXMLElementTagName().equals(tag)) {
+				if (getXMLElementTagName().equals(tag)) {
 					scores.add(new HighScore(xr));
 				}
 			}
@@ -395,13 +393,14 @@ public class HighScore extends FreeColObject {
 	 */
 	public static boolean saveHighScores(List<HighScore> scores) {
 		boolean ret = false;
-		if (scores == null)
+		if (scores == null) {
 			return false;
+		}
 		tidyScores(scores);
 
 		File hsf = FreeColDirectories.getHighScoreFile();
 		try (FileOutputStream fos = new FileOutputStream(hsf);
-				FreeColXMLWriter xw = new FreeColXMLWriter(fos, FreeColXMLWriter.WriteScope.toSave(), true);) {
+				FreeColXMLWriter xw = new FreeColXMLWriter(fos, FreeColXMLWriter.WriteScope.toSave(), true)) {
 			ret = true;
 			xw.writeStartDocument("UTF-8", "1.0");
 			xw.writeStartElement(HIGH_SCORES_TAG);
@@ -426,11 +425,8 @@ public class HighScore extends FreeColObject {
 		return ret;
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int compareTo(FreeColObject other) {
 		int cmp = 0;
@@ -438,14 +434,17 @@ public class HighScore extends FreeColObject {
 			HighScore hs = (HighScore) other;
 			cmp = hs.getScore() - getScore();
 		}
-		if (cmp == 0)
+		if (cmp == 0) {
 			cmp = super.compareTo(other);
+		}
 		return cmp;
 	}
 
-	// Serialization.
-	// High scores are only FreeColObjects so that they can be c-s serialized,
-	// they do not have ids.
+	/**
+	 * Serialization.
+	 * High scores are only FreeColObjects so that they can be c-s serialized,
+	 * they do not have ids.
+	 */
 
 	private static final String COLONIES_TAG = "colonies";
 	private static final String DATE_TAG = "date";
@@ -460,14 +459,11 @@ public class HighScore extends FreeColObject {
 	private static final String RETIREMENT_TURN_TAG = "retirementTurn";
 	private static final String SCORE_TAG = "score";
 	private static final String UNITS_TAG = "units";
-	// @compat 0.10.7
+	/** @compat 0.10.7 */
 	private static final String OLD_NATION_ID_TAG = "nationID";
 	private static final String OLD_NATION_TYPE_ID_TAG = "nationTypeID";
-	// end @compat
+	/** End @compat. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		// HighScores do not have ids, no super.writeAttributes().
@@ -504,9 +500,6 @@ public class HighScore extends FreeColObject {
 		xw.writeAttribute(COLONIES_TAG, colonies);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		// HighScores do not have ids, no super.readAttributes().
@@ -514,8 +507,9 @@ public class HighScore extends FreeColObject {
 		date = null;
 		try {
 			long l = xr.getAttribute(DATE_TAG, -1L);
-			if (l >= 0)
+			if (l >= 0) {
 				date = new Date(l);
+			}
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Bad long date", e);
 		}
@@ -524,7 +518,7 @@ public class HighScore extends FreeColObject {
 			try {
 				float f = xr.getAttribute(DATE_TAG, -1.0f);
 				if (f >= 0.0 && f < Long.MAX_VALUE) {
-					date = new Date(new Float(f).longValue());
+					date = new Date(Float.valueOf(f).longValue());
 				}
 			} catch (Exception e) {
 				logger.log(Level.WARNING, "Bad float date", e);
@@ -541,8 +535,9 @@ public class HighScore extends FreeColObject {
 			}
 		}
 		// end @compat
-		if (date == null)
-			date = new Date(); // Give up
+		if (date == null) {
+			date = new Date();
+		} // Give up
 
 		retirementTurn = xr.getAttribute(RETIREMENT_TURN_TAG, 0);
 
@@ -577,9 +572,6 @@ public class HighScore extends FreeColObject {
 		colonies = xr.getAttribute(COLONIES_TAG, 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

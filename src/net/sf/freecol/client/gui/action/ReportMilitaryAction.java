@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying a Military Report.
- */
+/** An action for displaying a Military Report. */
 public class ReportMilitaryAction extends FreeColAction {
-
 	public static final String id = "reportMilitaryAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ReportMilitaryAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showReportMilitaryPanel();

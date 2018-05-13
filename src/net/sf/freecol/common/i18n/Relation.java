@@ -21,13 +21,10 @@ package net.sf.freecol.common.i18n;
 
 import java.util.List;
 
-/**
- * A grammatical relationship.
- */
+/** A grammatical relationship. */
 public class Relation {
-
 	int low, high, mod = 1;
-	boolean negated = false;
+	boolean negated;
 	boolean integer = true;
 
 	public Relation(List<String> tokens) {
@@ -78,10 +75,7 @@ public class Relation {
 	 */
 	public boolean matches(double number) {
 		double value = (mod == 1) ? number : number % mod;
-		if (integer && value != (int) value) {
-			return false;
-		}
-		return (low <= value && value <= high) != negated;
+		return (!integer || value == (int) value) && (low <= value && value <= high) != negated;
 	}
 
 	@Override
@@ -93,14 +87,17 @@ public class Relation {
 		}
 		if (low == high) {
 			sb.append("is ");
-			if (negated)
+			if (negated) {
 				sb.append("not ");
+			}
 			sb.append(low);
 		} else {
-			if (negated)
+			if (negated) {
 				sb.append("not ");
-			if (!integer)
+			}
+			if (!integer) {
 				sb.append("with");
+			}
 			sb.append("in ").append(low).append("..").append(high);
 		}
 		return sb.toString();
@@ -142,5 +139,4 @@ public class Relation {
 			high = Integer.parseInt(input.remove(0));
 		}
 	}
-
 }

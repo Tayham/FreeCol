@@ -16,10 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/**********************************************
- * Please see "Howto" at the end of this file! *
- **********************************************/
+/* Please see "Howto" at the end of this file! */
 
 package net.sf.freecol.server.ai.goal;
 
@@ -55,7 +52,6 @@ import net.sf.freecol.server.ai.AIUnit;
  * also be used to assist the human player (i.e. GoTo, Scouting, Trade, Piracy).
  */
 public abstract class Goal extends AIObject implements GoalConstants {
-
 	private static final Logger logger = Logger.getLogger(Goal.class.getName());
 
 	private float relativeWeight;
@@ -67,7 +63,7 @@ public abstract class Goal extends AIObject implements GoalConstants {
 	private final Goal parentGoal;
 
 	/**
-	 * Standard constructor
+	 * Standard constructor.
 	 *
 	 * @param p
 	 *            The {@link AIPlayer} this goal belongs to
@@ -238,11 +234,11 @@ public abstract class Goal extends AIObject implements GoalConstants {
 	 *         does not exist
 	 */
 	public float getParentWeight() {
-		if (parentGoal == null) {
+		if (parentGoal != null) {
 			// we must be a direct goal of our AIPlayer
-			return 1.0f;
-		} else {
 			return parentGoal.getAbsoluteWeight();
+		} else {
+			return 1.0f;
 		}
 	}
 
@@ -322,7 +318,6 @@ public abstract class Goal extends AIObject implements GoalConstants {
 	// */
 	// protected void requestUnit(UnitType ut) {
 	// int turnsWithoutUnit = getGame().getTurn().getNumber() - turnLastUnitAdded;
-	//
 	// //FIXME: Uncomment after AIPlayer.addUnitWish() has been written.
 	// //player.addUnitWish(this, ut, getAbsoluteWeight(), turnsWithoutUnit);
 	// }
@@ -350,7 +345,6 @@ public abstract class Goal extends AIObject implements GoalConstants {
 	 *            The minimum a unit needs to produce to be considered.
 	 */
 	protected void requestWorker(GoodsType gt, int minProduction) {
-
 		// FIXME: Uncomment after AIPlayer.addWorkerWish() has been written.
 		// int turnsWithoutUnit = getGame().getTurn().getNumber() - turnLastUnitAdded;
 		// player.addWorkerWish(this, gt, minProduction, getAbsoluteWeight(),
@@ -542,7 +536,7 @@ public abstract class Goal extends AIObject implements GoalConstants {
 		Iterator<AIUnit> uit = getOwnedAIUnitsIterator();
 		while (uit.hasNext()) {
 			AIUnit u = uit.next();
-			if (!(u.getGoal() == this)) {
+			if (u.getGoal() != this) {
 				logger.warning("Goal " + getGoalDescription() + " owns unit with another goal: "
 						+ u.getGoal().getGoalDescription());
 				removeUnit(u);
@@ -592,7 +586,7 @@ public abstract class Goal extends AIObject implements GoalConstants {
 		return "aiGoal";
 	}
 
-	/* INTERFACE ******************************************************************/
+	/* INTERFACE */
 
 	/**
 	 * Since internal implementation details may vary, each Goal will define an

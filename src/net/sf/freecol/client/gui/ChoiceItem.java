@@ -31,14 +31,13 @@ import net.sf.freecol.common.model.Player;
  * {@link net.sf.freecol.client.gui.panel.FreeColChoiceDialog}.
  */
 public class ChoiceItem<T> implements Comparable<ChoiceItem<T>> {
-
 	private String text;
 	private final T object;
 	private ImageIcon icon;
 	private final boolean enabled;
-	private boolean optionOK = false;
-	private boolean optionCancel = false;
-	private boolean optionDefault = false;
+	private boolean optionOK;
+	private boolean optionCancel;
+	private boolean optionDefault;
 
 	/**
 	 * Creates a new <code>ChoiceItem</code> with the given object.
@@ -107,7 +106,7 @@ public class ChoiceItem<T> implements Comparable<ChoiceItem<T>> {
 	 *                <code>Integer</code>.
 	 */
 	public int getChoice() {
-		return ((Integer) object);
+		return (Integer) object;
 	}
 
 	/**
@@ -119,9 +118,6 @@ public class ChoiceItem<T> implements Comparable<ChoiceItem<T>> {
 		return this.enabled;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return text;
@@ -205,11 +201,8 @@ public class ChoiceItem<T> implements Comparable<ChoiceItem<T>> {
 		return this;
 	}
 
-	// Interface Comparable
+	/** Interface Comparable. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int compareTo(ChoiceItem<T> other) {
 		return (this.text == null) ? -1 : (other.text == null) ? 1 : this.text.compareTo(other.text);

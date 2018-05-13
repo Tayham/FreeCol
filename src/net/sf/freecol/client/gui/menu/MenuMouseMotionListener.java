@@ -37,7 +37,6 @@ import net.sf.freecol.client.gui.Canvas;
  * to the size of the entire canvas (which should always be bigger).
  */
 public class MenuMouseMotionListener extends AbstractCanvasListener implements MouseMotionListener {
-
 	/**
 	 * Trivial constructor.
 	 *
@@ -48,17 +47,11 @@ public class MenuMouseMotionListener extends AbstractCanvasListener implements M
 		super(freeColClient, canvas);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// Do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		performAutoScrollIfActive(e);

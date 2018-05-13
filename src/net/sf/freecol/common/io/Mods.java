@@ -32,11 +32,8 @@ import java.util.logging.Logger;
 import net.sf.freecol.common.io.FreeColModFile;
 import net.sf.freecol.common.util.LogBuilder;
 
-/**
- * Contains methods for getting a list of available mods.
- */
+/** Contains methods for getting a list of available mods. */
 public class Mods {
-
 	private static final Logger logger = Logger.getLogger(Mods.class.getName());
 
 	/** A cache of all the mods. */
@@ -62,8 +59,9 @@ public class Mods {
 					logger.log(Level.WARNING, "Bad mod in " + f.getPath(), e);
 				}
 			}
-			if (lb.grew())
+			if (lb.grew()) {
 				lb.log(logger, Level.INFO);
+			}
 		}
 	}
 

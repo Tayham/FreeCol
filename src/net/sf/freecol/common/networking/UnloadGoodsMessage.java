@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when unloading goods.
- */
+/** The message sent when unloading goods. */
 public class UnloadGoodsMessage extends DOMMessage {
-
 	/** The identifier of the type of goods to unload. */
 	private final String goodsTypeId;
 

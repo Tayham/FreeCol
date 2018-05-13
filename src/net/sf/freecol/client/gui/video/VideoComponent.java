@@ -32,11 +32,8 @@ import com.fluendo.player.Cortado;
 import net.sf.freecol.client.gui.panel.FreeColImageBorder;
 import net.sf.freecol.common.resources.Video;
 
-/**
- * A component for playing video.
- */
+/** A component for playing video. */
 public class VideoComponent extends JPanel {
-
 	private static final Logger logger = Logger.getLogger(VideoComponent.class.getName());
 
 	private final Cortado applet;
@@ -99,25 +96,18 @@ public class VideoComponent extends JPanel {
 		applet.removeMouseListener(l);
 	}
 
-	/**
-	 * Start playing the video.
-	 */
+	/** Start playing the video. */
 	public void play() {
 		applet.start();
 	}
 
-	/**
-	 * Stop playing the video.
-	 */
+	/** Stop playing the video. */
 	public void stop() {
 		applet.stop();
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		applet.stop();
@@ -126,14 +116,11 @@ public class VideoComponent extends JPanel {
 		// Java crashes here deep in the libraries, typically including:
 		// sun.awt.X11.XBaseMenuWindow.dispose(XBaseMenuWindow.java:907)
 		// so it is probably X11-dependent.
-		//
 		// Sighted:
 		// (Fedora, 1.7.0_40, 24.0-b56)
 		// (Arch, 1.7.0_45, 24.45-b08)
-		//
 		// Switching windowed mode seems to hit is particularly badly on
 		// arch, although not seeing that on Fedora (BR#2611).
-		//
 		// This routine was introduced to fix a different Java crash,
 		// so disabling it and/or replacing it with a stub just moves
 		// the problem around. Even the following does not help in

@@ -105,7 +105,6 @@ import net.sf.freecol.server.model.ServerPlayer;
  * {@link AIInGameInputHandler} when it is this player's turn.
  */
 public class EuropeanAIPlayer extends AIPlayer {
-
 	private static final Logger logger = Logger.getLogger(EuropeanAIPlayer.class.getName());
 
 	/** Maximum number of turns to travel to a building site. */
@@ -144,12 +143,14 @@ public class EuropeanAIPlayer extends AIPlayer {
 	private static final Comparator<AIUnit> builderComparator = new Comparator<AIUnit>() {
 		private int score(AIUnit a) {
 			Unit unit;
-			if (a == null || (unit = a.getUnit()) == null || BuildColonyMission.invalidReason(a) != null)
+			if (a == null || (unit = a.getUnit()) == null || BuildColonyMission.invalidReason(a) != null) {
 				return -1000;
-			int base = (!unit.hasDefaultRole()) ? 0
+			}
+			int base = !unit.hasDefaultRole() ? 0
 					: (unit.getSkillLevel() > 0) ? 100 : 500 + 100 * unit.getSkillLevel();
-			if (unit.hasTile())
+			if (unit.hasTile()) {
 				base += 50;
+			}
 			return base;
 		}
 
@@ -223,9 +224,7 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	private final java.util.Map<Tile, TileImprovementPlan> tipMap = new HashMap<>();
 
-	/**
-	 * A cached map of destination Location to Wishes awaiting transport.
-	 */
+	/** A cached map of destination Location to Wishes awaiting transport. */
 	private final java.util.Map<Location, List<Wish>> transportDemand = new HashMap<>();
 
 	/** A cached list of transportables awaiting transport. */
@@ -255,22 +254,22 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * Current estimate of the number of new <code>BuildColonyMission</code>s to
 	 * create.
 	 */
-	private int nBuilders = 0;
+	private int nBuilders;
 
 	/**
 	 * Current estimate of the number of new <code>PioneeringMission</code>s to
 	 * create.
 	 */
-	private int nPioneers = 0;
+	private int nPioneers;
 
 	/**
 	 * Current estimate of the number of new <code>ScoutingMission</code>s to
 	 * create.
 	 */
-	private int nScouts = 0;
+	private int nScouts;
 
 	/** Count of the number of transports needing a naval unit. */
-	private int nNavalCarrier = 0;
+	private int nNavalCarrier;
 
 	/**
 	 * Creates a new <code>EuropeanAIPlayer</code>.
@@ -311,8 +310,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 *            The <code>Specification</code> to initialize from.
 	 */
 	public static synchronized void initializeFromSpecification(Specification spec) {
-		if (pioneerRole != null)
+		if (pioneerRole != null) {
 			return;
+		}
 		pioneerRole = spec.getRoleWithAbility(Ability.IMPROVE_TERRAIN, null);
 		scoutRole = spec.getRoleWithAbility(Ability.SPEAK_WITH_CHIEF, null);
 		liftBoycottCheatPercent = spec.getInteger(GameOptions.LIFT_BOYCOTT_CHEAT);
@@ -354,23 +354,27 @@ public class EuropeanAIPlayer extends AIPlayer {
 		Mission m;
 		TransportMission tm;
 		for (AIUnit aiCarrier : aiUnits) {
-			if (aiCarrier.hasMission())
+			if (aiCarrier.hasMission()) {
 				continue;
+			}
 			Unit carrier = aiCarrier.getUnit();
-			if (!carrier.isNaval())
+			if (!carrier.isNaval()) {
 				continue;
+			}
 			target = null;
 			for (Unit u : carrier.getUnitList()) {
 				AIUnit aiu = aiMain.getAIUnit(u);
 				for (int range = buildingRange; range < maxRange; range += buildingRange) {
 					target = BuildColonyMission.findTarget(aiu, range, false);
-					if (target != null)
+					if (target != null) {
 						break;
+					}
 				}
 				if (target == null) {
 					throw new RuntimeException("Initial colony fail!");
 				}
-				if ((m = getBuildColonyMission(aiu, target)) != null) {
+				m = getBuildColonyMission(aiu, target);
+				if (m != null) {
 					lb.add(m, ", ");
 				}
 			}
@@ -382,8 +386,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 				lb.add(tm);
 				for (Unit u : carrier.getUnitList()) {
 					AIUnit aiu = getAIMain().getAIUnit(u);
-					if (aiu == null)
+					if (aiu == null) {
 						continue;
+					}
 					tm.queueTransportable(aiu, false, lb);
 				}
 			}
@@ -392,13 +397,17 @@ public class EuropeanAIPlayer extends AIPlayer {
 		// Put in some backup missions.
 		lb.mark();
 		for (AIUnit aiu : aiUnits) {
-			if (aiu.hasMission())
+			if (aiu.hasMission()) {
 				continue;
-			if ((m = getSimpleMission(aiu)) != null)
+			}
+			m = getSimpleMission(aiu);
+			if (m != null) {
 				lb.add(m, ", ");
+			}
 		}
-		if (lb.grew("\n  Backup: "))
+		if (lb.grew("\n  Backup: ")) {
 			lb.shrink(", ");
+		}
 	}
 
 	/**
@@ -430,12 +439,14 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	private void cheat(LogBuilder lb) {
 		final AIMain aiMain = getAIMain();
-		if (!aiMain.getFreeColServer().getSinglePlayer())
+		if (!aiMain.getFreeColServer().getSinglePlayer()) {
 			return;
+		}
 
 		final Player player = getPlayer();
-		if (player.getPlayerType() != PlayerType.COLONIAL)
+		if (player.getPlayerType() != PlayerType.COLONIAL) {
 			return;
+		}
 		lb.mark();
 
 		final Specification spec = getSpecification();
@@ -506,8 +517,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			for (UnitType ut : workerWishes.keySet()) {
 				List<WorkerWish> wl = workerWishes.get(ut);
 				if (wl == null || wl.isEmpty() || ut == null || !ut.isAvailableTo(player)
-						|| europe.getUnitPrice(ut) == UNDEFINED)
+						|| europe.getUnitPrice(ut) == UNDEFINED) {
 					continue;
+				}
 				WorkerWish ww = wl.get(0);
 				if (bestValue < ww.getValue()) {
 					bestValue = ww.getValue();
@@ -527,22 +539,22 @@ public class EuropeanAIPlayer extends AIPlayer {
 				cheatGold(cost, lb);
 				AIUnit aiu;
 				if (bestWish == null) {
-					if ((aiu = recruitAIUnitInEurope(-1)) != null) {
+					aiu = recruitAIUnitInEurope(-1);
+					if (aiu != null) {
 						// let giveNormalMissions look after the mission
 						lb.add(" to recruit ", aiu.getUnit(), ", ");
 					}
-				} else {
-					if ((aiu = trainAIUnitInEurope(bestWish.getUnitType())) != null) {
-						Mission m = getWishRealizationMission(aiu, bestWish);
-						if (m != null) {
-							lb.add(" to train for ", m, ", ");
-						} else {
-							lb.add(" to train ", aiu.getUnit(), ", ");
-						}
+				} else if ((aiu = trainAIUnitInEurope(bestWish.getUnitType())) != null) {
+					Mission m = getWishRealizationMission(aiu, bestWish);
+					if (m != null) {
+						lb.add(" to train for ", m, ", ");
+					} else {
+						lb.add(" to train ", aiu.getUnit(), ", ");
 					}
 				}
-				if (aiu != null)
+				if (aiu != null) {
 					player.logCheat("Make " + aiu.getUnit());
+				}
 			}
 		}
 
@@ -572,8 +584,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			if (colonies.size() < 3) {
 				List<Colony> targets = new ArrayList<>();
 				for (Player p : enemies) {
-					if (p.isEuropean())
+					if (p.isEuropean()) {
 						targets.addAll(p.getColonies());
+					}
 				}
 				double targetScore = -1;
 				for (Colony c : targets) {
@@ -591,20 +604,23 @@ public class EuropeanAIPlayer extends AIPlayer {
 			// Otherwise attack something near a weak colony
 			if (target == null && !colonies.isEmpty()) {
 				List<AIColony> bad = new ArrayList<>(getBadlyDefended());
-				if (bad.isEmpty())
+				if (bad.isEmpty()) {
 					bad.addAll(getAIColonies());
+				}
 				AIColony defend = getRandomMember(logger, "AIColony to defend", bad, air);
 				Tile center = defend.getColony().getTile();
 				Tile t = game.getMap().searchCircle(center, GoalDeciders.getEnemySettlementGoalDecider(enemies), 30);
-				if (t != null)
+				if (t != null) {
 					target = t.getSettlement();
+				}
 			}
 			if (target != null) {
 				List<Unit> mercs = ((ServerPlayer) player).createUnits(player.getMonarch().getMercenaries(air), europe);
 				for (Unit u : mercs) {
 					AIUnit aiu = getAIUnit(u);
-					if (aiu == null)
-						continue; // Can not happen
+					if (aiu == null) {
+						continue;
+					} // Can not happen
 					player.logCheat("Enlist " + aiu.getUnit());
 					Mission m = getSeekAndDestroyMission(aiu, target);
 					if (m != null) {
@@ -648,8 +664,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			cheatUnit(rc, "transport-naval", lb);
 		}
 
-		if (lb.grew("\n  Cheats: "))
+		if (lb.grew("\n  Cheats: ")) {
 			lb.shrink(", ");
+		}
 	}
 
 	/**
@@ -685,9 +702,10 @@ public class EuropeanAIPlayer extends AIPlayer {
 		int cost = europe.getUnitPrice(unitType);
 		cheatGold(cost, lb);
 		AIUnit result = trainAIUnitInEurope(unitType);
-		lb.add(" to build ", what, " ", unitType.getSuffix(), ((result != null) ? "" : "(failed)"), ", ");
-		if (result == null)
+		lb.add(" to build ", what, " ", unitType.getSuffix(), (result != null) ? "" : "(failed)", ", ");
+		if (result == null) {
 			return null;
+		}
 		player.logCheat("Build " + result.getUnit());
 		return result;
 	}
@@ -709,11 +727,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public void allocateTransportables(List<TransportableAIObject> transportables, List<TransportMission> missions,
 			LogBuilder lb) {
-		if (transportables.isEmpty())
+		if (transportables.isEmpty() || missions.isEmpty()) {
 			return;
-		if (missions.isEmpty())
-			return;
-
+		}
 		lb.add("\n  Allocate Transport cargo=", transportables.size(), " carriers=", missions.size());
 		// for (TransportableAIObject t : urgent) lb.add(" ", t);
 		// lb.add(" ->");
@@ -725,16 +741,18 @@ public class EuropeanAIPlayer extends AIPlayer {
 		boolean present;
 		int i = 0;
 		outer: while (i < transportables.size()) {
-			if (missions.isEmpty())
+			if (missions.isEmpty()) {
 				break;
+			}
 			TransportableAIObject t = transportables.get(i);
 			lb.add(" for ", t);
 			best = null;
 			bestValue = 0.0f;
 			present = false;
 			for (TransportMission tm : missions) {
-				if (!tm.spaceAvailable(t))
+				if (!tm.spaceAvailable(t)) {
 					continue;
+				}
 				Cargo cargo = tm.makeCargo(t, lb2);
 				if (cargo == null) { // Serious problem with this cargo
 					transportables.remove(i);
@@ -744,11 +762,12 @@ public class EuropeanAIPlayer extends AIPlayer {
 				float value;
 				if (turns == 0) {
 					value = tm.destinationCapacity();
-					if (!present)
-						bestValue = 0.0f; // reset
+					if (!present) {
+						bestValue = 0.0f;
+					} // reset
 					present = true;
 				} else {
-					value = (present) ? -1.0f : (float) t.getTransportPriority() / turns;
+					value = present ? -1.0f : (float) t.getTransportPriority() / turns;
 				}
 				if (bestValue < value) {
 					bestValue = value;
@@ -814,17 +833,17 @@ public class EuropeanAIPlayer extends AIPlayer {
 			for (TileImprovementPlan tip : aic.getTileImprovementPlans()) {
 				if (tip == null || tip.isComplete()) {
 					aic.removeTileImprovementPlan(tip);
-				} else if (tip.getPioneer() != null) {
-					; // Do nothing, remove when complete
-				} else if (!tip.validate()) {
-					aic.removeTileImprovementPlan(tip);
-					tip.dispose();
-				} else if (tip.getTarget() == null) {
-					logger.warning("No target for tip: " + tip);
-				} else {
-					TileImprovementPlan other = tipMap.get(tip.getTarget());
-					if (other == null || other.getValue() < tip.getValue()) {
-						tipMap.put(tip.getTarget(), tip);
+				} else if (tip.getPioneer() == null) {
+					if (!tip.validate()) {
+						aic.removeTileImprovementPlan(tip);
+						tip.dispose();
+					} else if (tip.getTarget() == null) {
+						logger.warning("No target for tip: " + tip);
+					} else {
+						TileImprovementPlan other = tipMap.get(tip.getTarget());
+						if (other == null || other.getValue() < tip.getValue()) {
+							tipMap.put(tip.getTarget(), tip);
+						}
 					}
 				}
 			}
@@ -835,8 +854,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 				TileImprovementPlan tip = tipMap.get(t);
 				AIUnit pioneer = tip.getPioneer();
 				lb.add(" ", t, "=", tip.getType().getSuffix());
-				if (pioneer != null)
+				if (pioneer != null) {
 					lb.add("/", pioneer.getUnit());
+				}
 			}
 		}
 	}
@@ -884,17 +904,18 @@ public class EuropeanAIPlayer extends AIPlayer {
 		return (best == null) ? null : best.getTarget();
 	}
 
-	/**
-	 * Remove a <code>TileImprovementPlan</code> from the relevant colony.
-	 */
+	/** Remove a <code>TileImprovementPlan</code> from the relevant colony. */
 	public void removeTileImprovementPlan(TileImprovementPlan plan) {
-		if (plan == null)
+		if (plan == null) {
 			return;
-		if (plan.getTarget() != null)
+		}
+		if (plan.getTarget() != null) {
 			tipMap.remove(plan.getTarget());
+		}
 		for (AIColony aic : getAIColonies()) {
-			if (aic.removeTileImprovementPlan(plan))
+			if (aic.removeTileImprovementPlan(plan)) {
 				break;
+			}
 		}
 	}
 
@@ -924,10 +945,10 @@ public class EuropeanAIPlayer extends AIPlayer {
 			if (aiu.getUnit().getLocation() != aiCarrier.getUnit()) {
 				lb.add(", drop transport ", aiCarrier.getUnit());
 				aiu.dropTransport();
-			} else if (newTarget == null) {
-				tm.dumpTransportable(aiu, lb);
-			} else {
+			} else if (newTarget != null) {
 				tm.requeueTransportable(aiu, lb);
+			} else {
+				tm.dumpTransportable(aiu, lb);
 			}
 		}
 	}
@@ -956,11 +977,13 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	private boolean checkTransport(TransportableAIObject t) {
 		AIUnit aiCarrier = t.getTransport();
-		if (aiCarrier == null)
+		if (aiCarrier == null) {
 			return false;
+		}
 		TransportMission tm = aiCarrier.getMission(TransportMission.class);
-		if (tm != null && tm.isTransporting(t))
+		if (tm != null && tm.isTransporting(t)) {
 			return true;
+		}
 		t.changeTransport(null);
 		return false;
 	}
@@ -977,8 +1000,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			int contig = tile.getContiguity();
 			if (contig > 0) {
 				Integer i = wagonsNeeded.get(contig);
-				if (i != null)
+				if (i != null) {
 					return i;
+				}
 			}
 		}
 		return 0;
@@ -995,14 +1019,16 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 *            The change to make.
 	 */
 	private void changeNeedWagon(Tile tile, int amount) {
-		if (tile == null)
+		if (tile == null) {
 			return;
+		}
 		int contig = tile.getContiguity();
 		if (contig > 0) {
 			Integer i = wagonsNeeded.get(contig);
 			if (i == null) {
-				if (amount == 0)
+				if (amount == 0) {
 					wagonsNeeded.put(contig, 0);
+				}
 			} else {
 				wagonsNeeded.put(contig, i + amount);
 			}
@@ -1025,13 +1051,15 @@ public class EuropeanAIPlayer extends AIPlayer {
 		// Prime the wagonsNeeded map with contiguities with a connected port
 		for (AIColony aic : getAIColonies()) {
 			Colony colony = aic.getColony();
-			if (colony.isConnectedPort())
+			if (colony.isConnectedPort()) {
 				changeNeedWagon(colony.getTile(), 0);
+			}
 		}
 
 		for (AIUnit aiu : getAIUnits()) {
-			if (aiu.hasMission() && !aiu.getMission().isValid())
+			if (aiu.hasMission() && !aiu.getMission().isValid()) {
 				continue;
+			}
 			Unit u = aiu.getUnit();
 			if (u.isCarrier()) {
 				if (u.isNaval()) {
@@ -1086,8 +1114,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			lb.add("\n  Transport Demand:");
 			for (Location ld : transportDemand.keySet()) {
 				lb.add("\n    ", ld, "[");
-				for (Wish w : transportDemand.get(ld))
+				for (Wish w : transportDemand.get(ld)) {
 					lb.add(" ", w);
+				}
 				lb.add(" ]");
 			}
 		}
@@ -1104,8 +1133,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 		Collections.sort(urgent);
 		int urge = urgent.size();
 		urge = Math.max(2, (urge + 5) / 10);
-		while (urgent.size() > urge)
+		while (urgent.size() > urge) {
 			urgent.remove(urge);
+		}
 		return urgent;
 	}
 
@@ -1165,8 +1195,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 		}
 		for (AIUnit aiu : getAIUnits()) {
 			TransportMission tm = aiu.getMission(TransportMission.class);
-			if (tm != null)
+			if (tm != null) {
 				tm.suppressEuropeanTrade(type, lb);
+			}
 		}
 
 		int n = 0;
@@ -1183,8 +1214,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 					n++;
 				}
 			}
-			if (n > 0)
+			if (n > 0) {
 				lb.add(", dropped ", n, " goods wishes");
+			}
 		}
 		lb.add(".");
 	}
@@ -1200,8 +1232,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public List<WorkerWish> getWorkerWishesAt(Location loc, UnitType type) {
 		List<Wish> demand = transportDemand.get(Location.upLoc(loc));
-		if (demand == null)
+		if (demand == null) {
 			return Collections.<WorkerWish>emptyList();
+		}
 		List<WorkerWish> result = new ArrayList<>();
 		for (Wish w : demand) {
 			if (w instanceof WorkerWish && ((WorkerWish) w).getUnitType() == type) {
@@ -1222,8 +1255,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public List<GoodsWish> getGoodsWishesAt(Location loc, GoodsType type) {
 		List<Wish> demand = transportDemand.get(Location.upLoc(loc));
-		if (demand == null)
+		if (demand == null) {
 			return Collections.<GoodsWish>emptyList();
+		}
 		List<GoodsWish> result = new ArrayList<>();
 		for (Wish w : demand) {
 			if (w instanceof GoodsWish && ((GoodsWish) w).getGoodsType() == type) {
@@ -1244,8 +1278,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public WorkerWish getBestWorkerWish(AIUnit aiUnit, UnitType unitType) {
 		List<WorkerWish> wishes = workerWishes.get(unitType);
-		if (wishes == null)
+		if (wishes == null) {
 			return null;
+		}
 
 		final Unit carrier = aiUnit.getUnit();
 		WorkerWish carried = null;
@@ -1258,11 +1293,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 					bestCarriedValue = (double) w.getValue() / turns;
 					carried = w;
 				}
-			} else {
-				if (bestOtherValue < w.getValue()) {
-					bestOtherValue = w.getValue();
-					other = w;
-				}
+			} else if (bestOtherValue < w.getValue()) {
+				bestOtherValue = w.getValue();
+				other = w;
 			}
 		}
 		return (carried != null) ? carried : (other != null) ? other : null;
@@ -1279,16 +1312,18 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public GoodsWish getBestGoodsWish(AIUnit aiUnit, GoodsType goodsType) {
 		List<GoodsWish> wishes = goodsWishes.get(goodsType);
-		if (wishes == null)
+		if (wishes == null) {
 			return null;
+		}
 
 		final Unit carrier = aiUnit.getUnit();
 		double bestValue = 0.0f;
 		GoodsWish best = null;
 		for (GoodsWish w : wishes) {
 			int turns = carrier.getTurnsToReach(carrier.getLocation(), w.getDestination());
-			if (turns >= Unit.MANY_TURNS)
+			if (turns >= Unit.MANY_TURNS) {
 				continue;
+			}
 			double value = (double) w.getValue() / turns;
 			if (bestValue < value) {
 				bestValue = value;
@@ -1307,18 +1342,18 @@ public class EuropeanAIPlayer extends AIPlayer {
 	private void buildWishMaps(LogBuilder lb) {
 		for (UnitType unitType : getSpecification().getUnitTypeList()) {
 			List<WorkerWish> wl = workerWishes.get(unitType);
-			if (wl == null) {
-				workerWishes.put(unitType, new ArrayList<WorkerWish>());
-			} else {
+			if (wl != null) {
 				wl.clear();
+			} else {
+				workerWishes.put(unitType, new ArrayList<WorkerWish>());
 			}
 		}
 		for (GoodsType goodsType : getSpecification().getStorableGoodsTypeList()) {
 			List<GoodsWish> gl = goodsWishes.get(goodsType);
-			if (gl == null) {
-				goodsWishes.put(goodsType, new ArrayList<GoodsWish>());
-			} else {
+			if (gl != null) {
 				gl.clear();
+			} else {
+				goodsWishes.put(goodsType, new ArrayList<GoodsWish>());
 			}
 		}
 
@@ -1372,13 +1407,15 @@ public class EuropeanAIPlayer extends AIPlayer {
 		if (w instanceof WorkerWish) {
 			WorkerWish ww = (WorkerWish) w;
 			List<WorkerWish> wl = workerWishes.get(ww.getUnitType());
-			if (wl != null)
+			if (wl != null) {
 				wl.remove(ww);
+			}
 		} else if (w instanceof GoodsWish) {
 			GoodsWish gw = (GoodsWish) w;
 			List<GoodsWish> gl = goodsWishes.get(gw.getGoodsType());
-			if (gl != null)
+			if (gl != null) {
 				gl.remove(gw);
+			}
 		} else {
 			throw new IllegalStateException("Bogus wish: " + w);
 		}
@@ -1397,8 +1434,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 		List<WorkerWish> wwL = workerWishes.get(unit.getType());
 		wwL.remove(ww);
 		List<Wish> wl = transportDemand.get(ww.getDestination());
-		if (wl != null)
+		if (wl != null) {
 			wl.remove(ww);
+		}
 		ww.setTransportable(aiUnit);
 	}
 
@@ -1415,8 +1453,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 		List<GoodsWish> gwL = goodsWishes.get(goods.getType());
 		gwL.remove(gw);
 		List<Wish> wl = transportDemand.get(gw.getDestination());
-		if (wl != null)
+		if (wl != null) {
 			wl.remove(gw);
+		}
 		gw.setTransportable(aig);
 	}
 
@@ -1432,28 +1471,33 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public int buildersNeeded() {
 		Player player = getPlayer();
-		if (!player.canBuildColonies())
+		if (!player.canBuildColonies()) {
 			return 0;
+		}
 
 		int nColonies = 0, nPorts = 0, nWorkers = 0, nEuropean = 0;
 		for (Settlement settlement : player.getSettlements()) {
 			nColonies++;
-			if (settlement.isConnectedPort())
+			if (settlement.isConnectedPort()) {
 				nPorts++;
+			}
 			for (Unit u : settlement.getUnitList()) {
-				if (u.isPerson())
+				if (u.isPerson()) {
 					nWorkers++;
+				}
 			}
 			for (Unit u : settlement.getTile().getUnitList()) {
-				if (u.isPerson())
+				if (u.isPerson()) {
 					nWorkers++;
+				}
 			}
 		}
 		Europe europe = player.getEurope();
 		if (europe != null) {
 			for (Unit u : europe.getUnitList()) {
-				if (u.isPerson())
+				if (u.isPerson()) {
 					nEuropean++;
+				}
 			}
 		}
 
@@ -1466,7 +1510,7 @@ public class EuropeanAIPlayer extends AIPlayer {
 		// high at least initially as it makes it hard for the initial
 		// colonies to become substantial. For now, arbitrarily choose e.
 		return (nColonies == 0 || nPorts == 0) ? 2
-				: ((nPorts <= 1) && (nWorkers + nEuropean) >= 3) ? 1
+				: (nPorts <= 1 && nWorkers + nEuropean >= 3) ? 1
 						: ((double) (nWorkers + nEuropean) / nColonies > Math.E) ? 1 : 0;
 	}
 
@@ -1494,7 +1538,7 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return The desired number of scouts for this player.
 	 */
 	public int scoutsNeeded() {
-		return 3 - (getGame().getTurn().getNumber() / 100);
+		return 3 - getGame().getTurn().getNumber() / 100;
 	}
 
 	/**
@@ -1510,18 +1554,20 @@ public class EuropeanAIPlayer extends AIPlayer {
 	public AIUnit recruitAIUnitInEurope(int slot) {
 		AIUnit aiUnit = null;
 		Europe europe = getPlayer().getEurope();
-		if (europe == null)
+		if (europe == null) {
 			return null;
+		}
 		int n = europe.getUnitCount();
 		final String selectAbility = Ability.SELECT_RECRUIT;
 		if (!Europe.MigrationType.validMigrantSlot(slot)) {
-			slot = (getPlayer().hasAbility(selectAbility)) ? Europe.MigrationType.getDefaultSlot()
+			slot = getPlayer().hasAbility(selectAbility) ? Europe.MigrationType.getDefaultSlot()
 					: Europe.MigrationType.getUnspecificSlot();
 		}
 		if (AIMessage.askEmigrate(this, slot) && europe.getUnitCount() == n + 1) {
 			aiUnit = getAIUnit(europe.getUnitList().get(n));
-			if (aiUnit != null)
+			if (aiUnit != null) {
 				addAIUnit(aiUnit);
+			}
 		}
 		return aiUnit;
 	}
@@ -1542,14 +1588,16 @@ public class EuropeanAIPlayer extends AIPlayer {
 
 		AIUnit aiUnit = null;
 		Europe europe = getPlayer().getEurope();
-		if (europe == null)
+		if (europe == null) {
 			return null;
+		}
 		int n = europe.getUnitCount();
 
 		if (AIMessage.askTrainUnitInEurope(this, unitType) && europe.getUnitCount() == n + 1) {
 			aiUnit = getAIUnit(europe.getUnitList().get(n));
-			if (aiUnit != null)
+			if (aiUnit != null) {
 				addAIUnit(aiUnit);
+			}
 		}
 		return aiUnit;
 	}
@@ -1583,18 +1631,15 @@ public class EuropeanAIPlayer extends AIPlayer {
 
 		for (Player p : getGame().getLivePlayers(serverPlayer)) {
 			Stance newStance = determineStance(p);
-			if (newStance != serverPlayer.getStance(p)) {
-				if (newStance == Stance.WAR && peaceHolds(p)) {
-					; // Peace treaty holds for now
-				} else {
-					getAIMain().getFreeColServer().getInGameController().changeStance(serverPlayer, newStance,
-							(ServerPlayer) p, true);
-					lb.add(" ", p.getDebugName(), "->", newStance, ", ");
-				}
+			if (newStance != serverPlayer.getStance(p) && (newStance != Stance.WAR || !peaceHolds(p))) {
+				getAIMain().getFreeColServer().getInGameController().changeStance(serverPlayer, newStance,
+						(ServerPlayer) p, true);
+				lb.add(" ", p.getDebugName(), "->", newStance, ", ");
 			}
 		}
-		if (lb.grew("\n  Stance changes:"))
+		if (lb.grew("\n  Stance changes:")) {
 			lb.shrink(", ");
+		}
 	}
 
 	/**
@@ -1625,14 +1670,15 @@ public class EuropeanAIPlayer extends AIPlayer {
 				}
 			}
 		}
-		if (peaceTurn < 0)
+		if (peaceTurn < 0) {
 			return false;
+		}
 
 		int n = turn.getNumber() - peaceTurn;
 		float prob = (float) Math.pow(peaceProb, n);
 		// Apply Franklin's modifier
 		prob = p.applyModifiers(prob, turn, Modifier.PEACE_TREATY);
-		return prob > 0.0f && (randomInt(logger, "Peace holds?", getAIRandom(), 100) < (int) (100.0f * prob));
+		return prob > 0.0f && randomInt(logger, "Peace holds?", getAIRandom(), 100) < (int) (100.0f * prob);
 	}
 
 	/**
@@ -1676,20 +1722,23 @@ public class EuropeanAIPlayer extends AIPlayer {
 		double navalStrength = 0.0;
 		int nPlayers = 0;
 		for (Player p : getGame().getLiveEuropeanPlayers(player)) {
-			if (p.isREF())
+			if (p.isREF()) {
 				continue;
+			}
 			NationSummary ns = getNationSummary(p);
 			if (p == player) {
 				navalStrength = ns.getNavalStrength();
 			} else {
 				int st = ns.getNavalStrength();
-				if (st >= 0)
+				if (st >= 0) {
 					navalAverage += st;
+				}
 				nPlayers++;
 			}
 		}
-		if (nPlayers <= 0 || navalStrength < 0)
+		if (nPlayers <= 0 || navalStrength < 0) {
 			return -1.0;
+		}
 		navalAverage /= nPlayers;
 		return (navalAverage == 0.0) ? -1.0 : navalStrength / navalAverage;
 	}
@@ -1704,8 +1753,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return The <code>TradeStatus</code> for the agreement.
 	 */
 	private TradeStatus rejectAgreement(TradeItem stance, DiplomaticTrade agreement) {
-		if (stance == null)
+		if (stance == null) {
 			return TradeStatus.REJECT_TRADE;
+		}
 
 		agreement.clear();
 		agreement.add(stance);
@@ -1750,15 +1800,11 @@ public class EuropeanAIPlayer extends AIPlayer {
 
 			if (unit.isUninitialized() || unit.isDisposed()) {
 				reasons.put(unit, "Invalid");
-
 			} else if (unit.isDamaged()) { // Damaged units must wait
-				if (!(m instanceof IdleAtSettlementMission)) {
-					if ((m = getIdleAtSettlementMission(aiUnit)) != null) {
-						lb.add(", ", m);
-					}
+				if (!(m instanceof IdleAtSettlementMission) && (m = getIdleAtSettlementMission(aiUnit)) != null) {
+					lb.add(", ", m);
 				}
 				reasons.put(unit, "Damaged");
-
 			} else if (unit.getState() == UnitState.IN_COLONY && colony.getUnitCount() <= 1) {
 				// The unit has its hand full keeping the colony alive.
 				if (!(m instanceof WorkInsideColonyMission)
@@ -1768,10 +1814,8 @@ public class EuropeanAIPlayer extends AIPlayer {
 					updateTransport(aiUnit, oldTarget, lb);
 				}
 				reasons.put(unit, "Vital");
-
 			} else if (unit.isInMission()) {
 				reasons.put(unit, "Mission");
-
 			} else if (m != null && m.isValid() && !m.isOneTime()) {
 				if (m instanceof BuildColonyMission) {
 					bcm = (BuildColonyMission) m;
@@ -1794,23 +1838,18 @@ public class EuropeanAIPlayer extends AIPlayer {
 					if (tm.destinationCapacity() > 0) {
 						transportMissions.add(tm);
 					}
-				} else if (m instanceof PrivateerMission) {
-					if (!(m.getTarget() instanceof Unit)) {
-						// Privateering but not chasing a unit, consider
-						// reassigning to transport.
-						navalUnits.add(aiUnit);
-						done.add(aiUnit);
-						continue;
-					}
+				} else if (m instanceof PrivateerMission && !(m.getTarget() instanceof Unit)) {
+					// Privateering but not chasing a unit, consider
+					// reassigning to transport.
+					navalUnits.add(aiUnit);
+					done.add(aiUnit);
+					continue;
 				}
 				reasons.put(unit, "Valid");
-
 			} else if (unit.isNaval()) {
 				navalUnits.add(aiUnit);
-
 			} else if (unit.isAtSea()) { // Wait for it to emerge
 				reasons.put(unit, "At-Sea");
-
 			} else { // Needs mission
 				continue;
 			}
@@ -1828,13 +1867,16 @@ public class EuropeanAIPlayer extends AIPlayer {
 			Collections.sort(aiUnits, builderComparator);
 			for (AIUnit aiUnit : aiUnits) {
 				final Location oldTarget = ((m = aiUnit.getMission()) == null) ? null : m.getTarget();
-				if ((m = getBuildColonyMission(aiUnit, bcmTarget)) == null)
+				m = getBuildColonyMission(aiUnit, bcmTarget);
+				if (m == null) {
 					continue;
+				}
 				lb.add(", ", m);
 				updateTransport(aiUnit, oldTarget, lb);
 				done.add(aiUnit);
-				if (requestsTransport(aiUnit))
+				if (requestsTransport(aiUnit)) {
 					transportSupply.add(aiUnit);
+				}
 				reasons.put(aiUnit.getUnit(), "0Builder");
 			}
 			aiUnits.removeAll(done);
@@ -1844,16 +1886,20 @@ public class EuropeanAIPlayer extends AIPlayer {
 			Collections.sort(aiUnits, builderComparator);
 			for (AIUnit aiUnit : aiUnits) {
 				final Location oldTarget = ((m = aiUnit.getMission()) == null) ? null : m.getTarget();
-				if ((m = getBuildColonyMission(aiUnit, null)) == null)
+				m = getBuildColonyMission(aiUnit, null);
+				if (m == null) {
 					continue;
+				}
 				lb.add(", ", m);
 				updateTransport(aiUnit, oldTarget, lb);
 				done.add(aiUnit);
-				if (requestsTransport(aiUnit))
+				if (requestsTransport(aiUnit)) {
 					transportSupply.add(aiUnit);
+				}
 				reasons.put(aiUnit.getUnit(), "Builder" + nBuilders);
-				if (--nBuilders <= 0)
+				if (--nBuilders <= 0) {
 					break;
+				}
 			}
 			aiUnits.removeAll(done);
 			done.clear();
@@ -1863,16 +1909,20 @@ public class EuropeanAIPlayer extends AIPlayer {
 			for (AIUnit aiUnit : aiUnits) {
 				final Location oldTarget = ((m = aiUnit.getMission()) == null) ? null : m.getTarget();
 				final Unit unit = aiUnit.getUnit();
-				if ((m = getScoutingMission(aiUnit)) == null)
+				m = getScoutingMission(aiUnit);
+				if (m == null) {
 					continue;
+				}
 				lb.add(", ", m);
 				updateTransport(aiUnit, oldTarget, lb);
 				done.add(aiUnit);
-				if (requestsTransport(aiUnit))
+				if (requestsTransport(aiUnit)) {
 					transportSupply.add(aiUnit);
+				}
 				reasons.put(unit, "Scout" + nScouts);
-				if (--nScouts <= 0)
+				if (--nScouts <= 0) {
 					break;
+				}
 			}
 			aiUnits.removeAll(done);
 			done.clear();
@@ -1882,16 +1932,20 @@ public class EuropeanAIPlayer extends AIPlayer {
 			for (AIUnit aiUnit : aiUnits) {
 				final Unit unit = aiUnit.getUnit();
 				final Location oldTarget = ((m = aiUnit.getMission()) == null) ? null : m.getTarget();
-				if ((m = getPioneeringMission(aiUnit, null)) == null)
+				m = getPioneeringMission(aiUnit, null);
+				if (m == null) {
 					continue;
+				}
 				lb.add(", ", m);
 				updateTransport(aiUnit, oldTarget, lb);
 				done.add(aiUnit);
-				if (requestsTransport(aiUnit))
+				if (requestsTransport(aiUnit)) {
 					transportSupply.add(aiUnit);
+				}
 				reasons.put(unit, "Pioneer" + nPioneers);
-				if (--nPioneers <= 0)
+				if (--nPioneers <= 0) {
 					break;
+				}
 			}
 			aiUnits.removeAll(done);
 			done.clear();
@@ -1901,14 +1955,17 @@ public class EuropeanAIPlayer extends AIPlayer {
 		for (AIUnit aiUnit : aiUnits) {
 			final Unit unit = aiUnit.getUnit();
 			final Location oldTarget = ((m = aiUnit.getMission()) == null) ? null : m.getTarget();
-			if ((m = getSimpleMission(aiUnit)) == null)
+			m = getSimpleMission(aiUnit);
+			if (m == null) {
 				continue;
+			}
 			lb.add(", ", m);
 			updateTransport(aiUnit, oldTarget, lb);
 			reasons.put(unit, "New-Land");
 			done.add(aiUnit);
-			if (requestsTransport(aiUnit))
+			if (requestsTransport(aiUnit)) {
 				transportSupply.add(aiUnit);
+			}
 		}
 		aiUnits.removeAll(done);
 		done.clear();
@@ -1918,9 +1975,11 @@ public class EuropeanAIPlayer extends AIPlayer {
 		for (AIUnit aiUnit : navalUnits) {
 			final Unit unit = aiUnit.getUnit();
 			Mission old = ((m = aiUnit.getMission()) != null && m.isValid()) ? m : null;
-			if ((m = getSimpleMission(aiUnit)) == null)
+			m = getSimpleMission(aiUnit);
+			if (m == null) {
 				continue;
-			lb.add(", ", m, ((m == old) ? " (preserved)" : " (new)"));
+			}
+			lb.add(", ", m, (m == old) ? " (preserved)" : " (new)");
 			reasons.put(unit, "New-Naval");
 			done.add(aiUnit);
 			if (m instanceof TransportMission) {
@@ -1959,25 +2018,24 @@ public class EuropeanAIPlayer extends AIPlayer {
 
 			if (unit.isInEurope() && unit.isPerson() && nPorts > 0) {
 				// Choose a port to add to
-				if (ports == null)
+				if (ports == null) {
 					ports = player.getPorts();
+				}
 				Colony c = ports.remove(0);
 				AIColony aic = aiMain.getAIColony(c);
-				if ((m = getWorkInsideColonyMission(aiUnit, aic)) != null) {
+				m = getWorkInsideColonyMission(aiUnit, aic);
+				if (m != null) {
 					lb.add(", ", m);
 					updateTransport(aiUnit, oldTarget, lb);
 					reasons.put(unit, "To-work");
 					ports.add(c);
 				}
-
 			} else if (m instanceof IdleAtSettlementMission) {
 				reasons.put(unit, "Idle"); // already idle
-			} else {
-				if ((m = getIdleAtSettlementMission(aiUnit)) != null) {
-					lb.add(", ", m);
-					updateTransport(aiUnit, oldTarget, lb);
-					reasons.put(unit, "Idle");
-				}
+			} else if ((m = getIdleAtSettlementMission(aiUnit)) != null) {
+				lb.add(", ", m);
+				updateTransport(aiUnit, oldTarget, lb);
+				reasons.put(unit, "Idle");
 			}
 		}
 		lb.grew("\n  Mission changes");
@@ -2024,10 +2082,8 @@ public class EuropeanAIPlayer extends AIPlayer {
 													: ((m = getSeekAndDestroyMission(aiUnit, 8)) != null) ? m
 															: (old instanceof UnitWanderHostileMission) ? old
 																	: getWanderHostileMission(aiUnit);
-
 		} else if (unit.isCarrier()) {
 			ret = getTransportMission(aiUnit);
-
 		} else {
 			// CashIn missions are obvious
 			ret = (old instanceof CashInTreasureTrainMission) ? old
@@ -2042,7 +2098,7 @@ public class EuropeanAIPlayer extends AIPlayer {
 													: ((m = getDefendCurrentSettlementMission(aiUnit)) != null) ? m
 
 															// REF override
-															: (unit.hasAbility(Ability.REF_UNIT))
+															: unit.hasAbility(Ability.REF_UNIT)
 																	? ((old instanceof UnitSeekAndDestroyMission) ? old
 																			: ((m = getSeekAndDestroyMission(aiUnit,
 																					12)) != null)
@@ -2167,8 +2223,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public Mission getBuildColonyMission(AIUnit aiUnit, Location target) {
 		String reason = BuildColonyMission.invalidReason(aiUnit);
-		if (reason != null)
+		if (reason != null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		if (target == null) {
 			target = BuildColonyMission.findTarget(aiUnit, buildingRange, unit.isInEurope());
@@ -2185,8 +2242,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 */
 	public Mission getCashInTreasureTrainMission(AIUnit aiUnit) {
 		String reason = CashInTreasureTrainMission.invalidReason(aiUnit);
-		if (reason != null)
+		if (reason != null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		Location loc = CashInTreasureTrainMission.findTarget(aiUnit, cashInRange, unit.isInEurope());
 		return (loc == null) ? null : new CashInTreasureTrainMission(getAIMain(), aiUnit, loc);
@@ -2202,8 +2260,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getDefendSettlementMission(AIUnit aiUnit, boolean relaxed) {
-		if (DefendSettlementMission.invalidReason(aiUnit) != null)
+		if (DefendSettlementMission.invalidReason(aiUnit) != null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		final Location loc = unit.getLocation();
 		double worstValue = 1000000.0;
@@ -2216,9 +2275,10 @@ public class EuropeanAIPlayer extends AIPlayer {
 					break;
 				}
 				int ttr = 1 + unit.getTurnsToReach(loc, colony.getTile(), unit.getCarrier(),
-						((relaxed) ? CostDeciders.numberOfTiles() : null));
-				if (ttr >= Unit.MANY_TURNS)
+						relaxed ? CostDeciders.numberOfTiles() : null);
+				if (ttr >= Unit.MANY_TURNS) {
 					continue;
+				}
 				double value = colony.getDefenceRatio() * 100.0 / ttr;
 				if (worstValue > value) {
 					worstValue = value;
@@ -2237,8 +2297,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getMissionaryMission(AIUnit aiUnit) {
-		if (MissionaryMission.prepare(aiUnit) != null)
+		if (MissionaryMission.prepare(aiUnit) != null) {
 			return null;
+		}
 		Location loc = MissionaryMission.findTarget(aiUnit, missionaryRange, true);
 		if (loc == null) {
 			aiUnit.equipForRole(getSpecification().getDefaultRole());
@@ -2259,8 +2320,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getPioneeringMission(AIUnit aiUnit, Location target) {
-		if (PioneeringMission.prepare(aiUnit) != null)
+		if (PioneeringMission.prepare(aiUnit) != null) {
 			return null;
+		}
 		if (target == null) {
 			target = PioneeringMission.findTarget(aiUnit, pioneeringRange, true);
 		}
@@ -2284,8 +2346,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getPrivateerMission(AIUnit aiUnit, Location target) {
-		if (PrivateerMission.invalidReason(aiUnit) != null)
+		if (PrivateerMission.invalidReason(aiUnit) != null) {
 			return null;
+		}
 		if (target == null) {
 			target = PrivateerMission.findTarget(aiUnit, privateerRange, true);
 		}
@@ -2300,8 +2363,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getScoutingMission(AIUnit aiUnit) {
-		if (ScoutingMission.prepare(aiUnit) != null)
+		if (ScoutingMission.prepare(aiUnit) != null) {
 			return null;
+		}
 		Location loc = ScoutingMission.findTarget(aiUnit, scoutingRange, true);
 		if (loc == null) {
 			Unit unit = aiUnit.getUnit();
@@ -2321,8 +2385,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getTransportMission(AIUnit aiUnit) {
-		if (TransportMission.invalidReason(aiUnit) != null)
+		if (TransportMission.invalidReason(aiUnit) != null) {
 			return null;
+		}
 		return new TransportMission(getAIMain(), aiUnit);
 	}
 
@@ -2336,14 +2401,16 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getWishRealizationMission(AIUnit aiUnit, WorkerWish wish) {
-		if (WishRealizationMission.invalidReason(aiUnit) != null)
+		if (WishRealizationMission.invalidReason(aiUnit) != null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		if (wish == null) {
 			wish = getBestWorkerWish(aiUnit, unit.getType());
 		}
-		if (wish == null)
+		if (wish == null) {
 			return null;
+		}
 		consumeWorkerWish(aiUnit, wish);
 		return new WishRealizationMission(getAIMain(), aiUnit, wish);
 	}
@@ -2358,35 +2425,30 @@ public class EuropeanAIPlayer extends AIPlayer {
 	 * @return A new mission, or null if impossible.
 	 */
 	public Mission getWorkInsideColonyMission(AIUnit aiUnit, AIColony aiColony) {
-		if (WorkInsideColonyMission.invalidReason(aiUnit) != null)
+		if (WorkInsideColonyMission.invalidReason(aiUnit) != null) {
 			return null;
+		}
 		if (aiColony == null) {
 			aiColony = getAIColony(aiUnit.getUnit().getColony());
 		}
 		return (aiColony == null) ? null : new WorkInsideColonyMission(getAIMain(), aiUnit, aiColony);
 	}
 
-	// AIPlayer interface
+	/** AIPlayer interface. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Stance determineStance(Player other) {
 		final Player player = getPlayer();
-		return (other.isREF()) ? ((player.getREFPlayer() == other)
+		return other.isREF() ? ((player.getREFPlayer() == other)
 				// At war with our REF if rebel, otherwise at peace.
-				? ((player.isRebel()) ? Stance.WAR : Stance.PEACE)
+				? (player.isRebel() ? Stance.WAR : Stance.PEACE)
 				// Do not mess with other player's REF unless they conquer
 				// their rebellious colonies.
-				: ((!other.getRebels().isEmpty()) ? Stance.PEACE : super.determineStance(other)))
+				: (!other.getRebels().isEmpty() ? Stance.PEACE : super.determineStance(other)))
 				// Use normal stance determination for non-REF nations.
 				: super.determineStance(other);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeAIColony(AIColony aic) {
 		final Colony colony = aic.getColony();
@@ -2394,8 +2456,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 		Set<TileImprovementPlan> tips = new HashSet<>();
 		for (Tile t : colony.getOwnedTiles()) {
 			TileImprovementPlan tip = tipMap.remove(t);
-			if (tip != null)
+			if (tip != null) {
 				tips.add(tip);
+			}
 		}
 
 		for (AIGoods aig : aic.getExportGoods()) {
@@ -2428,9 +2491,6 @@ public class EuropeanAIPlayer extends AIPlayer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void startWorking() {
 		final Player player = getPlayer();
@@ -2455,10 +2515,11 @@ public class EuropeanAIPlayer extends AIPlayer {
 		LogBuilder lb = new LogBuilder(1024);
 		int colonyCount = getAIColonies().size();
 		lb.add(player.getDebugName(), " in ", turn, "/", turn.getNumber(), " units=", getAIUnits().size(), " colonies=",
-				colonyCount, " declare=", (player.checkDeclareIndependence() == null), " v-land-REF=",
+				colonyCount, " declare=", player.checkDeclareIndependence() == null, " v-land-REF=",
 				player.getRebelStrengthRatio(false), " v-naval-REF=", player.getRebelStrengthRatio(true));
-		if (turn.isFirstTurn())
+		if (turn.isFirstTurn()) {
 			initializeMissions(lb);
+		}
 		determineStances(lb);
 
 		if (colonyCount > 0) {
@@ -2471,8 +2532,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			}
 
 			lb.add("\n  Update colonies:");
-			for (AIColony aic : getAIColonies())
+			for (AIColony aic : getAIColonies()) {
 				aic.update(lb);
+			}
 
 			buildTipMap(lb);
 			buildWishMaps(lb);
@@ -2489,8 +2551,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			giveNormalMissions(lb);
 			bringGifts(lb);
 			demandTribute(lb);
-			if (aiUnits.isEmpty())
+			if (aiUnits.isEmpty()) {
 				break;
+			}
 			aiUnits = doMissions(aiUnits, lb);
 		}
 		lb.log(logger, Level.FINE);
@@ -2504,9 +2567,6 @@ public class EuropeanAIPlayer extends AIPlayer {
 		workerWishes.clear();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected List<AIUnit> doMissions(List<AIUnit> aiUnits, LogBuilder lb) {
 		lb.add("\n  Do missions:");
@@ -2516,8 +2576,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 		// to be revisited.
 		for (AIUnit aiu : aiUnits) {
 			final Unit unit = aiu.getUnit();
-			if (unit == null || unit.isDisposed())
+			if (unit == null || unit.isDisposed()) {
 				continue;
+			}
 
 			// giveNormalMissions should have given all units a
 			// mission, but TransportMissions may have delivered a
@@ -2571,37 +2632,29 @@ public class EuropeanAIPlayer extends AIPlayer {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int adjustMission(AIUnit aiUnit, PathNode path, Class type, int value) {
-		if (value > 0) {
-			if (type == DefendSettlementMission.class) {
-				// Reduce value in proportion to the number of defenders.
-				Location loc = DefendSettlementMission.extractTarget(aiUnit, path);
-				if (!(loc instanceof Colony)) {
-					throw new IllegalStateException("European players defend colonies: " + loc);
-				}
-				Colony colony = (Colony) loc;
-				int defenders = getSettlementDefenders(colony);
-				value -= 25 * defenders;
-				// Reduce value according to the stockade level.
-				if (colony.hasStockade()) {
-					if (defenders > colony.getStockade().getLevel() + 1) {
-						value -= 100 * colony.getStockade().getLevel();
-					} else {
-						value -= 20 * colony.getStockade().getLevel();
-					}
+		if (value > 0 && type == DefendSettlementMission.class) {
+			// Reduce value in proportion to the number of defenders.
+			Location loc = DefendSettlementMission.extractTarget(aiUnit, path);
+			if (!(loc instanceof Colony)) {
+				throw new IllegalStateException("European players defend colonies: " + loc);
+			}
+			Colony colony = (Colony) loc;
+			int defenders = getSettlementDefenders(colony);
+			value -= 25 * defenders;
+			// Reduce value according to the stockade level.
+			if (colony.hasStockade()) {
+				if (defenders > colony.getStockade().getLevel() + 1) {
+					value -= 100 * colony.getStockade().getLevel();
+				} else {
+					value -= 20 * colony.getStockade().getLevel();
 				}
 			}
 		}
 		return value;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean indianDemand(Unit unit, Colony colony, GoodsType goods, int gold) {
 		// FIXME: make a better choice, check whether the colony is
@@ -2609,9 +2662,6 @@ public class EuropeanAIPlayer extends AIPlayer {
 		return !"conquest".equals(getAIAdvantage());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public TradeStatus acceptDiplomaticTrade(DiplomaticTrade agreement) {
 		final Player player = getPlayer();
@@ -2652,8 +2702,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 				}
 			}
 			lb.add(", ", Messages.message(item.getLabel()), " = ", value);
-			if (value == Integer.MIN_VALUE)
+			if (value == Integer.MIN_VALUE) {
 				unacceptable++;
+			}
 			scores.put(item, value);
 		}
 		lb.add(".");
@@ -2683,16 +2734,14 @@ public class EuropeanAIPlayer extends AIPlayer {
 				result = (agreement.getContext() == DiplomaticTrade.TradeContext.CONTACT && agreement.getVersion() == 0)
 						? TradeStatus.PROPOSE_TRADE
 						: (unacceptable == 0) ? TradeStatus.ACCEPT_TRADE
-								: (agreement.isEmpty()) ? TradeStatus.REJECT_TRADE : TradeStatus.PROPOSE_TRADE;
+								: agreement.isEmpty() ? TradeStatus.REJECT_TRADE : TradeStatus.PROPOSE_TRADE;
 			}
 			lb.add("  Total = ", value, ".");
 		}
 
-		if (result == null) { // Give up?
-			if (randomInt(logger, "Enough diplomacy?", getAIRandom(), 1 + agreement.getVersion()) > 5) {
-				result = rejectAgreement(peace, agreement);
-				lb.add("  Ran out of patience at ", agreement.getVersion(), ".");
-			}
+		if (result == null && randomInt(logger, "Enough diplomacy?", getAIRandom(), 1 + agreement.getVersion()) > 5) {
+			result = rejectAgreement(peace, agreement);
+			lb.add("  Ran out of patience at ", agreement.getVersion(), ".");
 		}
 
 		if (result == null) {
@@ -2700,8 +2749,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			// Return a proposal with items we like/can accept, or reject
 			// if none are left.
 			for (Entry<TradeItem, Integer> e : mapEntriesByValue(scores, ascendingIntegerComparator)) {
-				if (value > 0)
+				if (value > 0) {
 					break;
+				}
 				TradeItem item = e.getKey();
 				value -= e.getValue();
 				if (value >= 50 && item instanceof GoldTradeItem) {
@@ -2729,9 +2779,6 @@ public class EuropeanAIPlayer extends AIPlayer {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void registerSellGoods(Goods goods) {
 		String goldKey = "tradeGold#" + goods.getType().getId() + "#" + goods.getAmount() + "#"
@@ -2739,9 +2786,6 @@ public class EuropeanAIPlayer extends AIPlayer {
 		sessionRegister.put(goldKey, null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int buyProposition(Unit unit, Settlement settlement, Goods goods, int gold) {
 		logger.finest("Entering method buyProposition");
@@ -2785,9 +2829,6 @@ public class EuropeanAIPlayer extends AIPlayer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int sellProposition(Unit unit, Settlement settlement, Goods goods, int gold) {
 		logger.finest("Entering method sellProposition");
@@ -2805,9 +2846,6 @@ public class EuropeanAIPlayer extends AIPlayer {
 		return (netProfits * percentage) / 100;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean acceptTax(int tax) {
 		boolean ret = true;
@@ -2833,8 +2871,9 @@ public class EuropeanAIPlayer extends AIPlayer {
 			// multiple places.
 			int n = 0;
 			for (Settlement s : getPlayer().getSettlements()) {
-				if (s.getGoodsCount(goodsType) > 0)
+				if (s.getGoodsCount(goodsType) > 0) {
 					n++;
+				}
 			}
 			ret = n < 2;
 			if (ret) {
@@ -2847,7 +2886,7 @@ public class EuropeanAIPlayer extends AIPlayer {
 			// FIXME: check whether we have an armory, at least
 			int turn = getGame().getTurn().getNumber();
 			ret = turn < 300;
-			lb.add(((ret) ? "accepted" : "rejected"), ": special-goods-in-turn-", turn, ".");
+			lb.add(ret ? "accepted" : "rejected", ": special-goods-in-turn-", turn, ".");
 		} else {
 			// FIXME: consider the amount of goods produced. If we
 			// depend on shipping huge amounts of cheap goods, we
@@ -2857,34 +2896,30 @@ public class EuropeanAIPlayer extends AIPlayer {
 					/ goodsTypes.size();
 			int income = getPlayer().getIncomeAfterTaxes(toBeDestroyed.getType());
 			ret = income <= 0 || income > averageIncome;
-			lb.add(((ret) ? "accepted" : "rejected"), ": goods(", goodsType.getSuffix(), ")-with-income(", income,
-					((ret) ? ")non-positive-or-more-than(" : ")less-than-average("), averageIncome, ").");
+			lb.add(ret ? "accepted" : "rejected", ": goods(", goodsType.getSuffix(), ")-with-income(", income,
+					ret ? ")non-positive-or-more-than(" : ")less-than-average(", averageIncome, ").");
 		}
-		if (!ret)
+		if (!ret) {
 			suppressEuropeanTrade(goodsType, lb);
+		}
 		lb.log(logger, Level.INFO);
 		return ret;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean acceptMercenaries() {
 		return getPlayer().isAtWar() || "conquest".equals(getAIAdvantage());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public FoundingFather selectFoundingFather(List<FoundingFather> ffs) {
 		final int age = getGame().getAge();
 		FoundingFather bestFather = null;
 		int bestWeight = Integer.MIN_VALUE;
 		for (FoundingFather father : ffs) {
-			if (father == null)
+			if (father == null) {
 				continue;
+			}
 
 			// For the moment, arbitrarily: always choose the one
 			// offering custom houses. Allowing the AI to build CH
@@ -2904,11 +2939,8 @@ public class EuropeanAIPlayer extends AIPlayer {
 		return bestFather;
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

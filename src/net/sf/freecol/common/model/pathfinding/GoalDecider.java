@@ -41,14 +41,13 @@ import net.sf.freecol.common.model.Unit;
  * The method {@link #getGoal()} will get called after this.
  */
 public interface GoalDecider {
-
 	/**
 	 * Gets the <code>PathNode</code> containing the goal.
 	 *
 	 * @return The <code>PathNode</code> where the <code>Tile</code> returned by
 	 *         <code>pathNode.getTile()</code> is the goal.
 	 */
-	public PathNode getGoal();
+	PathNode getGoal();
 
 	/**
 	 * Determines whether this <code>GoalDecider</code> has any sub goals.
@@ -56,7 +55,7 @@ public interface GoalDecider {
 	 * @return <code>true</code> if there are any sub goals and <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean hasSubGoals();
+	boolean hasSubGoals();
 
 	/**
 	 * Checks whether the given <code>PathNode</code> is a goal/sub-goal.
@@ -72,5 +71,5 @@ public interface GoalDecider {
 	 *         this method returns <code>true</code> and {@link #hasSubGoals()}
 	 *         returns <code>false</code>.
 	 */
-	public boolean check(Unit u, PathNode pathNode);
+	boolean check(Unit u, PathNode pathNode);
 }

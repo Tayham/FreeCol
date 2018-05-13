@@ -28,17 +28,12 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent to initiate a transaction.
- */
+/** The message sent to initiate a transaction. */
 public class CloseTransactionMessage extends DOMMessage {
-
 	/** The object identifier of the unit performing the transaction. */
 	private final String unitId;
 
-	/**
-	 * The object identifier of the settlement at which the transaction occurs.
-	 */
+	/** The object identifier of the settlement at which the transaction occurs. */
 	private final String settlementId;
 
 	/**

@@ -27,11 +27,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.Utils;
 import net.sf.freecol.common.model.Specification;
 
-/**
- * Represents an option that can be an arbitrary string.
- */
+/** Represents an option that can be an arbitrary string. */
 public class TextOption extends AbstractOption<String> {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(TextOption.class.getName());
 
@@ -60,11 +57,8 @@ public class TextOption extends AbstractOption<String> {
 		super(id, specification);
 	}
 
-	// Interface Option.
+	/** Interface Option. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public TextOption clone() {
 		TextOption result = new TextOption(getId(), getSpecification());
@@ -72,17 +66,11 @@ public class TextOption extends AbstractOption<String> {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getValue() {
 		return value;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setValue(String value) {
 		final String oldValue = this.value;
@@ -94,23 +82,17 @@ public class TextOption extends AbstractOption<String> {
 		isDefined = true;
 	}
 
-	// Override AbstractOption
+	/** Override AbstractOption. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void setValue(String valueString, String defaultValueString) {
 		setValue((valueString != null) ? valueString : defaultValueString);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String CHOICE_TAG = "choice";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -118,9 +100,6 @@ public class TextOption extends AbstractOption<String> {
 		xw.writeAttribute(VALUE_TAG, value);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
@@ -129,9 +108,6 @@ public class TextOption extends AbstractOption<String> {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

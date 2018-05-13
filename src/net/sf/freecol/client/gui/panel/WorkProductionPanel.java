@@ -45,11 +45,8 @@ import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 import net.sf.freecol.common.model.WorkLocation;
 
-/**
- * Display the production of a unit.
- */
+/** Display the production of a unit. */
 public class WorkProductionPanel extends FreeColPanel {
-
 	private final Turn turn = getGame().getTurn();
 
 	/**
@@ -86,13 +83,11 @@ public class WorkProductionPanel extends FreeColPanel {
 			shortName = Messages.getName(tileType);
 			longName = Messages.message(colonyTile.getLabel());
 			image = getGUI().createColonyTileImage(tile, colony);
-
 		} else if (wl instanceof Building) {
 			final Building building = (Building) wl;
 			shortName = Messages.getName(building.getType());
 			longName = shortName;
 			image = lib.getBuildingImage(building);
-
 		} else {
 			throw new IllegalStateException("WorkLocation OO fail.");
 		}
@@ -142,8 +137,9 @@ public class WorkProductionPanel extends FreeColPanel {
 		for (Modifier m : modifiers) {
 			JLabel[] mLabels = ModifierFormat.getModifierLabels(m, unitType, turn);
 			for (int i = 0; i < mLabels.length; i++) {
-				if (mLabels[i] == null)
+				if (mLabels[i] == null) {
 					continue;
+				}
 				if (i == 0) {
 					add(mLabels[i], "newline");
 				} else {

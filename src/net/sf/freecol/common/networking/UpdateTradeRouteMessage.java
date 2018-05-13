@@ -26,11 +26,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when updating a trade route.
- */
+/** The message sent when updating a trade route. */
 public class UpdateTradeRouteMessage extends DOMMessage {
-
 	/** The trade route to update. */
 	private final TradeRoute tradeRoute;
 

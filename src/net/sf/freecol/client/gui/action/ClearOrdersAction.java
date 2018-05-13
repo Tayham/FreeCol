@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for clearing the active unit's orders.
- */
+/** An action for clearing the active unit's orders. */
 public class ClearOrdersAction extends UnitAction {
-
 	public static final String id = "clearOrdersAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ClearOrdersAction extends UnitAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().clearOrders(getGUI().getActiveUnit());

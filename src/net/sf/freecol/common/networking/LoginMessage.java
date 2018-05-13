@@ -27,11 +27,8 @@ import net.sf.freecol.server.FreeColServer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * The message sent when logging in.
- */
+/** The message sent when logging in. */
 public class LoginMessage extends DOMMessage {
-
 	/** The Player that is logging in. */
 	private final Player player;
 
@@ -122,7 +119,7 @@ public class LoginMessage extends DOMMessage {
 		this.game = (children.getLength() != 1) ? null : new Game((Element) children.item(0), this.userName);
 	}
 
-	// Public interface
+	/** Public interface. */
 
 	public String getUserName() {
 		return userName;

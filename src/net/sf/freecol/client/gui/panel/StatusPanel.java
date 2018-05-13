@@ -26,11 +26,8 @@ import javax.swing.JLabel;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * A <code>Panel</code> for showing status information on screen.
- */
+/** A <code>Panel</code> for showing status information on screen. */
 public final class StatusPanel extends FreeColPanel {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(StatusPanel.class.getName());
 

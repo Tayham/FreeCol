@@ -46,11 +46,8 @@ import static net.sf.freecol.common.util.RandomUtils.*;
 import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 
-/**
- * The server version of an Indian Settlement.
- */
+/** The server version of an Indian Settlement. */
 public class ServerIndianSettlement extends IndianSettlement implements ServerModelObject {
-
 	private static final Logger logger = Logger.getLogger(ServerIndianSettlement.class.getName());
 
 	/** Alarm added when a new missionary is added. */
@@ -61,9 +58,7 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 
 	public static final int MAX_HORSES_PER_TURN = 2;
 
-	/**
-	 * Trivial constructor for all ServerModelObjects.
-	 */
+	/** Trivial constructor for all ServerModelObjects. */
 	public ServerIndianSettlement(Game game, String id) {
 		super(game, id);
 	}
@@ -148,8 +143,9 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 	public void csStartTurn(Random random, ChangeSet cs) {
 		final Specification spec = getSpecification();
 		final Unit missionary = getMissionary();
-		if (missionary == null)
+		if (missionary == null) {
 			return;
+		}
 		final ServerPlayer other = (ServerPlayer) missionary.getOwner();
 		final Tile tile = getTile();
 		final Turn turn = getGame().getTurn();
@@ -164,7 +160,7 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 		logger.finest("Conversion at " + getName() + " alarm=" + alarm + " " + convert + " = " + getConvertProgress()
 				+ " + " + cMiss + " + " + cAlarm);
 		ServerColony colony = (ServerColony) tile.getNearestSettlement(other, MAX_CONVERT_DISTANCE, true);
-		if (convert < (float) getType().getConvertThreshold() || (getUnitCount() + tile.getUnitCount()) <= 2
+		if (convert < getType().getConvertThreshold() || getUnitCount() + tile.getUnitCount() <= 2
 				|| colony == null) {
 			setConvertProgress((int) Math.floor(convert));
 		} else {
@@ -174,8 +170,9 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 			// missions) into the settlement so we can ignore the
 			// tile-residents.
 			List<Unit> ul = tile.getUnitList();
-			if (ul.isEmpty())
+			if (ul.isEmpty()) {
 				ul.addAll(getUnitList());
+			}
 			ServerUnit brave = (ServerUnit) getRandomMember(logger, "Convert", ul, random);
 			colony.csAddConvert(brave, cs);
 		}
@@ -266,7 +263,7 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 		GoodsType rumType = spec.getGoodsType("model.goods.rum");
 		List<UnitType> unitTypes = spec.getUnitTypesWithAbility(Ability.BORN_IN_INDIAN_SETTLEMENT);
 		if (!unitTypes.isEmpty()
-				&& (getGoodsCount(foodType) + 4 * getGoodsCount(rumType) > FOOD_PER_COLONIST + KEEP_RAW_MATERIAL)) {
+				&& getGoodsCount(foodType) + 4 * getGoodsCount(rumType) > FOOD_PER_COLONIST + KEEP_RAW_MATERIAL) {
 			if (ownedUnits.size() <= getType().getMaximumSize()) {
 				// Allow one more brave than the initially generated
 				// number. This is more than sufficient. Do not
@@ -365,8 +362,9 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 		int bestValue = Integer.MIN_VALUE;
 		for (Player p : getGame().getLiveEuropeanPlayers(null)) {
 			Tension alarm = getAlarm(p);
-			if (alarm == null || alarm.getLevel() == Tension.Level.HAPPY)
+			if (alarm == null || alarm.getLevel() == Tension.Level.HAPPY) {
 				continue;
+			}
 			int value = alarm.getValue();
 			if (bestValue < value) {
 				bestValue = value;
@@ -420,7 +418,7 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 		boolean change = changeAlarm(player, add);
 		if (propagate) {
 			// Propagate alarm upwards. Capital has a greater impact.
-			((ServerPlayer) getOwner()).csModifyTension(player, ((isCapital()) ? add : add / 2), this, cs);
+			((ServerPlayer) getOwner()).csModifyTension(player, isCapital() ? add : add / 2, this, cs);
 		}
 		logger.finest("Alarm at " + getName() + " toward " + player.getName() + " modified by " + add + " now = "
 				+ getAlarm(player).getValue());
@@ -466,8 +464,9 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 	 */
 	public void csChangeMissionary(Unit missionary, ChangeSet cs) {
 		final Unit old = getMissionary();
-		if (missionary == old)
+		if (missionary == old) {
 			return;
+		}
 
 		final Tile tile = getTile();
 		final ServerPlayer newOwner = (missionary == null) ? null : (ServerPlayer) missionary.getOwner();
@@ -518,8 +517,9 @@ public class ServerIndianSettlement extends IndianSettlement implements ServerMo
 	 */
 	public void csKillMissionary(Boolean destroy, ChangeSet cs) {
 		Unit missionary = getMissionary();
-		if (missionary == null)
+		if (missionary == null) {
 			return;
+		}
 		csChangeMissionary(null, cs);
 
 		// Inform the enemy of loss of mission

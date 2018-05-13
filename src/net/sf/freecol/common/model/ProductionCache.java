@@ -33,10 +33,8 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
  * the production and consumption of the colony. This includes the production of
  * all colony tiles and buildings, as well as the consumption of all units,
  * buildings and build queues.
- *
  */
 public class ProductionCache {
-
 	/**
 	 * The colony whose production is being cached. The goods stored in the colony
 	 * may need to be considered in order to prevent excess production.
@@ -56,7 +54,7 @@ public class ProductionCache {
 	 * Flag to indicate whether the cache is up to date, or not and needs
 	 * {@link #update} to be called.
 	 */
-	private boolean upToDate = false;
+	private boolean upToDate;
 
 	/**
 	 * Creates a new <code>ProductionCache</code> instance.
@@ -83,8 +81,9 @@ public class ProductionCache {
 	 * with the Building-form arguments.
 	 */
 	private synchronized void update() {
-		if (upToDate)
-			return; // nothing to do
+		if (upToDate) {
+			return;
+		} // nothing to do
 		final Specification spec = colony.getSpecification();
 		final GoodsType bells = spec.getGoodsType("model.goods.bells");
 
@@ -174,7 +173,6 @@ public class ProductionCache {
 	 * global production modifiers change. This might be the case when a new
 	 * {@link FoundingFather} is added, or when the colony's production bonus
 	 * changes.
-	 *
 	 */
 	public synchronized void invalidate() {
 		upToDate = false;

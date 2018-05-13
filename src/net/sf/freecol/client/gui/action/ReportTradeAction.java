@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying a Trade Report.
- */
+/** An action for displaying a Trade Report. */
 public class ReportTradeAction extends FreeColAction {
-
 	public static final String id = "reportTradeAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ReportTradeAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showReportTradePanel();

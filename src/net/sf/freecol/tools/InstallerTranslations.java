@@ -27,17 +27,14 @@ import java.io.FilenameFilter;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Handle translations for the installer.
- */
+/** Handle translations for the installer. */
 public class InstallerTranslations {
-
 	private static final File SOURCE_DIRECTORY = new File("data/strings");
 	private static final File MAIN_FILE = new File(SOURCE_DIRECTORY, "FreeColMessages.properties");
 	private static final File DESTINATION_DIRECTORY = new File("build/installer");
 	private static final File LANGUAGE_CODES = new File(DESTINATION_DIRECTORY, "iso-639-2.txt");
 
-	// it seems IzPack doesn't use ISO codes at all
+	/** It seems IzPack doesn't use ISO codes at all. */
 	private static final String[][] IZPACK_CODES = { { "ca", "cat", "Catalunyan" }, { "zh", "chn", "Chinese" },
 			{ "cs", "cze", "Czech" }, { "da", "dan", "Danish" }, { "de", "deu", "German" }, { "en", "eng", "English" },
 			{ "eu", "eus", "Basque" }, { "fi", "fin", "Finnish" }, { "fr", "fra", "French" },
@@ -55,7 +52,6 @@ public class InstallerTranslations {
 			"UserFiles.home", "UserFiles.freecol", "UserFiles.other" };
 
 	public static void main(String[] args) throws Exception {
-
 		/*
 		 * if (!LANGUAGE_CODES.exists()) {
 		 * System.out.println("Language codes not found."); System.exit(1); }
@@ -86,7 +82,6 @@ public class InstallerTranslations {
 		});
 
 		for (String name : sourceFiles) {
-
 			String languageCode = null;
 			int index = name.indexOf('.', 16);
 			if (index < 0) {
@@ -138,13 +133,12 @@ public class InstallerTranslations {
 				out.write(output.toString());
 			}
 		}
-
 	}
 
 	private static Map<String, String> readFile(File file) {
 		Map<String, String> result = new HashMap<>();
 		try (FileReader fileReader = new FileReader(file);
-				BufferedReader bufferedReader = new BufferedReader(fileReader);) {
+				BufferedReader bufferedReader = new BufferedReader(fileReader)) {
 			String line = bufferedReader.readLine();
 			while (line != null) {
 				int index = line.indexOf('=');

@@ -48,17 +48,14 @@ import net.sf.freecol.common.util.Utils;
 
 import org.w3c.dom.Element;
 
-/**
- * The main component of the game model.
- */
+/** The main component of the game model. */
 public class Game extends FreeColGameObject {
-
 	private static final Logger logger = Logger.getLogger(Game.class.getName());
 
 	/** State for the FCGO iterator, out here because it has to be static. */
-	private static enum FcgoState {
+	private enum FcgoState {
 		INVALID, VALID, CONSUMED,
-	};
+	}
 
 	/** Map of all classes with corresponding server classes. */
 	private static final java.util.Map<Class<? extends FreeColObject>, Class<? extends FreeColObject>> serverClasses = new HashMap<>();
@@ -68,13 +65,13 @@ public class Game extends FreeColGameObject {
 		serverClasses.put(net.sf.freecol.common.model.ColonyTile.class,
 				net.sf.freecol.server.model.ServerColonyTile.class);
 		serverClasses.put(net.sf.freecol.common.model.Europe.class, net.sf.freecol.server.model.ServerEurope.class);
-		serverClasses.put(net.sf.freecol.common.model.Game.class, net.sf.freecol.server.model.ServerGame.class);
+		serverClasses.put(Game.class, net.sf.freecol.server.model.ServerGame.class);
 		serverClasses.put(net.sf.freecol.common.model.IndianSettlement.class,
 				net.sf.freecol.server.model.ServerIndianSettlement.class);
 		serverClasses.put(net.sf.freecol.common.model.Region.class, net.sf.freecol.server.model.ServerRegion.class);
 		serverClasses.put(net.sf.freecol.common.model.Player.class, net.sf.freecol.server.model.ServerPlayer.class);
 		serverClasses.put(net.sf.freecol.common.model.Unit.class, net.sf.freecol.server.model.ServerUnit.class);
-	};
+	}
 
 	/**
 	 * Map of class name to class for the location classes, to speed up game
@@ -91,7 +88,7 @@ public class Game extends FreeColGameObject {
 		locationClasses.put("Map", net.sf.freecol.common.model.Map.class);
 		locationClasses.put("Tile", net.sf.freecol.common.model.Tile.class);
 		locationClasses.put("Unit", net.sf.freecol.common.model.Unit.class);
-	};
+	}
 
 	/**
 	 * The next available identifier that can be given to a new
@@ -99,7 +96,7 @@ public class Game extends FreeColGameObject {
 	 */
 	protected int nextId = 1;
 
-	/** Game UUID, persistent in savegame files */
+	/** Game UUID, persistent in savegame files. */
 	private UUID uuid = UUID.randomUUID();
 
 	/** The client player name, null in the server. */
@@ -127,7 +124,7 @@ public class Game extends FreeColGameObject {
 	private Turn turn = new Turn(1);
 
 	/** Whether the War of Spanish Succession has already taken place. */
-	private boolean spanishSuccession = false;
+	private boolean spanishSuccession;
 
 	// Serialization not required below.
 
@@ -154,7 +151,7 @@ public class Game extends FreeColGameObject {
 	private static final int REMOVE_GC_THRESHOLD = 64;
 
 	/** The number of FCGOs removed since last cache clean. */
-	private int removeCount = 0;
+	private int removeCount;
 
 	/**
 	 * A FreeColGameObjectListener to watch the objects in the game. Usually this is
@@ -192,7 +189,7 @@ public class Game extends FreeColGameObject {
 		this.combatModel = new SimpleCombatModel();
 		readFromXMLElement(element);
 		// setId() does not add Games to the freeColGameObjects
-		this.setFreeColGameObject(getId(), this);
+		setFreeColGameObject(getId(), this);
 	}
 
 	/**
@@ -271,11 +268,13 @@ public class Game extends FreeColGameObject {
 	 * @return The game object, or null if not found.
 	 */
 	public FreeColGameObject getFreeColGameObject(String id) {
-		if (id == null || id.isEmpty())
+		if (id == null || id.isEmpty()) {
 			return null;
+		}
 		final WeakReference<FreeColGameObject> ro = freeColGameObjects.get(id);
-		if (ro == null)
+		if (ro == null) {
 			return null;
+		}
 		final FreeColGameObject o = ro.get();
 		if (o == null) {
 			removeFreeColGameObject(id, "missed");
@@ -344,10 +343,12 @@ public class Game extends FreeColGameObject {
 	 *                If the identifier is null or empty.
 	 */
 	public void removeFreeColGameObject(String id, String reason) {
-		if (id == null)
+		if (id == null) {
 			throw new IllegalArgumentException("Null identifier.");
-		if (id.isEmpty())
+		}
+		if (id.isEmpty()) {
 			throw new IllegalArgumentException("Empty identifier.");
+		}
 
 		logger.finest("removeFCGO/" + reason + ": " + id);
 		freeColGameObjects.remove(id);
@@ -355,8 +356,8 @@ public class Game extends FreeColGameObject {
 
 		// Garbage collect the FCGOs if enough have been removed.
 		if (++removeCount > REMOVE_GC_THRESHOLD) {
-			for (FreeColGameObject fcgo : getFreeColGameObjects())
-				;
+			for (FreeColGameObject fcgo : getFreeColGameObjects()) {
+			}
 			removeCount = 0;
 			System.gc(); // Probably a good opportunity.
 		}
@@ -404,8 +405,9 @@ public class Game extends FreeColGameObject {
 
 			@Override
 			public boolean hasNext() {
-				if (this.fcgoState == FcgoState.VALID)
+				if (this.fcgoState == FcgoState.VALID) {
 					return true;
+				}
 				while (this.it.hasNext()) {
 					this.readAhead = this.it.next();
 					if (this.readAhead.getValue().get() != null) {
@@ -420,8 +422,9 @@ public class Game extends FreeColGameObject {
 
 			@Override
 			public FreeColGameObject next() {
-				if (!hasNext())
+				if (!hasNext()) {
 					throw new NoSuchElementException();
+				}
 				FreeColGameObject fcgo = this.readAhead.getValue().get();
 				this.fcgoState = FcgoState.CONSUMED;
 				return fcgo;
@@ -517,8 +520,9 @@ public class Game extends FreeColGameObject {
 	 */
 	public List<Player> getOtherLivePlayers(Player... players) {
 		List<Player> result = getLivePlayers(null);
-		for (Player other : players)
+		for (Player other : players) {
 			result.remove(other);
+		}
 		return result;
 	}
 
@@ -567,17 +571,20 @@ public class Game extends FreeColGameObject {
 	 * @see #getNextPlayer
 	 */
 	public Player getPlayerAfter(Player beforePlayer) {
-		if (players.isEmpty())
+		if (players.isEmpty()) {
 			return null;
+		}
 
 		final int start = players.indexOf(beforePlayer);
 		int index = start;
 		do {
-			if (++index >= players.size())
+			if (++index >= players.size()) {
 				index = 0;
+			}
 			Player player = players.get(index);
-			if (!player.isUnknownEnemy() && !player.isDead())
+			if (!player.isUnknownEnemy() && !player.isDead()) {
 				return player;
+			}
 		} while (index != start);
 		return null;
 	}
@@ -588,7 +595,7 @@ public class Game extends FreeColGameObject {
 	 * @return The first player, or null if none present.
 	 */
 	public Player getFirstPlayer() {
-		return (players.isEmpty()) ? null : players.get(0);
+		return players.isEmpty() ? null : players.get(0);
 	}
 
 	/**
@@ -625,8 +632,9 @@ public class Game extends FreeColGameObject {
 			players.add(player);
 			Nation nation = getSpecification().getNation(player.getNationId());
 			nationOptions.getNations().put(nation, NationState.NOT_AVAILABLE);
-			if (currentPlayer == null)
+			if (currentPlayer == null) {
 				currentPlayer = player;
+			}
 			return true;
 		}
 		logger.warning("Game already full, but tried to add: " + player.getName());
@@ -643,15 +651,17 @@ public class Game extends FreeColGameObject {
 	public boolean removePlayer(Player player) {
 		Player newCurrent = (currentPlayer != player) ? null : getPlayerAfter(currentPlayer);
 
-		if (!players.remove(player))
+		if (!players.remove(player)) {
 			return false;
+		}
 
 		Nation nation = getSpecification().getNation(player.getNationId());
 		nationOptions.getNations().put(nation, NationState.AVAILABLE);
 		player.dispose();
 
-		if (newCurrent != null)
+		if (newCurrent != null) {
 			currentPlayer = newCurrent;
+		}
 		return true;
 	}
 
@@ -940,8 +950,9 @@ public class Game extends FreeColGameObject {
 	 */
 	public void checkOwners(Ownable o, Player oldOwner) {
 		Player newOwner = o.getOwner();
-		if (oldOwner == newOwner)
+		if (oldOwner == newOwner) {
 			return;
+		}
 
 		if (oldOwner != null && oldOwner.removeOwnable(o)) {
 			oldOwner.invalidateCanSeeTiles();// +vis
@@ -974,8 +985,9 @@ public class Game extends FreeColGameObject {
 	public Settlement getSettlementByName(String name) {
 		for (Player p : getLivePlayers(null)) {
 			for (Settlement s : p.getSettlements()) {
-				if (name.equals(s.getName()))
+				if (name.equals(s.getName())) {
 					return s;
+				}
 			}
 		}
 		return null;
@@ -1001,8 +1013,9 @@ public class Game extends FreeColGameObject {
 	 */
 	public FreeColObject getMessageDisplay(ModelMessage message) {
 		String id = message.getDisplayId();
-		if (id == null)
+		if (id == null) {
 			id = message.getSourceId();
+		}
 		FreeColObject o = getFreeColGameObject(id);
 		if (o == null) {
 			try {
@@ -1044,8 +1057,9 @@ public class Game extends FreeColGameObject {
 				Long count = (long) 1;
 				objStats.put(className, count);
 			}
-			if (fcgo.isDisposed())
+			if (fcgo.isDisposed()) {
 				disposed++;
+			}
 		}
 		stats.put("disposed", Long.toString(disposed));
 		for (Entry<String, Long> entry : objStats.entrySet()) {
@@ -1092,13 +1106,10 @@ public class Game extends FreeColGameObject {
 	 *                on error.
 	 */
 	public <T extends FreeColObject> T newInstance(Class<T> returnClass, boolean server) throws IOException {
-		Class<T> rc = (server) ? serverClass(returnClass) : returnClass;
+		Class<T> rc = server ? serverClass(returnClass) : returnClass;
 		try {
 			Constructor<T> c = rc.getConstructor(Game.class, String.class);
 			return c.newInstance(this, (String) null);
-
-		} catch (NoSuchMethodException nsme) { // Specific to getConstructor
-			throw new IOException(nsme);
 		} catch (Exception e) { // Handles multiple fails from newInstance
 			throw new IOException(e);
 		}
@@ -1122,17 +1133,13 @@ public class Game extends FreeColGameObject {
 			T ret = newInstance(returnClass, false);
 			ret.readFromXML(xr);
 			return ret;
-
 		} catch (IOException ioe) {
 			throw new XMLStreamException(ioe);
 		}
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int checkIntegrity(boolean fix) {
 		int result = super.checkIntegrity(fix);
@@ -1157,8 +1164,9 @@ public class Game extends FreeColGameObject {
 			}
 		}
 		if (lb.grew()) {
-			if (fix)
+			if (fix) {
 				lb.add(" (dropped)");
+			}
 			lb.log(logger, Level.WARNING);
 		}
 
@@ -1172,30 +1180,25 @@ public class Game extends FreeColGameObject {
 		return result;
 	}
 
-	// Override Object
-	//
-	// Two games are not the same just because they have the same
-	// identifier, but to avoid having to check everything in the Game
-	// just insist on object equality for the equals() test, and
-	// accept the basic id-based hashCode().
-
 	/**
-	 * {@inheritDoc}
+	 * Override Object
+	 * Two games are not the same just because they have the same
+	 * identifier, but to avoid having to check everything in the Game
+	 * just insist on object equality for the equals() test, and
+	 * accept the basic id-based hashCode().
 	 */
+
 	@Override
 	public boolean equals(Object o) {
 		return this == o;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		return Utils.hashCode(getId());
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String CIBOLA_TAG = "cibola";
 	private static final String CURRENT_PLAYER_TAG = "currentPlayer";
@@ -1203,19 +1206,15 @@ public class Game extends FreeColGameObject {
 	private static final String SPANISH_SUCCESSION_TAG = "spanishSuccession";
 	private static final String TURN_TAG = "turn";
 	private static final String UUID_TAG = "UUID";
-	// @compat 0.10.x
+	/** @compat 0.10.x */
 	private static final String OLD_NEXT_ID_TAG = "nextID";
-	// end @compat
+	/** End @compat. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
 
 		if (xw.validForSave()) {
-
 			xw.writeAttribute(NEXT_ID_TAG, nextId);
 		}
 
@@ -1230,9 +1229,6 @@ public class Game extends FreeColGameObject {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -1252,26 +1248,27 @@ public class Game extends FreeColGameObject {
 
 		List<Player> players = getSortedCopy(getPlayers());
 		Player unknown = getUnknownEnemy();
-		if (unknown != null)
+		if (unknown != null) {
 			players.add(unknown);
-		for (Player p : players)
+		}
+		for (Player p : players) {
 			p.toXML(xw);
+		}
 
-		if (map != null)
+		if (map != null) {
 			map.toXML(xw);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
 
 		nextId = xr.getAttribute(NEXT_ID_TAG, -1);
 		// @compat 0.10.x
-		if (nextId < 0)
+		if (nextId < 0) {
 			nextId = xr.getAttribute(OLD_NEXT_ID_TAG, 0);
+		}
 		// end @compat
 
 		String str = xr.getAttribute(UUID_TAG, (String) null);
@@ -1280,7 +1277,6 @@ public class Game extends FreeColGameObject {
 				UUID u = UUID.fromString(str);
 				this.uuid = u;
 			} catch (IllegalArgumentException iae) {
-				;// Preserve existing uuid
 			}
 		}
 
@@ -1289,9 +1285,6 @@ public class Game extends FreeColGameObject {
 		spanishSuccession = xr.getAttribute(SPANISH_SUCCESSION_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -1319,9 +1312,6 @@ public class Game extends FreeColGameObject {
 		currentPlayer = (current == null) ? null : getFreeColGameObject(current, Player.class);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Game game = getGame();
@@ -1332,18 +1322,16 @@ public class Game extends FreeColGameObject {
 			String cibola = xr.readId();
 			// @compat 0.11.3
 			final String oldPrefix = "lostCityRumour.cityName";
-			if (cibola.startsWith(oldPrefix))
+			if (cibola.startsWith(oldPrefix)) {
 				cibola = "nameCache." + cibola;
+			}
 			// end @compat 0.11.3
 			NameCache.addCityOfCibola(cibola);
 			xr.closeTag(CIBOLA_TAG);
-
 		} else if (Map.getXMLElementTagName().equals(tag)) {
 			map = xr.readFreeColGameObject(game, Map.class);
-
 		} else if (NationOptions.getXMLElementTagName().equals(tag)) {
 			nationOptions = new NationOptions(xr, specification);
-
 		} else if (Player.getXMLElementTagName().equals(tag)) {
 			Player player = xr.readFreeColGameObject(game, Player.class);
 			if (player.isUnknownEnemy()) {
@@ -1351,19 +1339,14 @@ public class Game extends FreeColGameObject {
 			} else {
 				players.add(player);
 			}
-
 		} else if (Specification.getXMLElementTagName().equals(tag)) {
 			logger.info(((specification == null) ? "Loading" : "Reloading") + " specification.");
 			specification = new Specification(xr);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

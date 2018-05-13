@@ -30,13 +30,14 @@ import net.sf.freecol.common.ObjectWithId;
  * @see Locatable
  */
 public interface Location extends ObjectWithId {
-
-	// "Rank" constants for location ordering.
-	// Tile ranks are distinct and non-negative.
-	// Other locations devolve to {europe,highseas,tile} rank.
-	public static final int LOCATION_RANK_NOWHERE = -3;
-	public static final int LOCATION_RANK_EUROPE = -2;
-	public static final int LOCATION_RANK_HIGHSEAS = -1;
+	/**
+	 * "Rank" constants for location ordering.
+	 * Tile ranks are distinct and non-negative.
+	 * Other locations devolve to {europe,highseas,tile} rank.
+	 */
+	int LOCATION_RANK_NOWHERE = -3;
+	int LOCATION_RANK_EUROPE = -2;
+	int LOCATION_RANK_HIGHSEAS = -1;
 
 	/**
 	 * Gets the identifier of this <code>Location</code>.
@@ -44,22 +45,21 @@ public interface Location extends ObjectWithId {
 	 * @return The object identifier.
 	 * @see FreeColGameObject#getId
 	 */
-	@Override
-	public String getId();
+	@Override String getId();
 
 	/**
 	 * Gets the Tile associated with this Location.
 	 *
 	 * @return The Tile associated with this Location, or null if none found.
 	 */
-	public Tile getTile();
+	Tile getTile();
 
 	/**
 	 * Get a label for this location.
 	 *
 	 * @return A label for this location.
 	 */
-	public StringTemplate getLocationLabel();
+	StringTemplate getLocationLabel();
 
 	/**
 	 * Get a label for this location for a particular player.
@@ -68,7 +68,7 @@ public interface Location extends ObjectWithId {
 	 *            The <code>Player</code> to return the name for.
 	 * @return A label for this location.
 	 */
-	public StringTemplate getLocationLabelFor(Player player);
+	StringTemplate getLocationLabelFor(Player player);
 
 	/**
 	 * Adds a <code>Locatable</code> to this Location.
@@ -77,7 +77,7 @@ public interface Location extends ObjectWithId {
 	 *            The <code>Locatable</code> to add to this Location.
 	 * @return True if the locatable was added.
 	 */
-	public boolean add(Locatable locatable);
+	boolean add(Locatable locatable);
 
 	/**
 	 * Removes a <code>Locatable</code> from this Location.
@@ -86,7 +86,7 @@ public interface Location extends ObjectWithId {
 	 *            The <code>Locatable</code> to remove from this Location.
 	 * @return True if the locatable was removed.
 	 */
-	public boolean remove(Locatable locatable);
+	boolean remove(Locatable locatable);
 
 	/**
 	 * Checks if this <code>Location</code> contains the specified
@@ -96,7 +96,7 @@ public interface Location extends ObjectWithId {
 	 *            The <code>Locatable</code> to test the presence of.
 	 * @return True if the locatable is present at this location.
 	 */
-	public boolean contains(Locatable locatable);
+	boolean contains(Locatable locatable);
 
 	/**
 	 * Checks whether or not the specified locatable may be added to this
@@ -106,21 +106,21 @@ public interface Location extends ObjectWithId {
 	 *            The <code>Locatable</code> to add.
 	 * @return True if the locatable can be added to this location.
 	 */
-	public boolean canAdd(Locatable locatable);
+	boolean canAdd(Locatable locatable);
 
 	/**
 	 * Gets the number of units at this Location.
 	 *
 	 * @return The number of units at this Location.
 	 */
-	public int getUnitCount();
+	int getUnitCount();
 
 	/**
 	 * Gets a list of all the units present at this location.
 	 *
 	 * @return A list of all the units at this location.
 	 */
-	public List<Unit> getUnitList();
+	List<Unit> getUnitList();
 
 	/**
 	 * Gets a <code>Iterator</code> of every <code>Unit</code> directly located on
@@ -128,7 +128,7 @@ public interface Location extends ObjectWithId {
 	 *
 	 * @return A unit <code>Iterator</code>.
 	 */
-	public Iterator<Unit> getUnitIterator();
+	Iterator<Unit> getUnitIterator();
 
 	/**
 	 * Gets the <code>GoodsContainer</code> this <code>Location</code> use for
@@ -137,21 +137,21 @@ public interface Location extends ObjectWithId {
 	 * @return The <code>GoodsContainer</code> or <code>null</code> if the
 	 *         <code>Location</code> cannot store any goods.
 	 */
-	public GoodsContainer getGoodsContainer();
+	GoodsContainer getGoodsContainer();
 
 	/**
 	 * Gets the <code>Settlement</code> this <code>Location</code> is located in.
 	 *
 	 * @return The associated <code>Settlement</code>, or null if none.
 	 */
-	public Settlement getSettlement();
+	Settlement getSettlement();
 
 	/**
 	 * Get the colony at this location.
 	 *
 	 * @return A <code>Colony</code> at this location if any, or null if none found.
 	 */
-	public Colony getColony();
+	Colony getColony();
 
 	/**
 	 * Gets the native settlement at this location.
@@ -159,7 +159,7 @@ public interface Location extends ObjectWithId {
 	 * @return The <code>IndianSettlement</code> at this location if any, or null if
 	 *         none found.
 	 */
-	public IndianSettlement getIndianSettlement();
+	IndianSettlement getIndianSettlement();
 
 	/**
 	 * Promote this location to a more meaningful one if possible.
@@ -168,21 +168,21 @@ public interface Location extends ObjectWithId {
 	 *
 	 * @return A more meaningful <code>Location</code>, or this one.
 	 */
-	public Location up();
+	Location up();
 
 	/**
 	 * Get a integer for this location, for the benefit of location comparators.
 	 *
 	 * @return A suitable integer.
 	 */
-	public int getRank();
+	int getRank();
 
 	/**
 	 * Get a short description of this location.
 	 *
 	 * @return A short description.
 	 */
-	public String toShortString();
+	String toShortString();
 
 	/**
 	 * Static frontend to up().
@@ -191,7 +191,7 @@ public interface Location extends ObjectWithId {
 	 *            The <code>Location</code> to improve.
 	 * @return The improved <code>Location</code>.
 	 */
-	public static Location upLoc(Location loc) {
+	static Location upLoc(Location loc) {
 		return (loc == null) ? null : loc.up();
 	}
 
@@ -202,7 +202,7 @@ public interface Location extends ObjectWithId {
 	 *            A <code>Location</code> to check.
 	 * @return The integer rank of the given location.
 	 */
-	public static int getRank(Location loc) {
-		return (loc == null) ? Location.LOCATION_RANK_NOWHERE : loc.getRank();
+	static int getRank(Location loc) {
+		return (loc == null) ? LOCATION_RANK_NOWHERE : loc.getRank();
 	}
 }

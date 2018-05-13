@@ -26,7 +26,6 @@ import javax.swing.ImageIcon;
  * Colopedia's tree.
  */
 class ColopediaTreeItem {
-
 	private final ColopediaDetailPanel detailPanel;
 	private final String id;
 	private final String text;
@@ -69,9 +68,6 @@ class ColopediaTreeItem {
 		return text;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return text;

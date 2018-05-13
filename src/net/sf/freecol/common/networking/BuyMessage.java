@@ -30,11 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when purchasing at an IndianSettlement.
- */
+/** The message sent when purchasing at an IndianSettlement. */
 public class BuyMessage extends DOMMessage {
-
 	/** The object identifier of the unit that is buying. */
 	private final String unitId;
 
@@ -135,8 +132,9 @@ public class BuyMessage extends DOMMessage {
 		}
 
 		int gold = getGold();
-		if (gold < 0)
+		if (gold < 0) {
 			return DOMMessage.clientError("Bad gold: " + goldString);
+		}
 
 		// Try to buy.
 		return server.getInGameController().buyFromSettlement(serverPlayer, unit, settlement, goods, gold);

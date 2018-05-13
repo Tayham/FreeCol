@@ -25,7 +25,6 @@ package net.sf.freecol.common.model;
  * (defined as a constant in this class).
  */
 public class GameOptions {
-
 	/** Map game option group. */
 	public static final String GAMEOPTIONS_MAP = "gameOptions.map";
 

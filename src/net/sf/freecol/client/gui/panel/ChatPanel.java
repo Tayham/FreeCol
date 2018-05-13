@@ -34,7 +34,6 @@ import net.sf.freecol.client.FreeColClient;
  * presses enter in the textfield.
  */
 public final class ChatPanel extends FreeColPanel {
-
 	private static final Logger logger = Logger.getLogger(ChatPanel.class.getName());
 
 	public static final int CHAT = 1;
@@ -66,9 +65,7 @@ public final class ChatPanel extends FreeColPanel {
 		setSize(getPreferredSize());
 	}
 
-	/**
-	 * Requests that the chat textfield in this chat panel gets the focus.
-	 */
+	/** Requests that the chat textfield in this chat panel gets the focus. */
 	@Override
 	public void requestFocus() {
 		field.requestFocus();
@@ -86,11 +83,8 @@ public final class ChatPanel extends FreeColPanel {
 		return message;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final String command = ae.getActionCommand();

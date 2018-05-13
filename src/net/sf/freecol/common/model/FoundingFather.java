@@ -38,8 +38,7 @@ import static net.sf.freecol.common.util.StringUtils.*;
  * cause certain events.
  */
 public class FoundingFather extends FreeColGameObjectType {
-
-	public static enum FoundingFatherType {
+	public enum FoundingFatherType {
 		TRADE, EXPLORATION, MILITARY, POLITICAL, RELIGIOUS;
 
 		/**
@@ -169,8 +168,9 @@ public class FoundingFather extends FreeColGameObjectType {
 	 *            The <code>Event</code> to add.
 	 */
 	private void addEvent(Event event) {
-		if (events == null)
+		if (events == null) {
 			events = new ArrayList<>();
+		}
 		events.add(event);
 	}
 
@@ -202,8 +202,9 @@ public class FoundingFather extends FreeColGameObjectType {
 	 *            The <code>Scope</code> to add.
 	 */
 	private void addScope(Scope scope) {
-		if (scopes == null)
+		if (scopes == null) {
 			scopes = new ArrayList<>();
+		}
 		scopes.add(scope);
 	}
 
@@ -237,8 +238,9 @@ public class FoundingFather extends FreeColGameObjectType {
 	 *            The upgraded <code>UnitType</code>.
 	 */
 	private void addUpgrade(UnitType fromType, UnitType toType) {
-		if (upgrades == null)
+		if (upgrades == null) {
 			upgrades = new HashMap<>();
+		}
 		upgrades.put(fromType, toType);
 	}
 
@@ -270,8 +272,9 @@ public class FoundingFather extends FreeColGameObjectType {
 	 *            The <code>AbstractUnit</code> to add.
 	 */
 	private void addUnit(AbstractUnit unit) {
-		if (units == null)
+		if (units == null) {
 			units = new ArrayList<>();
+		}
 		units.add(unit);
 	}
 
@@ -285,10 +288,10 @@ public class FoundingFather extends FreeColGameObjectType {
 	 * @return True if the father is available.
 	 */
 	public boolean isAvailableTo(Player player) {
-		return (!player.isEuropean()) ? false : (scopes == null) ? true : any(scopes, s -> s.appliesTo(player));
+		return (player.isEuropean() && scopes == null) || any(scopes, s -> s.appliesTo(player));
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String FROM_ID_TAG = "from-id";
 	private static final String TO_ID_TAG = "to-id";
@@ -297,9 +300,6 @@ public class FoundingFather extends FreeColGameObjectType {
 	private static final String UPGRADE_TAG = "upgrade";
 	private static final String WEIGHT_TAG = "weight";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -311,18 +311,17 @@ public class FoundingFather extends FreeColGameObjectType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
-		for (Event event : getEvents())
+		for (Event event : getEvents()) {
 			event.toXML(xw);
+		}
 
-		for (Scope scope : getScopes())
+		for (Scope scope : getScopes()) {
 			scope.toXML(xw);
+		}
 
 		for (AbstractUnit unit : getUnits()) {
 			xw.writeStartElement(UNIT_TAG);
@@ -345,9 +344,6 @@ public class FoundingFather extends FreeColGameObjectType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -359,9 +355,6 @@ public class FoundingFather extends FreeColGameObjectType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -375,9 +368,6 @@ public class FoundingFather extends FreeColGameObjectType {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -388,24 +378,17 @@ public class FoundingFather extends FreeColGameObjectType {
 			UnitType toType = xr.getType(spec, TO_ID_TAG, UnitType.class, (UnitType) null);
 			addUpgrade(fromType, toType);
 			xr.closeTag(UPGRADE_TAG);
-
 		} else if (UNIT_TAG.equals(tag)) {
 			addUnit(new AbstractUnit(xr));
-
 		} else if (Event.getXMLElementTagName().equals(tag)) {
 			addEvent(new Event(xr, spec));
-
 		} else if (Scope.getXMLElementTagName().equals(tag)) {
 			addScope(new Scope(xr));
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

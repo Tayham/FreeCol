@@ -33,11 +33,8 @@ import net.sf.freecol.common.io.Mods;
 import net.sf.freecol.common.model.Specification;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-/**
- * Represents a list of Options.
- */
+/** Represents a list of Options. */
 public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T>>> {
-
 	private static final Logger logger = Logger.getLogger(ListOption.class.getName());
 
 	/** The AbstractOption used to generate new values. */
@@ -103,8 +100,9 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 	public List<T> getOptionValues() {
 		List<T> result = new ArrayList<>();
 		for (AbstractOption<T> option : value) {
-			if (option != null)
+			if (option != null) {
 				result.add(option.getValue());
+			}
 		}
 		return result;
 	}
@@ -116,8 +114,9 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 	 *            The new <code>AbstractOption</code> member to add.
 	 */
 	private void addMember(AbstractOption<T> ao) {
-		if (canAdd(ao))
+		if (canAdd(ao)) {
 			this.value.add(ao);
+		}
 	}
 
 	/**
@@ -147,7 +146,7 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 	 * @return True if the option can be added.
 	 */
 	public boolean canAdd(AbstractOption<T> ao) {
-		return (allowDuplicates) ? true : none(value, o -> o.equals(ao));
+		return allowDuplicates || none(value, o -> o.equals(ao));
 	}
 
 	// Interface Option
@@ -171,13 +170,15 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 	@Override
 	public void setValue(List<AbstractOption<T>> value) {
 		// Fail fast: the list value may be empty, but it must not be null.
-		if (value == null)
+		if (value == null) {
 			throw new IllegalArgumentException("Null ListOption");
+		}
 
 		List<AbstractOption<T>> oldValue = new ArrayList<>(this.value);
 		this.value.clear();
-		for (AbstractOption<T> op : value)
+		for (AbstractOption<T> op : value) {
 			addMember(op);
+		}
 
 		if (isDefined && !value.equals(oldValue)) {
 			firePropertyChange(VALUE_TAG, oldValue, value);
@@ -185,25 +186,19 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 		isDefined = true;
 	}
 
-	// Override AbstractOption
+	/** Override AbstractOption. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isNullValueOK() {
 		return true;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String MAXIMUM_NUMBER_TAG = "maximumNumber";
 	private static final String OPTION_VALUE_TAG = "optionValue";
 	private static final String TEMPLATE_TAG = "template";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -211,9 +206,6 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 		xw.writeAttribute(MAXIMUM_NUMBER_TAG, maximumNumber);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		if (template != null) {
@@ -229,9 +221,6 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -239,9 +228,6 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 		maximumNumber = xr.getAttribute(MAXIMUM_NUMBER_TAG, 1);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -250,15 +236,12 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
 
-		if (null != tag) // @compat 0.10.4
+		if (null != tag) {
 			switch (tag) {
 			case OPTION_VALUE_TAG:
 				String modId = xr.readId();
@@ -275,26 +258,25 @@ public abstract class ListOption<T> extends AbstractOption<List<AbstractOption<T
 				break;
 			case TEMPLATE_TAG:
 				xr.nextTag();
-				template = (AbstractOption<T>) readOption(xr);
+				template = readOption(xr);
 				xr.closeTag(TEMPLATE_TAG);
 				break;
 			default:
 				AbstractOption<T> op = null;
 				try {
-					op = (AbstractOption<T>) readOption(xr);
+					op = readOption(xr);
 				} catch (XMLStreamException xse) {
 					logger.log(Level.WARNING, "Invalid option at: " + tag, xse);
 					xr.closeTag(tag);
 				}
-				if (op != null)
+				if (op != null) {
 					addMember(op);
+				}
 				break;
 			}
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);

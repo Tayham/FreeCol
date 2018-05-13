@@ -78,7 +78,6 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
  * @author Brian
  */
 public final class QuickActionMenu extends JPopupMenu {
-
 	private static final Logger logger = Logger.getLogger(QuickActionMenu.class.getName());
 
 	private final FreeColClient freeColClient;
@@ -135,67 +134,70 @@ public final class QuickActionMenu extends JPopupMenu {
 	 */
 	private void promptForGoods(AbstractGoods ag) {
 		int ret = gui.showSelectAmountDialog(ag.getType(), GoodsContainer.CARGO_SIZE, ag.getAmount(), true);
-		if (ret > 0)
+		if (ret > 0) {
 			ag.setAmount(ret);
+		}
 	}
 
-	/**
-	 * Creates a popup menu for a Unit.
-	 */
+	/** Creates a popup menu for a Unit. */
 	private void createUnitMenu(final UnitLabel unitLabel) {
 		final Unit unit = unitLabel.getUnit();
 
-		this.setLabel("Unit");
+		setLabel("Unit");
 		ImageIcon unitIcon = new ImageIcon(gui.getImageLibrary().getSmallUnitImage(unit));
 		JMenuItem name = new JMenuItem(
 				unit.getDescription(Unit.UnitLabelType.NATIONAL) + " (" + Messages.message("colopedia") + ")",
 				unitIcon);
 		name.setActionCommand(UnitAction.COLOPEDIA.toString());
 		name.addActionListener(unitLabel);
-		this.add(name);
-		this.addSeparator();
+		add(name);
+		addSeparator();
 
-		if (addCarrierItems(unitLabel))
-			this.addSeparator();
+		if (addCarrierItems(unitLabel)) {
+			addSeparator();
+		}
 
 		if (unit.isInEurope()) {
-			if (addCommandItems(unitLabel))
-				this.addSeparator();
+			if (addCommandItems(unitLabel)) {
+				addSeparator();
+			}
 			if (addBoardItems(unitLabel, unit.getOwner().getEurope())) {
-				this.addSeparator();
+				addSeparator();
 			}
 		} else if (unit.hasTile()) {
 			Colony colony = unit.getLocation().getTile().getColony();
 			if (colony != null) {
-				if (addTileItem(unitLabel))
-					this.addSeparator();
-				if (addWorkItems(unitLabel))
-					this.addSeparator();
-				if (addEducationItems(unitLabel))
-					this.addSeparator();
+				if (addTileItem(unitLabel)) {
+					addSeparator();
+				}
+				if (addWorkItems(unitLabel)) {
+					addSeparator();
+				}
+				if (addEducationItems(unitLabel)) {
+					addSeparator();
+				}
 				if (unit.isInColony() && colony.canReducePopulation()) {
 					JMenuItem menuItem = Utility.localizedMenuItem("quickActionMenu.leaveTown");
 					menuItem.setActionCommand(UnitAction.LEAVE_TOWN.toString());
 					menuItem.addActionListener(unitLabel);
-					this.add(menuItem);
+					add(menuItem);
 					addBoardItems(unitLabel, colony.getTile());
-					this.addSeparator();
+					addSeparator();
 				} else {
-					if (addCommandItems(unitLabel))
-						this.addSeparator();
+					if (addCommandItems(unitLabel)) {
+						addSeparator();
+					}
 					if (addBoardItems(unitLabel, colony.getTile())) {
-						this.addSeparator();
+						addSeparator();
 					}
 				}
-			} else {
-				if (addCommandItems(unitLabel))
-					this.addSeparator();
+			} else if (addCommandItems(unitLabel)) {
+				addSeparator();
 			}
 		}
 
-		if (unit.hasAbility(Ability.CAN_BE_EQUIPPED)) {
-			if (addRoleItems(unitLabel))
-				this.addSeparator();
+		if (unit.hasAbility(Ability.CAN_BE_EQUIPPED) && addRoleItems(unitLabel)) {
+			addSeparator();
 		}
 	}
 
@@ -203,8 +205,9 @@ public final class QuickActionMenu extends JPopupMenu {
 		final InGameController igc = freeColClient.getInGameController();
 		final Unit tempUnit = unitLabel.getUnit();
 
-		if (tempUnit.isCarrier())
+		if (tempUnit.isCarrier()) {
 			return false;
+		}
 		boolean added = false;
 		for (final Unit unit : loc.getUnitList()) {
 			if (unit.isCarrier() && unit.canCarryUnits() && unit.canAdd(tempUnit) && tempUnit.getLocation() != unit) {
@@ -214,7 +217,7 @@ public final class QuickActionMenu extends JPopupMenu {
 				menuItem.addActionListener((ActionEvent ae) -> {
 					igc.boardShip(tempUnit, unit);
 				});
-				this.add(menuItem);
+				add(menuItem);
 				added = true;
 			}
 		}
@@ -236,7 +239,7 @@ public final class QuickActionMenu extends JPopupMenu {
 					}
 					igc.loadCargo(goods, unit);
 				});
-				this.add(menuItem);
+				add(menuItem);
 				added = true;
 			}
 		}
@@ -245,21 +248,22 @@ public final class QuickActionMenu extends JPopupMenu {
 
 	private boolean addCarrierItems(final UnitLabel unitLabel) {
 		final Unit unit = unitLabel.getUnit();
-		if (!unit.isCarrier() || !unit.hasCargo())
+		if (!unit.isCarrier() || !unit.hasCargo()) {
 			return false;
+		}
 
 		JMenuItem cargo = Utility.localizedMenuItem("cargoOnCarrier");
-		this.add(cargo);
+		add(cargo);
 
 		for (Unit passenger : unit.getUnitList()) {
 			JMenuItem menuItem = new JMenuItem("    " + passenger.getDescription(Unit.UnitLabelType.NATIONAL));
 			menuItem.setFont(menuItem.getFont().deriveFont(Font.ITALIC));
-			this.add(menuItem);
+			add(menuItem);
 		}
 		for (Goods goods : unit.getGoodsList()) {
 			JMenuItem menuItem = new JMenuItem("    " + Messages.message(goods.getLabel(true)));
 			menuItem.setFont(menuItem.getFont().deriveFont(Font.ITALIC));
-			this.add(menuItem);
+			add(menuItem);
 		}
 		return true;
 	}
@@ -272,8 +276,9 @@ public final class QuickActionMenu extends JPopupMenu {
 				Integer i1 = map.get(m1);
 				Integer i2 = map.get(m2);
 				int cmp = i2.compareTo(i1);
-				if (cmp == 0)
+				if (cmp == 0) {
 					cmp = m1.getText().compareTo(m2.getText());
+				}
 				return cmp;
 			}
 		});
@@ -292,15 +297,16 @@ public final class QuickActionMenu extends JPopupMenu {
 		}
 		JMenuItem menuItem = Utility.localizedMenuItem(t, new ImageIcon(gui.getImageLibrary().getSmallIconImage(type)));
 		menuItem.setActionCommand(
-				UnitLabel.getWorkLabel(wl) + "/" + wl.getId() + "/" + type.getId() + "/" + ((claim) ? "!" : ""));
+				UnitLabel.getWorkLabel(wl) + "/" + wl.getId() + "/" + type.getId() + "/" + (claim ? "!" : ""));
 		menuItem.addActionListener(unitLabel);
 		return menuItem;
 	}
 
 	private boolean addWorkItems(final UnitLabel unitLabel) {
 		final Unit unit = unitLabel.getUnit();
-		if (unit.isCarrier())
+		if (unit.isCarrier()) {
 			return false;
+		}
 
 		final UnitType unitType = unit.getType();
 		final GoodsType expertGoods = unitType.getExpertProduction();
@@ -365,30 +371,36 @@ public final class QuickActionMenu extends JPopupMenu {
 
 		JMenu container = Utility.localizedMenu("quickActionMenu.changeWork");
 		List<JMenuItem> owned = descendingList(items);
-		if (expertOwned != null)
+		if (expertOwned != null) {
 			owned.add(0, expertOwned);
-		for (JMenuItem j : owned)
-			container.add(j);
-		List<JMenuItem> unowned = descendingList(extras);
-		if (expertUnowned != null)
-			unowned.add(0, expertUnowned);
-		if (!unowned.isEmpty()) {
-			if (!owned.isEmpty())
-				container.addSeparator();
-			for (JMenuItem j : unowned)
-				container.add(j);
 		}
-		if (container.getItemCount() > 0)
-			this.add(container);
+		for (JMenuItem j : owned) {
+			container.add(j);
+		}
+		List<JMenuItem> unowned = descendingList(extras);
+		if (expertUnowned != null) {
+			unowned.add(0, expertUnowned);
+		}
+		if (!unowned.isEmpty()) {
+			if (!owned.isEmpty()) {
+				container.addSeparator();
+			}
+			for (JMenuItem j : unowned) {
+				container.add(j);
+			}
+		}
+		if (container.getItemCount() > 0) {
+			add(container);
+		}
 
 		if (current != null && unit.getWorkType() != null) {
 			JMenuItem ji = Utility.localizedMenuItem("showProductionModifiers");
 			ji.addActionListener((ActionEvent ae) -> {
 				gui.showWorkProductionPanel(unit);
 			});
-			this.add(ji);
+			add(ji);
 		}
-		return !(owned.isEmpty() && unowned.isEmpty() && current == null);
+		return !owned.isEmpty() || !unowned.isEmpty() || current != null;
 	}
 
 	private boolean addEducationItems(final UnitLabel unitLabel) {
@@ -416,7 +428,7 @@ public final class QuickActionMenu extends JPopupMenu {
 								+ teacher.getNeededTurnsOfTraining());
 						menuItem.setEnabled(false);
 					}
-					this.add(menuItem);
+					add(menuItem);
 					separatorNeeded = true;
 				}
 			}
@@ -428,7 +440,7 @@ public final class QuickActionMenu extends JPopupMenu {
 			menuItem.setText(
 					menuItem.getText() + ": " + unit.getTurnsOfTraining() + "/" + unit.getNeededTurnsOfTraining());
 			menuItem.setEnabled(false);
-			this.add(menuItem);
+			add(menuItem);
 			separatorNeeded = true;
 		}
 		int experience = unit.getExperience();
@@ -449,7 +461,7 @@ public final class QuickActionMenu extends JPopupMenu {
 						.addName(String.valueOf(maxExperience))), "align right");
 				experiencePanel.add(Utility.localizedLabel("quickActionMenu.upgrade"));
 				experiencePanel.add(new JLabel(ModifierFormat.format(probability) + "%"), "align right");
-				this.add(experiencePanel);
+				add(experiencePanel);
 				separatorNeeded = true;
 			}
 		}
@@ -468,37 +480,36 @@ public final class QuickActionMenu extends JPopupMenu {
 			gui.setActiveUnit(tempUnit);
 		});
 		menuItem.setEnabled(!isUnitAtSea);
-		this.add(menuItem);
+		add(menuItem);
 
 		if (!(tempUnit.getLocation() instanceof Europe)) {
 			menuItem = Utility.localizedMenuItem("fortify");
 			menuItem.setActionCommand(UnitAction.FORTIFY.toString());
 			menuItem.addActionListener(unitLabel);
-			menuItem.setEnabled((tempUnit.getMovesLeft() > 0) && !(tempUnit.getState() == Unit.UnitState.FORTIFIED
-					|| tempUnit.getState() == Unit.UnitState.FORTIFYING));
-			this.add(menuItem);
+			menuItem.setEnabled(tempUnit.getMovesLeft() > 0 && tempUnit.getState() != UnitState.FORTIFIED && tempUnit.getState() != UnitState.FORTIFYING);
+			add(menuItem);
 		}
 
 		UnitState unitState = tempUnit.getState();
 		menuItem = Utility.localizedMenuItem("sentry");
 		menuItem.setActionCommand(UnitAction.SENTRY.toString());
 		menuItem.addActionListener(unitLabel);
-		menuItem.setEnabled(unitState != Unit.UnitState.SENTRY && !isUnitAtSea);
-		this.add(menuItem);
+		menuItem.setEnabled(unitState != UnitState.SENTRY && !isUnitAtSea);
+		add(menuItem);
 
 		boolean hasTradeRoute = tempUnit.getTradeRoute() != null;
 		menuItem = Utility.localizedMenuItem("clearOrders");
 		menuItem.setActionCommand(UnitAction.CLEAR_ORDERS.toString());
 		menuItem.addActionListener(unitLabel);
-		menuItem.setEnabled((unitState != Unit.UnitState.ACTIVE || hasTradeRoute) && !isUnitAtSea);
-		this.add(menuItem);
+		menuItem.setEnabled((unitState != UnitState.ACTIVE || hasTradeRoute) && !isUnitAtSea);
+		add(menuItem);
 
 		if (tempUnit.isCarrier()) {
 			menuItem = Utility.localizedMenuItem("assignTradeRoute");
 			menuItem.setActionCommand(UnitAction.ASSIGN_TRADE_ROUTE.toString());
 			menuItem.addActionListener(unitLabel);
 			menuItem.setEnabled(!hasTradeRoute);
-			this.add(menuItem);
+			add(menuItem);
 		}
 
 		if (tempUnit.canCarryTreasure() && tempUnit.canCashInTreasureTrain()) {
@@ -507,7 +518,7 @@ public final class QuickActionMenu extends JPopupMenu {
 				freeColClient.getInGameController().checkCashInTreasureTrain(tempUnit);
 			});
 			menuItem.setEnabled(true);
-			this.add(menuItem);
+			add(menuItem);
 		}
 
 		if (tempUnit.getLocation() instanceof Unit) {
@@ -515,7 +526,7 @@ public final class QuickActionMenu extends JPopupMenu {
 			menuItem.setActionCommand(UnitAction.LEAVE_SHIP.toString());
 			menuItem.addActionListener(unitLabel);
 			menuItem.setEnabled(true);
-			this.add(menuItem);
+			add(menuItem);
 		}
 
 		if (tempUnit.isCarrier()) {
@@ -523,7 +534,7 @@ public final class QuickActionMenu extends JPopupMenu {
 			menuItem.setActionCommand(UnitAction.UNLOAD.toString());
 			menuItem.addActionListener(unitLabel);
 			menuItem.setEnabled(tempUnit.hasCargo() && !isUnitAtSea);
-			this.add(menuItem);
+			add(menuItem);
 		}
 
 		return true;
@@ -594,12 +605,14 @@ public final class QuickActionMenu extends JPopupMenu {
 		final int roleCount = unit.getRoleCount();
 		boolean separatorNeeded = false;
 
-		UnitLocation uloc = (unit.isInEurope()) ? unit.getOwner().getEurope() : unit.getSettlement();
-		if (uloc == null)
+		UnitLocation uloc = unit.isInEurope() ? unit.getOwner().getEurope() : unit.getSettlement();
+		if (uloc == null) {
 			return false;
+		}
 		for (Role r : unit.getAvailableRoles(null)) {
-			if (r == role)
+			if (r == role) {
 				continue;
+			}
 			JMenuItem newItem;
 			if (r.isDefaultRole()) { // Always valid
 				newItem = createRoleItem(unitLabel, role, roleCount, r, 0, 0);
@@ -608,8 +621,9 @@ public final class QuickActionMenu extends JPopupMenu {
 				for (int count = r.getMaximumCount(); count > 0; count--) {
 					List<AbstractGoods> req = unit.getGoodsDifference(r, count);
 					int price = uloc.priceGoods(req);
-					if (price < 0)
+					if (price < 0) {
 						continue;
+					}
 					if (unit.getOwner().checkGold(price)) {
 						newItem = createRoleItem(unitLabel, role, roleCount, r, count, price);
 						break;
@@ -617,20 +631,21 @@ public final class QuickActionMenu extends JPopupMenu {
 				}
 			}
 			if (newItem != null) {
-				this.add(newItem);
+				add(newItem);
 				separatorNeeded = true;
 			}
 		}
 
 		UnitType newUnitType = unit.getType().getTargetType(ChangeType.CLEAR_SKILL, unit.getOwner());
 		if (newUnitType != null) {
-			if (separatorNeeded)
-				this.addSeparator();
+			if (separatorNeeded) {
+				addSeparator();
+			}
 			JMenuItem menuItem = Utility.localizedMenuItem("quickActionMenu.clearSpeciality",
 					new ImageIcon(gui.getImageLibrary().getTinyUnitImage(newUnitType)));
 			menuItem.setActionCommand(UnitAction.CLEAR_SPECIALITY.toString());
 			menuItem.addActionListener(unitLabel);
-			this.add(menuItem);
+			add(menuItem);
 			if (unit.getLocation() instanceof Building && !((Building) unit.getLocation()).canAddType(newUnitType)) {
 				menuItem.setEnabled(false);
 			}
@@ -639,43 +654,40 @@ public final class QuickActionMenu extends JPopupMenu {
 		return separatorNeeded;
 	}
 
-	/**
-	 * Creates a menu for some goods.
-	 */
+	/** Creates a menu for some goods. */
 	private void createGoodsMenu(final GoodsLabel goodsLabel) {
 		final InGameController igc = freeColClient.getInGameController();
 		final Player player = freeColClient.getMyPlayer();
 		final Goods goods = goodsLabel.getGoods();
 
-		this.setLabel(Messages.message("cargo"));
+		setLabel(Messages.message("cargo"));
 		JMenuItem name = new JMenuItem(Messages.getName(goods) + " (" + Messages.message("colopedia") + ")",
 				new ImageIcon(gui.getImageLibrary().getSmallIconImage(goods.getType())));
 		name.addActionListener((ActionEvent ae) -> {
 			gui.showColopediaPanel(goods.getType().getId());
 		});
-		this.add(name);
+		add(name);
 
 		int amount = (player.getMarket() == null) ? 0
 				: player.getMarket().getSalePrice(goods.getType(), goods.getAmount());
-		if (amount > 0)
+		if (amount > 0) {
 			amount -= amount * player.getTax() / 100;
+		}
 		if (amount > 0) {
 			JMenuItem price = Utility
 					.localizedMenuItem(StringTemplate.template("quickActionMenu.profit").addAmount("%amount%", amount));
-			this.add(price);
+			add(price);
 		}
 
 		if (goods.getLocation() instanceof Colony) {
 			Colony colony = (Colony) goods.getLocation();
 			addLoadItems(goods, colony.getTile());
-
 		} else if (goods.getLocation() instanceof Europe) {
 			Europe europe = (Europe) goods.getLocation();
 			addLoadItems(goods, europe);
 			if (!player.canTrade(goods.getType())) {
 				addPayArrears(goods.getType());
 			}
-
 		} else if (goods.getLocation() instanceof Unit) {
 			Unit carrier = (Unit) goods.getLocation();
 
@@ -688,7 +700,7 @@ public final class QuickActionMenu extends JPopupMenu {
 					}
 					igc.unloadCargo(goods, false);
 				});
-				this.add(unload);
+				add(unload);
 			} else {
 				if (carrier.isInEurope() && !player.canTrade(goods.getType())) {
 					addPayArrears(goods.getType());
@@ -706,7 +718,7 @@ public final class QuickActionMenu extends JPopupMenu {
 					}
 					parentPanel.revalidate();
 				});
-				this.add(dump);
+				add(dump);
 			}
 		}
 	}
@@ -730,7 +742,7 @@ public final class QuickActionMenu extends JPopupMenu {
 			}
 			parentPanel.revalidate();
 		});
-		this.add(menuItem);
+		add(menuItem);
 	}
 
 	/**
@@ -743,13 +755,13 @@ public final class QuickActionMenu extends JPopupMenu {
 		final AbstractGoods ag = marketLabel.getAbstractGoods();
 		final Player player = freeColClient.getMyPlayer();
 
-		this.setLabel(Messages.message("cargo"));
+		setLabel(Messages.message("cargo"));
 		JMenuItem name = new JMenuItem(Messages.getName(ag) + " (" + Messages.message("colopedia") + ")",
 				new ImageIcon(gui.getImageLibrary().getSmallIconImage(ag.getType())));
 		name.addActionListener((ActionEvent ae) -> {
 			gui.showColopediaPanel(ag.getType().getId());
 		});
-		this.add(name);
+		add(name);
 
 		final Europe europe = this.freeColClient.getMyPlayer().getEurope();
 		addMarketItems(ag, europe);
@@ -774,16 +786,14 @@ public final class QuickActionMenu extends JPopupMenu {
 					}
 					igc.buyGoods(ag.getType(), ag.getAmount(), unit);
 				});
-				this.add(menuItem);
+				add(menuItem);
 				added = true;
 			}
 		}
 		return added;
 	}
 
-	/**
-	 * Creates a menu for a tile.
-	 */
+	/** Creates a menu for a tile. */
 	private void createTileMenu(final ASingleTilePanel singleTilePanel) {
 		if (singleTilePanel.getColonyTile() != null && singleTilePanel.getColonyTile().getColony() != null) {
 			addTileItem(singleTilePanel.getColonyTile().getWorkTile());
@@ -819,7 +829,7 @@ public final class QuickActionMenu extends JPopupMenu {
 			menuItem.addActionListener((ActionEvent ae) -> {
 				gui.showTilePanel(tile);
 			});
-			this.add(menuItem);
+			add(menuItem);
 		}
 	}
 }

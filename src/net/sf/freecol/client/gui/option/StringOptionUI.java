@@ -33,7 +33,6 @@ import net.sf.freecol.common.option.StringOption;
  * to be both seen and changed.
  */
 public final class StringOptionUI extends OptionUI<StringOption> {
-
 	private final JComboBox<String> box = new JComboBox<>();
 
 	/**
@@ -56,27 +55,18 @@ public final class StringOptionUI extends OptionUI<StringOption> {
 		initialize();
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JComboBox<String> getComponent() {
 		return box;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValue((String) box.getSelectedItem());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		box.setSelectedItem(getOption().getValue());

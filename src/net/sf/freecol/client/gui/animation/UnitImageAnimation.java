@@ -33,11 +33,8 @@ import net.sf.freecol.common.io.sza.SimpleZippedAnimation;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * Class for in-place animation of units.
- */
+/** Class for in-place animation of units. */
 public final class UnitImageAnimation {
-
 	private final SwingGUI gui;
 	private final Unit unit;
 	private final Tile tile;
@@ -64,12 +61,11 @@ public final class UnitImageAnimation {
 		this.mirror = mirror;
 	}
 
-	/**
-	 * Do the animation.
-	 */
+	/** Do the animation. */
 	public void animate() {
-		if (gui.getTilePosition(tile) == null)
+		if (gui.getTilePosition(tile) == null) {
 			return;
+		}
 
 		// Painting the whole screen once to get rid of disposed dialog-boxes.
 		gui.paintImmediatelyCanvasInItsBounds();

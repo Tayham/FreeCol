@@ -24,12 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * A queue of things for a colony to build.
- */
+/** A queue of things for a colony to build. */
 public class BuildQueue<T extends BuildableType> implements Consumer {
-
-	public static enum CompletionAction {
+	public enum CompletionAction {
 		/**
 		 * Always remove the completed item. Not used by any build queue at the moment.
 		 */
@@ -51,7 +48,7 @@ public class BuildQueue<T extends BuildableType> implements Consumer {
 		 * moment, however).
 		 */
 		ADD_RANDOM
-	};
+	}
 
 	/** A list of Buildable items. */
 	private List<T> buildQueue = new ArrayList<>();
@@ -86,7 +83,7 @@ public class BuildQueue<T extends BuildableType> implements Consumer {
 	 * @return The type of building currently being built.
 	 */
 	public T getCurrentlyBuilding() {
-		return (buildQueue.isEmpty()) ? null : buildQueue.get(0);
+		return buildQueue.isEmpty() ? null : buildQueue.get(0);
 	}
 
 	/**
@@ -139,11 +136,8 @@ public class BuildQueue<T extends BuildableType> implements Consumer {
 		this.completionAction = newCompletionAction;
 	}
 
-	// Interface Consumer
+	/** Interface Consumer. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<AbstractGoods> getConsumedGoods() {
 		T current = getCurrentlyBuilding();
@@ -208,17 +202,11 @@ public class BuildQueue<T extends BuildableType> implements Consumer {
 		return Ability.CONSUME_ALL_OR_NOTHING.equals(id);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Set<Modifier> getModifiers(String id) {
 		return Collections.<Modifier>emptySet();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);

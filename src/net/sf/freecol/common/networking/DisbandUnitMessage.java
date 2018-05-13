@@ -27,11 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when disbanding a unit.
- */
+/** The message sent when disbanding a unit. */
 public class DisbandUnitMessage extends DOMMessage {
-
 	/** The identifier of the unit to be disbanded. */
 	private final String unitId;
 

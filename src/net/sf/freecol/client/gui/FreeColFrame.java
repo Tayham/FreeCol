@@ -41,11 +41,8 @@ import net.sf.freecol.client.gui.menu.MapEditorMenuBar;
 import net.sf.freecol.client.gui.menu.MenuMouseMotionListener;
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * The base frame for FreeCol.
- */
+/** The base frame for FreeCol. */
 public class FreeColFrame extends JFrame {
-
 	private static final Logger logger = Logger.getLogger(FreeColFrame.class.getName());
 
 	/** The FreeCol client controlling the frame. */
@@ -158,9 +155,7 @@ public class FreeColFrame extends JFrame {
 		return "FreeCol " + FreeCol.getVersion();
 	}
 
-	/**
-	 * Set the canvas for this frame.
-	 */
+	/** Set the canvas for this frame. */
 	private void setCanvas() {
 		// This crashes deep in the Java libraries when changing full screen
 		// mode during the opening video
@@ -174,5 +169,4 @@ public class FreeColFrame extends JFrame {
 			logger.log(Level.WARNING, "Java crash", e);
 		}
 	}
-
 }

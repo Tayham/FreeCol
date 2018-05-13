@@ -29,11 +29,8 @@ import net.miginfocom.swing.MigLayout;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.StringTemplate;
 
-/**
- * The panel that allows a choice of tribute amount.
- */
+/** The panel that allows a choice of tribute amount. */
 public final class SelectTributeAmountDialog extends FreeColInputDialog<Integer> {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(SelectTributeAmountDialog.class.getName());
 
@@ -72,9 +69,6 @@ public final class SelectTributeAmountDialog extends FreeColInputDialog<Integer>
 		initializeInputDialog(frame, true, panel, null, "ok", "cancel");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Integer getInputValue() {
 		int result;
@@ -86,11 +80,8 @@ public final class SelectTributeAmountDialog extends FreeColInputDialog<Integer>
 		return (result <= 0 || result > maximum) ? null : result;
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void requestFocus() {
 		this.input.requestFocus();

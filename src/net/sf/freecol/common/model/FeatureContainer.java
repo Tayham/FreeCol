@@ -44,7 +44,6 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
  * - FreeColObject itself implements a null version.
  */
 public final class FeatureContainer {
-
 	private static final Logger logger = Logger.getLogger(FeatureContainer.class.getName());
 
 	/** Lock variables. */
@@ -68,13 +67,12 @@ public final class FeatureContainer {
 		}
 	}
 
-	/**
-	 * On demand creation of the abilities map.
-	 */
+	/** On demand creation of the abilities map. */
 	private void requireAbilities() {
 		synchronized (abilitiesLock) {
-			if (abilities == null)
+			if (abilities == null) {
 				abilities = new HashMap<>();
+			}
 		}
 	}
 
@@ -89,13 +87,12 @@ public final class FeatureContainer {
 		}
 	}
 
-	/**
-	 * On demand creation of the modifiers map.
-	 */
+	/** On demand creation of the modifiers map. */
 	private synchronized void requireModifiers() {
 		synchronized (modifiersLock) {
-			if (modifiers == null)
+			if (modifiers == null) {
 				modifiers = new HashMap<>();
+			}
 		}
 	}
 
@@ -105,7 +102,7 @@ public final class FeatureContainer {
 	 * @return True if the ability set is `satisfied'.
 	 */
 	public static boolean hasAbility(Set<Ability> abilitySet) {
-		return (abilitySet == null || abilitySet.isEmpty()) ? false : all(abilitySet, Ability::getValue);
+		return abilitySet != null && !abilitySet.isEmpty() && all(abilitySet, Ability::getValue);
 	}
 
 	/**
@@ -121,7 +118,7 @@ public final class FeatureContainer {
 	 * @return True if the ability is present.
 	 */
 	public boolean hasAbility(String id, FreeColGameObjectType fcgot, Turn turn) {
-		return FeatureContainer.hasAbility(getAbilities(id, fcgot, turn));
+		return hasAbility(getAbilities(id, fcgot, turn));
 	}
 
 	/**
@@ -157,15 +154,17 @@ public final class FeatureContainer {
 					}
 				} else {
 					Set<Ability> aset = abilities.get(id);
-					if (aset != null)
+					if (aset != null) {
 						result.addAll(aset);
+					}
 				}
 			}
 			Iterator<Ability> it = result.iterator();
 			while (it.hasNext()) {
 				Ability a = it.next();
-				if (!a.appliesTo(fcgot, turn))
+				if (!a.appliesTo(fcgot, turn)) {
 					it.remove();
+				}
 			}
 		}
 		return result;
@@ -179,8 +178,9 @@ public final class FeatureContainer {
 	 * @return True if the <code>Ability</code> was added.
 	 */
 	public boolean addAbility(Ability ability) {
-		if (ability == null)
+		if (ability == null) {
 			return false;
+		}
 
 		requireAbilities();
 		synchronized (abilitiesLock) {
@@ -201,8 +201,9 @@ public final class FeatureContainer {
 	 * @return The ability removed or null on failure.
 	 */
 	public Ability removeAbility(Ability ability) {
-		if (ability == null || !abilitiesPresent())
+		if (ability == null || !abilitiesPresent()) {
 			return null;
+		}
 
 		synchronized (abilitiesLock) {
 			Set<Ability> abilitySet = abilities.get(ability.getId());
@@ -217,8 +218,9 @@ public final class FeatureContainer {
 	 *            The object identifier.
 	 */
 	public void removeAbilities(String id) {
-		if (!abilitiesPresent())
+		if (!abilitiesPresent()) {
 			return;
+		}
 
 		synchronized (abilitiesLock) {
 			abilities.remove(id);
@@ -247,15 +249,17 @@ public final class FeatureContainer {
 					}
 				} else {
 					Set<Modifier> mset = modifiers.get(id);
-					if (mset != null)
+					if (mset != null) {
 						result.addAll(mset);
+					}
 				}
 			}
 			Iterator<Modifier> it = result.iterator();
 			while (it.hasNext()) {
 				Modifier m = it.next();
-				if (!m.appliesTo(fcgot, turn))
+				if (!m.appliesTo(fcgot, turn)) {
 					it.remove();
+				}
 			}
 		}
 		return result;
@@ -291,15 +295,17 @@ public final class FeatureContainer {
 	 * @return The modified number.
 	 */
 	public static float applyModifiers(float number, Turn turn, Collection<Modifier> mods) {
-		if (mods == null || mods.isEmpty())
+		if (mods == null || mods.isEmpty()) {
 			return number;
+		}
 		List<Modifier> modifiers = new ArrayList<>(mods);
 		Collections.sort(modifiers);
 		float result = number;
 		for (Modifier m : modifiers) {
 			float value = m.getValue(turn);
-			if (value == Modifier.UNKNOWN)
+			if (value == Modifier.UNKNOWN) {
 				return value;
+			}
 			result = m.apply(result, value);
 		}
 		return result;
@@ -313,8 +319,9 @@ public final class FeatureContainer {
 	 * @return True if the modifier was added.
 	 */
 	public boolean addModifier(Modifier modifier) {
-		if (modifier == null)
+		if (modifier == null) {
 			return false;
+		}
 
 		requireModifiers();
 		synchronized (modifiersLock) {
@@ -335,8 +342,9 @@ public final class FeatureContainer {
 	 * @return The modifier removed.
 	 */
 	public Modifier removeModifier(Modifier modifier) {
-		if (modifier == null || !modifiersPresent())
+		if (modifier == null || !modifiersPresent()) {
 			return null;
+		}
 
 		synchronized (modifiersLock) {
 			Set<Modifier> modifierSet = modifiers.get(modifier.getId());
@@ -351,8 +359,9 @@ public final class FeatureContainer {
 	 *            The object identifier.
 	 */
 	public void removeModifiers(String id) {
-		if (!modifiersPresent())
+		if (!modifiersPresent()) {
 			return;
+		}
 
 		synchronized (modifiersLock) {
 			modifiers.remove(id);
@@ -367,8 +376,9 @@ public final class FeatureContainer {
 	 */
 	public void addFeatures(FreeColObject fco) {
 		FeatureContainer c = fco.getFeatureContainer();
-		if (c == null)
+		if (c == null) {
 			return;
+		}
 
 		if (c.abilitiesPresent()) {
 			requireAbilities();
@@ -415,8 +425,9 @@ public final class FeatureContainer {
 	 */
 	public void removeFeatures(FreeColObject fco) {
 		FeatureContainer c = fco.getFeatureContainer();
-		if (c == null)
+		if (c == null) {
 			return;
+		}
 
 		if (abilitiesPresent() && c.abilitiesPresent()) {
 			Set<String> ca = new HashSet<>();
@@ -426,11 +437,13 @@ public final class FeatureContainer {
 			synchronized (abilitiesLock) {
 				for (String key : ca) {
 					Set<Ability> abilitySet = abilities.get(key);
-					if (abilitySet == null)
+					if (abilitySet == null) {
 						continue;
+					}
 					for (Ability a : new HashSet<>(abilitySet)) {
-						if (a.getSource() == fco)
+						if (a.getSource() == fco) {
 							abilitySet.remove(a);
+						}
 					}
 				}
 			}
@@ -444,20 +457,20 @@ public final class FeatureContainer {
 			synchronized (modifiersLock) {
 				for (String key : cm) {
 					Set<Modifier> modifierSet = modifiers.get(key);
-					if (modifierSet == null)
+					if (modifierSet == null) {
 						continue;
+					}
 					for (Modifier m : new HashSet<>(modifierSet)) {
-						if (m.getSource() == fco)
+						if (m.getSource() == fco) {
 							modifierSet.remove(m);
+						}
 					}
 				}
 			}
 		}
 	}
 
-	/**
-	 * Clear this feature container.
-	 */
+	/** Clear this feature container. */
 	public void clear() {
 		if (abilitiesPresent()) {
 			synchronized (abilitiesLock) {
@@ -500,9 +513,6 @@ public final class FeatureContainer {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(256);

@@ -68,7 +68,6 @@ import net.sf.freecol.server.networking.DummyConnection;
  * {@link AIInGameInputHandler} when it is this player's turn.
  */
 public abstract class AIPlayer extends AIObject {
-
 	private static final Logger logger = Logger.getLogger(AIPlayer.class.getName());
 
 	/** A comparator to sort AI units by location. */
@@ -163,9 +162,7 @@ public abstract class AIPlayer extends AIObject {
 		return aiRandom;
 	}
 
-	/**
-	 * Clears the cache of AI units.
-	 */
+	/** Clears the cache of AI units. */
 	protected void clearAIUnits() {
 		aiUnits.clear();
 	}
@@ -192,9 +189,7 @@ public abstract class AIPlayer extends AIObject {
 		aiUnits.remove(aiUnit);
 	}
 
-	/**
-	 * Build the cache of AI units.
-	 */
+	/** Build the cache of AI units. */
 	private void createAIUnits() {
 		clearAIUnits();
 		for (Unit u : getPlayer().getUnits()) {
@@ -222,7 +217,7 @@ public abstract class AIPlayer extends AIObject {
 	protected String getAIAdvantage() {
 		final String prefix = "model.nationType.";
 		String id = (player == null || player.getNationType() == null) ? "" : player.getNationType().getId();
-		return (id.startsWith(prefix)) ? id.substring(prefix.length()) : "";
+		return id.startsWith(prefix) ? id.substring(prefix.length()) : "";
 	}
 
 	/**
@@ -304,8 +299,9 @@ public abstract class AIPlayer extends AIObject {
 	 * @return A list of AIUnits.
 	 */
 	protected List<AIUnit> getAIUnits() {
-		if (aiUnits.isEmpty())
+		if (aiUnits.isEmpty()) {
 			createAIUnits();
+		}
 		return new ArrayList<>(aiUnits);
 	}
 
@@ -315,8 +311,9 @@ public abstract class AIPlayer extends AIObject {
 	 * @return The <code>Iterator</code>.
 	 */
 	protected Iterator<AIUnit> getAIUnitIterator() {
-		if (aiUnits.isEmpty())
+		if (aiUnits.isEmpty()) {
 			createAIUnits();
+		}
 		return aiUnits.iterator();
 	}
 
@@ -362,8 +359,9 @@ public abstract class AIPlayer extends AIObject {
 	 */
 	public boolean isTargetValidForSeekAndDestroy(Unit attacker, Tile tile) {
 		// Insist the attacker exists.
-		if (attacker == null)
+		if (attacker == null) {
 			return false;
+		}
 
 		Player attackerPlayer = attacker.getOwner();
 
@@ -374,24 +372,20 @@ public abstract class AIPlayer extends AIObject {
 				: (defender != null) ? defender.getOwner() : null;
 
 		// Insist there be a defending player.
-		if (defenderPlayer == null)
+		if (defenderPlayer == null || attackerPlayer == defenderPlayer) {
 			return false;
-
-		// Can not attack our own units.
-		if (attackerPlayer == defenderPlayer)
-			return false;
+		}
 
 		// If European, do not attack if not at war.
 		// If native, do not attack if not at war and at least content.
 		// Otherwise some attacks are allowed even if not at war.
 		boolean atWar = attackerPlayer.atWarWith(defenderPlayer);
 		if (attackerPlayer.isEuropean()) {
-			if (!atWar)
-				return false;
-		} else if (attackerPlayer.isIndian()) {
-			if (!atWar && attackerPlayer.getTension(defenderPlayer).getLevel().compareTo(Tension.Level.CONTENT) <= 0) {
+			if (!atWar) {
 				return false;
 			}
+		} else if (attackerPlayer.isIndian() && !atWar && attackerPlayer.getTension(defenderPlayer).getLevel().compareTo(Tension.Level.CONTENT) <= 0) {
+			return false;
 		}
 		return attacker.canAttack(defender);
 	}
@@ -412,8 +406,9 @@ public abstract class AIPlayer extends AIObject {
 		for (AIUnit aiu : units) {
 			Unit u = aiu.getUnit();
 			String reason = reasons.get(u);
-			if (reason == null)
+			if (reason == null) {
 				reason = "OMITTED";
+			}
 			String ms = "NONE";
 			Location target = null;
 			if (aiu.hasMission()) {
@@ -425,8 +420,9 @@ public abstract class AIPlayer extends AIObject {
 
 			lb.add("\n  @", String.format("%-30s%-10s%-40s%-16s", chop(u.getLocation().toShortString(), 30),
 					chop(reason, 10), chop(u.toShortString(), 40), chop(ms, 16)));
-			if (target != null)
+			if (target != null) {
 				lb.add("->", target);
+			}
 		}
 	}
 
@@ -439,8 +435,9 @@ public abstract class AIPlayer extends AIObject {
 	 * @return A new misison, or null if impossible or not worthwhile.
 	 */
 	public Mission getDefendCurrentSettlementMission(AIUnit aiUnit) {
-		if (DefendSettlementMission.invalidReason(aiUnit) != null)
+		if (DefendSettlementMission.invalidReason(aiUnit) != null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		final Location loc = unit.getLocation();
 		final Settlement settlement = (loc == null) ? null : loc.getSettlement();
@@ -556,16 +553,18 @@ public abstract class AIPlayer extends AIObject {
 		List<AIUnit> result = new ArrayList<>();
 		for (AIUnit aiu : aiUnits) {
 			final Unit unit = aiu.getUnit();
-			if (unit == null || unit.isDisposed())
+			if (unit == null || unit.isDisposed()) {
 				continue;
+			}
 			lb.add("\n  ", unit, " ");
 			try {
 				aiu.doMission(lb);
 			} catch (Exception e) {
 				logger.log(Level.WARNING, "doMissions failed for: " + aiu, e);
 			}
-			if (!unit.isDisposed() && unit.getMovesLeft() > 0)
+			if (!unit.isDisposed() && unit.getMovesLeft() > 0) {
 				result.add(aiu);
+			}
 		}
 		return result;
 	}
@@ -609,14 +608,13 @@ public abstract class AIPlayer extends AIObject {
 	 * @param agreement
 	 *            The proposed <code>DiplomaticTrade</code>.
 	 * @return The <code>TradeStatus</code> to apply to the agreement.
-	 *
 	 */
 	public TradeStatus acceptDiplomaticTrade(DiplomaticTrade agreement) {
 		return TradeStatus.REJECT_TRADE;
 	}
 
 	/**
-	 * Called after another <code>Player</code> sends a <code>trade</code> message
+	 * Called after another <code>Player</code> sends a <code>trade</code> message.
 	 *
 	 * @param goods
 	 *            The goods which we are going to offer
@@ -692,13 +690,10 @@ public abstract class AIPlayer extends AIObject {
 		return null;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String RANDOM_STATE_TAG = "randomState";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -706,9 +701,6 @@ public abstract class AIPlayer extends AIObject {
 		xw.writeAttribute(RANDOM_STATE_TAG, Utils.getRandomState(aiRandom));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -722,15 +714,13 @@ public abstract class AIPlayer extends AIObject {
 		aiRandom = (rnd != null) ? rnd : new Random(aiMain.getRandomSeed("Seed for " + getId()));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		super.readChildren(xr);
 
-		if (getPlayer() != null)
+		if (getPlayer() != null) {
 			uninitialized = false;
+		}
 	}
 
 	/**

@@ -33,9 +33,8 @@ import net.sf.freecol.common.model.Operand.OperandType;
  * hand side must apply to the object on which a limit is to be placed.
  */
 public final class Limit extends FreeColGameObjectType {
-
 	/** The basic operation used in evaluating this limit. */
-	public static enum Operator {
+	public enum Operator {
 		EQ, LT, GT, LE, GE
 	}
 
@@ -287,8 +286,9 @@ public final class Limit extends FreeColGameObjectType {
 	 * @return The result of the evaluation.
 	 */
 	private boolean evaluate(Integer lhs, Integer rhs) {
-		if (lhs == null || rhs == null)
+		if (lhs == null || rhs == null) {
 			return true;
+		}
 		switch (operator) {
 		case EQ:
 			return lhs == rhs;
@@ -306,19 +306,16 @@ public final class Limit extends FreeColGameObjectType {
 		return false;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String LEFT_HAND_SIDE_TAG = "left-hand-side";
 	private static final String OPERATOR_TAG = "operator";
 	private static final String RIGHT_HAND_SIDE_TAG = "right-hand-side";
-	// @compat 0.11.3
+	/** @compat 0.11.3 */
 	private static final String OLD_LEFT_HAND_SIDE_TAG = "leftHandSide";
 	private static final String OLD_RIGHT_HAND_SIDE_TAG = "rightHandSide";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -326,9 +323,6 @@ public final class Limit extends FreeColGameObjectType {
 		xw.writeAttribute(OPERATOR_TAG, operator);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -338,9 +332,6 @@ public final class Limit extends FreeColGameObjectType {
 		rightHandSide.toXML(xw, RIGHT_HAND_SIDE_TAG);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -348,9 +339,6 @@ public final class Limit extends FreeColGameObjectType {
 		operator = xr.getAttribute(OPERATOR_TAG, Operator.class, (Operator) null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -361,22 +349,17 @@ public final class Limit extends FreeColGameObjectType {
 		// end @compat 0.11.3
 		) {
 			leftHandSide = new Operand(xr);
-
 		} else if (RIGHT_HAND_SIDE_TAG.equals(tag)
 				// @compat 0.11.3
 				|| OLD_RIGHT_HAND_SIDE_TAG.equals(tag)
 		// end @compat 0.11.3
 		) {
 			rightHandSide = new Operand(xr);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
@@ -384,9 +367,6 @@ public final class Limit extends FreeColGameObjectType {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

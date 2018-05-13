@@ -40,11 +40,8 @@ import net.sf.freecol.client.gui.FontLibrary;
 import net.sf.freecol.client.gui.action.ColopediaAction.PanelType;
 import net.sf.freecol.common.i18n.Messages;
 
-/**
- * This panel displays the concepts within the Colopedia.
- */
+/** This panel displays the concepts within the Colopedia. */
 public class ConceptDetailPanel extends FreeColPanel implements ColopediaDetailPanel<String> {
-
 	private static final String id = "colopediaAction." + PanelType.CONCEPTS.getKey();
 
 	private static final String[] concepts = { "taxes", "efficiency", "education", "fortification", "independence",
@@ -72,11 +69,8 @@ public class ConceptDetailPanel extends FreeColPanel implements ColopediaDetailP
 		return Messages.getName(id);
 	}
 
-	// Implement ColopediaDetailPanel
+	/** Implement ColopediaDetailPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addSubTrees(DefaultMutableTreeNode root) {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(new ColopediaTreeItem(this, id, getName(), null));
@@ -93,13 +87,11 @@ public class ConceptDetailPanel extends FreeColPanel implements ColopediaDetailP
 		root.add(node);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void buildDetail(String id, JPanel panel) {
-		if (this.id.equals(id))
+		if (this.id.equals(id)) {
 			return;
+		}
 
 		panel.setLayout(new MigLayout("wrap 1, center"));
 

@@ -36,7 +36,6 @@ import org.w3c.dom.Element;
  * have a single <code>AIObject</code> attached to it.
  */
 public abstract class AIObject extends FreeColObject {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(FreeColObject.class.getName());
 
@@ -44,7 +43,7 @@ public abstract class AIObject extends FreeColObject {
 	private final AIMain aiMain;
 
 	/** Whether the object is uninitialized. */
-	protected boolean uninitialized = false;
+	protected boolean uninitialized;
 
 	/**
 	 * Creates a new uninitialized <code>AIObject</code>.
@@ -157,19 +156,15 @@ public abstract class AIObject extends FreeColObject {
 		return getAIMain().getAIObject(getId()) == null;
 	}
 
-	/**
-	 * Adds this object to the AI main if it has a non-null identifier.
-	 */
+	/** Adds this object to the AI main if it has a non-null identifier. */
 	protected final void addAIObjectWithId() {
-		if (getId() != null)
+		if (getId() != null) {
 			aiMain.addAIObject(getId(), this);
+		}
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final Specification getSpecification() {
 		return getGame().getSpecification();
@@ -186,6 +181,6 @@ public abstract class AIObject extends FreeColObject {
 	 *         fixed, positive if no problems found at all.
 	 */
 	public int checkIntegrity(boolean fix) {
-		return (isUninitialized()) ? -1 : 1;
+		return isUninitialized() ? -1 : 1;
 	}
 }

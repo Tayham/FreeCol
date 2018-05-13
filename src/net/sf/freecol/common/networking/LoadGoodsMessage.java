@@ -30,11 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when loading goods.
- */
+/** The message sent when loading goods. */
 public class LoadGoodsMessage extends DOMMessage {
-
 	/** The identifier for the location of the goods. */
 	private final String locationId;
 

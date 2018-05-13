@@ -39,11 +39,8 @@ import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Turn;
 
-/**
- * This panel provides detailed information about rebels in a colony.
- */
+/** This panel provides detailed information about rebels in a colony. */
 public class RebelToolTip extends JToolTip {
-
 	/**
 	 * Creates a RebelToolTip.
 	 *
@@ -87,8 +84,9 @@ public class RebelToolTip extends JToolTip {
 		libertyProduction = (int) FeatureContainer.applyModifiers((float) libertyProduction, turn, modifiers);
 		for (Modifier m : modifiers) {
 			JLabel[] labels = ModifierFormat.getModifierLabels(m, null, turn);
-			for (JLabel j : labels)
+			for (JLabel j : labels) {
 				add(j);
+			}
 		}
 
 		boolean capped = spec.getBoolean(GameOptions.BELL_ACCUMULATION_CAPPED) && colony.getSoL() >= 100;
@@ -96,7 +94,7 @@ public class RebelToolTip extends JToolTip {
 		final int modulo = liberty % Colony.LIBERTY_PER_REBEL;
 		final int width = (int) getPreferredSize().getWidth() - 32;
 		FreeColProgressBar progress = new FreeColProgressBar(null, 0, Colony.LIBERTY_PER_REBEL, modulo,
-				((capped) ? 0 : libertyProduction));
+				(capped ? 0 : libertyProduction));
 		progress.setPreferredSize(new Dimension(width, 20));
 		add(progress, "span 3");
 
@@ -139,11 +137,8 @@ public class RebelToolTip extends JToolTip {
 		}
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

@@ -30,7 +30,6 @@ import net.sf.freecol.client.gui.ImageLibrary;
  * image on FreeColMenuBar, such as that at the top of the window.
  */
 public class FreeColMenuBarUI extends BasicMenuBarUI {
-
 	private static final FreeColMenuBarUI sharedInstance = new FreeColMenuBarUI();
 
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
@@ -38,10 +37,9 @@ public class FreeColMenuBarUI extends BasicMenuBarUI {
 	}
 
 	@Override
-	public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+	public void paint(java.awt.Graphics g, JComponent c) {
 		if (c.isOpaque()) {
 			ImageLibrary.drawTiledImage("image.background.FreeColMenuBar", g, c, null);
 		}
 	}
-
 }

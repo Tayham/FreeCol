@@ -80,11 +80,8 @@ import net.sf.freecol.common.networking.WorkMessage;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * Wrapper class for AI message handling.
- */
+/** Wrapper class for AI message handling. */
 public class AIMessage {
-
 	private static final Logger logger = Logger.getLogger(AIMessage.class.getName());
 
 	/**
@@ -140,10 +137,12 @@ public class AIMessage {
 	private static boolean askHandling(Connection conn, Element request) {
 		while (request != null) {
 			Element reply = ask(conn, request);
-			if (reply == null)
+			if (reply == null) {
 				break;
-			if (checkError(reply, request.getTagName()))
+			}
+			if (checkError(reply, request.getTagName())) {
 				return false;
+			}
 			try {
 				request = conn.handle(reply);
 			} catch (FreeColException fce) {
@@ -166,8 +165,9 @@ public class AIMessage {
 	 */
 	private static Element askExpecting(Connection conn, Element request, String expect) {
 		Element reply = ask(conn, request);
-		if (checkError(reply, request.getTagName()) || reply == null)
+		if (checkError(reply, request.getTagName()) || reply == null) {
 			return null;
+		}
 
 		final String tag = reply.getTagName();
 		if ("multiple".equals(tag)) {
@@ -182,19 +182,22 @@ public class AIMessage {
 				}
 				try {
 					Element e = conn.handle((Element) nodes.item(i));
-					if (e != null)
+					if (e != null) {
 						replies.add(e);
+					}
 				} catch (FreeColException fce) {
 					logger.log(Level.WARNING, "AI handler failed: " + reply, fce);
 				}
 			}
-			if (!askHandling(conn, DOMMessage.collapseElements(replies)) || result == null)
+			if (!askHandling(conn, DOMMessage.collapseElements(replies)) || result == null) {
 				return null;
+			}
 			reply = result;
 		}
 
-		if (expect.equals(reply.getTagName()))
+		if (expect.equals(reply.getTagName())) {
 			return reply;
+		}
 		logger.log(Level.WARNING, "AI handler expected " + expect + ", recieved " + tag);
 		return null;
 	}
@@ -225,7 +228,7 @@ public class AIMessage {
 	 *         returned.
 	 */
 	private static boolean sendMessage(Connection connection, DOMMessage message) {
-		return (connection != null && message != null) ? sendMessage(connection, message.toXMLElement()) : false;
+		return connection != null && message != null && sendMessage(connection, message.toXMLElement());
 	}
 
 	/**
@@ -637,12 +640,13 @@ public class AIMessage {
 		for (Unit u : workers) {
 			Unit su = scratch.getCorresponding(u);
 			if (u.getLocation().getId().equals(su.getLocation().getId()) && u.getWorkType() == su.getWorkType()
-					&& u.getRole() == su.getRole() && u.getRoleCount() == su.getRoleCount())
+					&& u.getRole() == su.getRole() && u.getRoleCount() == su.getRoleCount()) {
 				continue;
+			}
 			message.addChange(u, (Location) colony.getCorresponding((FreeColObject) su.getLocation()), su.getWorkType(),
 					su.getRole(), su.getRoleCount());
 		}
-		return (message.isEmpty()) ? false : sendMessage(aiColony.getAIOwner().getConnection(), message);
+		return !message.isEmpty() && sendMessage(aiColony.getAIOwner().getConnection(), message);
 	}
 
 	/**

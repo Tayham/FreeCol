@@ -34,7 +34,6 @@ import net.sf.freecol.client.FreeColClient;
  * buttons.
  */
 public final class ColorChooserPanel extends FreeColPanel {
-
 	private final JColorChooser colorChooser;
 
 	/**
@@ -68,11 +67,8 @@ public final class ColorChooserPanel extends FreeColPanel {
 		return this.colorChooser.getColor();
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

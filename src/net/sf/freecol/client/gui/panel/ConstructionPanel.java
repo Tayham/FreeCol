@@ -49,7 +49,6 @@ import static net.sf.freecol.common.util.StringUtils.getBreakingPoint;
  * This panel shows the progress of constructing a building or unit in a colony.
  */
 public class ConstructionPanel extends MigPanel implements PropertyChangeListener {
-
 	public static final String EVENT = Colony.ColonyChangeEvent.BUILD_QUEUE_CHANGE.toString();
 
 	/** The enclosing client. */
@@ -178,11 +177,8 @@ public class ConstructionPanel extends MigPanel implements PropertyChangeListene
 		this.defaultLabel = newDefaultLabel;
 	}
 
-	// Interface PropertyChangeListener
+	/** Interface PropertyChangeListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		update();

@@ -30,11 +30,8 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-/**
- * A type of goods, derived from the specification.
- */
+/** A type of goods, derived from the specification. */
 public final class GoodsType extends FreeColGameObjectType {
-
 	private static final float DEFAULT_PRODUCTION_WEIGHT = 1.0f;
 	private static final float DEFAULT_LOW_PRODUCTION_THRESHOLD = 0.0f;
 	private static final float DEFAULT_ZERO_PRODUCTION_FACTOR = 1.0f;
@@ -43,11 +40,11 @@ public final class GoodsType extends FreeColGameObjectType {
 	public static final Comparator<GoodsType> goodsTypeComparator = new Comparator<GoodsType>() {
 		private int rank(GoodsType g) {
 			return (!g.isStorable() || g.isTradeGoods()) ? -1
-					: (g.isFoodType()) ? 1
-							: (g.isNewWorldGoodsType()) ? 2
-									: (g.isFarmed()) ? 3
-											: (g.isRawMaterial()) ? 4
-													: (g.isNewWorldLuxuryType()) ? 5 : (g.isRefined()) ? 6 : -1;
+					: g.isFoodType() ? 1
+							: g.isNewWorldGoodsType() ? 2
+									: g.isFarmed() ? 3
+											: g.isRawMaterial() ? 4
+													: g.isNewWorldLuxuryType() ? 5 : g.isRefined() ? 6 : -1;
 		}
 
 		@Override
@@ -74,12 +71,10 @@ public final class GoodsType extends FreeColGameObjectType {
 	 * Whether this type of goods is required for building equipment that grants an
 	 * offence bonus or defence bonus.
 	 */
-	private boolean isMilitary = false;
+	private boolean isMilitary;
 
-	/**
-	 * Whether this type of goods is required for building. (Derived attribute)
-	 */
-	private boolean buildingMaterial = false;
+	/** Whether this type of goods is required for building. (Derived attribute) */
+	private boolean buildingMaterial;
 
 	/** Whether these are trade goods that can only be obtained in Europe. */
 	private boolean tradeGoods;
@@ -174,8 +169,10 @@ public final class GoodsType extends FreeColGameObjectType {
 		return isMilitary;
 	}
 
-	// @compat 0.10.x
-	// Needed by Specification fixup010x()
+	/**
+	 * @compat 0.10.x
+	 * Needed by Specification fixup010x()
+	 */
 	public void setMilitary() {
 		this.isMilitary = true;
 	}
@@ -452,13 +449,15 @@ public final class GoodsType extends FreeColGameObjectType {
 	 * @see BuildableType
 	 */
 	public boolean isRawBuildingMaterial() {
-		if (this.madeFrom != null)
+		if (this.madeFrom != null) {
 			return false;
+		}
 
 		GoodsType refinedType = makes;
 		while (refinedType != null) {
-			if (refinedType.isBuildingMaterial())
+			if (refinedType.isBuildingMaterial()) {
 				return true;
+			}
 			refinedType = refinedType.makes;
 		}
 		return false;
@@ -474,8 +473,9 @@ public final class GoodsType extends FreeColGameObjectType {
 	public Set<GoodsType> getEquivalentTypes() {
 		Set<GoodsType> result = new HashSet<>();
 		for (GoodsType type : getSpecification().getGoodsTypeList()) {
-			if (type == this || type.getStoredAs() == this)
+			if (type == this || type.getStoredAs() == this) {
 				result.add(type);
+			}
 		}
 		return result;
 	}
@@ -516,12 +516,13 @@ public final class GoodsType extends FreeColGameObjectType {
 
 		// Set makes attribute
 		for (GoodsType g : spec.getGoodsTypeList()) {
-			if (g.madeFrom != null)
+			if (g.madeFrom != null) {
 				g.madeFrom.makes = g;
+			}
 		}
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String BREEDING_NUMBER_TAG = "breeding-number";
 	private static final String IGNORE_LIMIT_TAG = "ignore-limit";
@@ -542,9 +543,6 @@ public final class GoodsType extends FreeColGameObjectType {
 	private static final String TRADE_GOODS_TAG = "trade-goods";
 	private static final String ZERO_PRODUCTION_FACTOR_TAG = "zero-production-factor";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -590,9 +588,6 @@ public final class GoodsType extends FreeColGameObjectType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -610,9 +605,6 @@ public final class GoodsType extends FreeColGameObjectType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -654,9 +646,6 @@ public final class GoodsType extends FreeColGameObjectType {
 		zeroProductionFactor = xr.getAttribute(ZERO_PRODUCTION_FACTOR_TAG, DEFAULT_ZERO_PRODUCTION_FACTOR);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -669,15 +658,11 @@ public final class GoodsType extends FreeColGameObjectType {
 			priceDiff = xr.getAttribute(PRICE_DIFFERENCE_TAG, 1);
 
 			xr.closeTag(MARKET_TAG);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

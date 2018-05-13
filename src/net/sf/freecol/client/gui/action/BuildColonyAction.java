@@ -24,11 +24,8 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * An action for using the active unit to build a colony.
- */
+/** An action for using the active unit to build a colony. */
 public class BuildColonyAction extends UnitAction {
-
 	public static final String id = "buildColonyAction";
 
 	/**
@@ -43,15 +40,13 @@ public class BuildColonyAction extends UnitAction {
 		addImageIcons("build");
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
-		if (!super.shouldBeEnabled())
+		if (!super.shouldBeEnabled()) {
 			return false;
+		}
 		Unit selectedOne = getGUI().getActiveUnit();
 		return selectedOne != null && selectedOne.hasTile()
 				&& (selectedOne.canBuildColony() || (selectedOne.getTile().getColony() != null
@@ -59,11 +54,8 @@ public class BuildColonyAction extends UnitAction {
 						&& selectedOne.getType().hasSkill()));
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().buildColony(getGUI().getActiveUnit());

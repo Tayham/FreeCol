@@ -40,11 +40,8 @@ import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * A general panel for information display.
- */
+/** A general panel for information display. */
 public class InformationPanel extends FreeColPanel {
-
 	/**
 	 * Creates an information panel that shows the given texts and images, and an
 	 * "OK" button.
@@ -88,8 +85,9 @@ public class InformationPanel extends FreeColPanel {
 				textPanel.add(Utility.getDefaultTextArea(texts[i], new Dimension(475, 185)), "skip");
 			}
 			StringTemplate disp = displayLabel(fcos[i]);
-			if (disp == null)
+			if (disp == null) {
 				continue;
+			}
 			JButton button = Utility.localizedButton(
 					StringTemplate.template("informationPanel.display").addStringTemplate("%object%", disp));
 			final FreeColObject fco = fcos[i];
@@ -127,7 +125,7 @@ public class InformationPanel extends FreeColPanel {
 								: null;
 	}
 
-	// Override JComponent
+	/** Override JComponent. */
 
 	@Override
 	public void paintComponent(Graphics g) {

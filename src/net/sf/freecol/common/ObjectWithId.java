@@ -24,11 +24,10 @@ package net.sf.freecol.common;
  * and to provide a localized name for it.
  */
 public interface ObjectWithId {
-
 	/**
 	 * Get the identifier of the object.
 	 *
 	 * @return The object identifier.
 	 */
-	public String getId();
+	String getId();
 }

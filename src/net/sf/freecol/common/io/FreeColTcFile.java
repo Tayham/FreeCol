@@ -25,11 +25,8 @@ import java.io.IOException;
 
 import net.sf.freecol.common.resources.ResourceMapping;
 
-/**
- * A Total Conversion (TC). Rules are TCs.
- */
+/** A Total Conversion (TC). Rules are TCs. */
 public class FreeColTcFile extends FreeColModFile {
-
 	/** A file filter to select TCs. */
 	private static final FileFilter fileFilter = makeFileFilter(MOD_DESCRIPTOR_FILE, "ftc", ZIP_FILE_EXTENSION);
 
@@ -57,9 +54,6 @@ public class FreeColTcFile extends FreeColModFile {
 		super(new File(FreeColDirectories.getRulesDirectory(), id));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ResourceMapping getResourceMapping() {
 		ResourceMapping result = new ResourceMapping();

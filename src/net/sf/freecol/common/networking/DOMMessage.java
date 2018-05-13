@@ -54,7 +54,6 @@ import org.xml.sax.SAXException;
  * XML-trees.
  */
 public class DOMMessage {
-
 	protected static final Logger logger = Logger.getLogger(DOMMessage.class.getName());
 
 	private static final String FREECOL_PROTOCOL_VERSION = "0.1.6";
@@ -64,9 +63,7 @@ public class DOMMessage {
 	/** The actual message data. */
 	protected Document document;
 
-	/**
-	 * Protected constructor for the benefit of the subclasses.
-	 */
+	/** Protected constructor for the benefit of the subclasses. */
 	protected DOMMessage(String tag) {
 		this.document = createNewDocument();
 		this.document.appendChild(this.document.createElement(tag));
@@ -123,13 +120,13 @@ public class DOMMessage {
 			if (dumpMsgOnError) {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				inputSource.getByteStream().reset();
-				while (true) {
+				do {
 					int i = inputSource.getByteStream().read();
 					if (-1 == i) {
 						break;
 					}
 					baos.write(i);
-				}
+				} while (true);
 				logger.severe(baos.toString("UTF-8"));
 			}
 			throw e;
@@ -160,8 +157,9 @@ public class DOMMessage {
 	 * @return The message created, or null on failure.
 	 */
 	public static DOMMessage createMessage(Game game, Element element) {
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		String tag = element.getTagName();
 		tag = "net.sf.freecol.common.networking." + tag.substring(0, 1).toUpperCase() + tag.substring(1) + "Message";
 		Class[] types = { Game.class, Element.class };
@@ -482,9 +480,6 @@ public class DOMMessage {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return document.getDocumentElement().toString();

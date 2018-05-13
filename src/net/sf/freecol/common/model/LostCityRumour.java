@@ -35,17 +35,14 @@ import net.sf.freecol.common.util.RandomChoice;
 import static net.sf.freecol.common.util.StringUtils.*;
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-/**
- * Represents a lost city rumour.
- */
+/** Represents a lost city rumour. */
 public class LostCityRumour extends TileItem {
-
 	private static final Logger logger = Logger.getLogger(LostCityRumour.class.getName());
 
-	// The bogus end of the world year.
+	/** The bogus end of the world year. */
 	private static final int MAYAN_PROPHESY_YEAR = 2012;
 
-	// How many `nothing' rumours are there.
+	/** How many `nothing' rumours are there. */
 	private static int rumourNothing = -1;
 
 	/**
@@ -61,7 +58,7 @@ public class LostCityRumour extends TileItem {
 	private String name = null;
 
 	/** Constants describing types of Lost City Rumours. */
-	public static enum RumourType {
+	public enum RumourType {
 		NO_SUCH_RUMOUR, BURIAL_GROUND, EXPEDITION_VANISHES, NOTHING, LEARN, TRIBAL_CHIEF, COLONIST, MOUNDS, RUINS, CIBOLA, FOUNTAIN_OF_YOUTH;
 
 		/**
@@ -153,8 +150,10 @@ public class LostCityRumour extends TileItem {
 		return name;
 	}
 
-	// @compat 0.10.4
-	// See readAttributes and TileItemContainer.readChild
+	/**
+	 * @compat 0.10.4
+	 * See readAttributes and TileItemContainer.readChild
+	 */
 	public void setTile(Tile tile) {
 		this.tile = tile;
 	}
@@ -262,8 +261,9 @@ public class LostCityRumour extends TileItem {
 			i = 0;
 			for (;;) {
 				String key = Messages.descriptionKey("model.lostCityRumour.nothing." + i);
-				if (!Messages.containsKey(key))
+				if (!Messages.containsKey(key)) {
 					break;
+				}
 				i++;
 			}
 			rumourNothing = i;
@@ -273,37 +273,25 @@ public class LostCityRumour extends TileItem {
 				Messages.descriptionKey("model.lostCityRumour.nothing." + i), player);
 	}
 
-	// Interface Named
+	/** Interface Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getNameKey() {
 		return Messages.nameKey("model.lostCityRumour");
 	}
 
-	// Interface TileItem
+	/** Interface TileItem. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final int getZIndex() {
 		return Tile.RUMOUR_ZINDEX;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isTileTypeAllowed(TileType tileType) {
 		return !tileType.isWater();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int applyBonus(GoodsType goodsType, UnitType unitType, int potential) {
 		// Just return the given potential, since lost cities do not
@@ -312,57 +300,39 @@ public class LostCityRumour extends TileItem {
 		return potential;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canProduce(GoodsType goodsType, UnitType unitType) {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Modifier> getProductionModifiers(GoodsType goodsType, UnitType unitType) {
 		return Collections.<Modifier>emptyList();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isNatural() {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isComplete() {
 		return true;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int checkIntegrity(boolean fix) {
 		return (type == RumourType.NO_SUCH_RUMOUR) ? -1 : 1;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String NAME_TAG = "name";
 	private static final String TILE_TAG = "tile";
 	private static final String TYPE_TAG = "type";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -378,9 +348,6 @@ public class LostCityRumour extends TileItem {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -398,9 +365,6 @@ public class LostCityRumour extends TileItem {
 		name = xr.getAttribute(NAME_TAG, (String) null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

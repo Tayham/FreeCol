@@ -30,7 +30,6 @@ import net.sf.freecol.common.model.Colony.ColonyChangeEvent;
  * off any consequent property changes.
  */
 public class ColonyWas {
-
 	private static final Logger logger = Logger.getLogger(ColonyWas.class.getName());
 
 	private final Colony colony;

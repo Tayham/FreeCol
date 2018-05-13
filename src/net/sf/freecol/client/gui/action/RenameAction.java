@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for renaming the active unit.
- */
+/** An action for renaming the active unit. */
 public class RenameAction extends UnitAction {
-
 	public static final String id = "renameAction";
 
 	/**
@@ -40,11 +37,8 @@ public class RenameAction extends UnitAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().rename(getGUI().getActiveUnit());

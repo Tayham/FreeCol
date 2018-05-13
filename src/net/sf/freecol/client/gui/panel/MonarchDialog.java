@@ -48,7 +48,6 @@ import net.sf.freecol.common.model.StringTemplate;
  * FreeColConfirmDialog.
  */
 public final class MonarchDialog extends FreeColDialog<Boolean> {
-
 	/**
 	 * Creates a dialog to handle monarch interactions.
 	 *
@@ -73,11 +72,13 @@ public final class MonarchDialog extends FreeColDialog<Boolean> {
 			throw new IllegalStateException("Unrecognized monarch action: " + action);
 		}
 		String yesId = action.getYesKey();
-		if (!Messages.containsKey(yesId))
+		if (!Messages.containsKey(yesId)) {
 			yesId = null;
+		}
 		String noId = action.getNoKey();
-		if (!Messages.containsKey(noId))
+		if (!Messages.containsKey(noId)) {
 			noId = "close";
+		}
 
 		String hdrKey = action.getHeaderKey();
 		if (!Messages.containsKey(hdrKey)) {

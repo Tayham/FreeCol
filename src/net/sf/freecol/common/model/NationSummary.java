@@ -24,14 +24,10 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-
 import org.w3c.dom.Element;
 
-/**
- * A summary of an enemy nation.
- */
+/** A summary of an enemy nation. */
 public class NationSummary extends FreeColObject {
-
 	/** The stance of the player toward the requesting player. */
 	private Stance stance;
 
@@ -71,8 +67,9 @@ public class NationSummary extends FreeColObject {
 		setId("");
 
 		stance = player.getStance(requester);
-		if (stance == Stance.UNCONTACTED)
+		if (stance == Stance.UNCONTACTED) {
 			stance = Stance.PEACE;
+		}
 
 		numberOfSettlements = player.getSettlements().size();
 
@@ -103,7 +100,7 @@ public class NationSummary extends FreeColObject {
 		readFromXMLElement(element);
 	}
 
-	// Trivial accessors
+	/** Trivial accessors. */
 	public Stance getStance() {
 		return stance;
 	}
@@ -140,7 +137,7 @@ public class NationSummary extends FreeColObject {
 		return tax;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String FOUNDING_FATHERS_TAG = "foundingFathers";
 	private static final String GOLD_TAG = "gold";
@@ -152,9 +149,6 @@ public class NationSummary extends FreeColObject {
 	private static final String STANCE_TAG = "stance";
 	private static final String TAX_TAG = "tax";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -184,9 +178,6 @@ public class NationSummary extends FreeColObject {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -210,9 +201,6 @@ public class NationSummary extends FreeColObject {
 		tax = xr.getAttribute(TAX_TAG, -1);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

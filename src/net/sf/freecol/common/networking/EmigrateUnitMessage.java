@@ -29,11 +29,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when a unit is to emigrate.
- */
+/** The message sent when a unit is to emigrate. */
 public class EmigrateUnitMessage extends DOMMessage {
-
 	/** The slot from which to select the unit. */
 	private final String slotString;
 

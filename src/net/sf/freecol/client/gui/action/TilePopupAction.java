@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying a Tile Popup.
- */
+/** An action for displaying a Tile Popup. */
 public class TilePopupAction extends MapboardAction {
-
 	public static final String id = "tilePopupAction";
 
 	/**
@@ -40,11 +37,8 @@ public class TilePopupAction extends MapboardAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showTilePopUpAtSelectedTile();

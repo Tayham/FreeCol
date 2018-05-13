@@ -33,7 +33,6 @@ import net.sf.freecol.common.model.Unit;
  * <code>CostDecider</code> has been specified.
  */
 class BaseCostDecider implements CostDecider {
-
 	/** The number of moves left following a proposed move. */
 	protected int movesLeft;
 
@@ -63,25 +62,23 @@ class BaseCostDecider implements CostDecider {
 		Tile newTile = newLocation.getTile();
 		if (oldLocation instanceof Europe) { // Coming from Europe
 			if (newLocation instanceof Europe || newTile == null || !newTile.isDirectlyHighSeasConnected()
-					|| !unit.getType().canMoveToHighSeas())
+					|| !unit.getType().canMoveToHighSeas()) {
 				return ILLEGAL_MOVE;
+			}
 			newTurns = unit.getSailTurns();
 			movesLeft = unit.getInitialMovesLeft();
 			cost = newTurns * unit.getInitialMovesLeft();
-
 		} else if (oldTile == null) {
 			return ILLEGAL_MOVE;
-
 		} else if (newLocation instanceof Europe) { // Going to Europe
-			if (!unit.getType().canMoveToHighSeas())
+			if (!unit.getType().canMoveToHighSeas()) {
 				return ILLEGAL_MOVE;
+			}
 			newTurns = unit.getSailTurns();
 			movesLeft = unit.getInitialMovesLeft();
 			cost = newTurns * unit.getInitialMovesLeft();
-
 		} else if (newTile == null || !newTile.isExplored()) {
 			return ILLEGAL_MOVE;
-
 		} else { // Moving between tiles
 			// Disallow illegal moves.
 			// Special moves and moving off a carrier consume a whole turn.
@@ -93,8 +90,9 @@ class BaseCostDecider implements CostDecider {
 				// Ignore hostile units in the base case, treating attacks
 				// as moves.
 			case MOVE:
-				if (!unit.isOnCarrier())
-					break; // Fall through if disembarking.
+				if (!unit.isOnCarrier()) {
+					break;
+				} // Fall through if disembarking.
 			case ATTACK_SETTLEMENT:
 			case EXPLORE_LOST_CITY_RUMOUR:
 			case EMBARK:

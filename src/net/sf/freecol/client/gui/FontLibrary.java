@@ -30,7 +30,6 @@ import net.sf.freecol.common.resources.ResourceManager;
  * Should be used for getting a <code>Font</code> everywhere it is needed.
  */
 public class FontLibrary {
-
 	private static final Logger logger = Logger.getLogger(FontLibrary.class.getName());
 
 	/**
@@ -43,7 +42,7 @@ public class FontLibrary {
 	 * <li>HEADER -- a stylized old-fashioned typeface for headers</li>
 	 * </ul>
 	 */
-	public static enum FontType {
+	public enum FontType {
 		NORMAL, SIMPLE, HEADER
 	}
 
@@ -59,18 +58,14 @@ public class FontLibrary {
 	 * <li>BIG -- used for panel headers</li>
 	 * </ul>
 	 */
-	public static enum FontSize {
+	public enum FontSize {
 		TINY, SMALLER, SMALL, MEDIUM, BIG
 	}
 
-	/**
-	 * The optional custom main Font
-	 */
+	/** The optional custom main Font. */
 	private static Font mainFont = null;
 
-	/**
-	 * How much the font size is scaled.
-	 */
+	/** How much the font size is scaled. */
 	private final float scaleFactor;
 
 	/**
@@ -203,8 +198,7 @@ public class FontLibrary {
 		float scaledSize = calcScaledSize(fontSize, scaleFactor);
 		String fontKey = getFontKey(fontType);
 		Font font = (fontKey == null) ? mainFont : ResourceManager.getFont(fontKey);
-		font = font.deriveFont(style, scaledSize);
-		return font;
+		return font.deriveFont(style, scaledSize);
 	}
 
 	/**
@@ -236,15 +230,15 @@ public class FontLibrary {
 		Font font = null;
 		if (fontType != FontType.NORMAL) {
 			font = ResourceManager.getFont(fontKey);
-			if (font.canDisplayUpTo(string) != -1)
+			if (font.canDisplayUpTo(string) != -1) {
 				font = null;
+			}
 		}
 		if (font == null) {
 			fontKey = getFontKey(FontType.NORMAL);
 			font = (fontKey == null) ? mainFont : ResourceManager.getFont(fontKey);
 		}
-		font = font.deriveFont(style, scaledSize);
-		return font;
+		return font.deriveFont(style, scaledSize);
 	}
 
 	private static float calcScaledSize(FontSize fontSize, float scaleFactor) {
@@ -286,5 +280,4 @@ public class FontLibrary {
 		}
 		return fontName;
 	}
-
 }

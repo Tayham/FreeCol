@@ -27,11 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when putting a unit outside a colony.
- */
+/** The message sent when putting a unit outside a colony. */
 public class PutOutsideColonyMessage extends DOMMessage {
-
 	/** The identifier of the unit to be put out. */
 	private final String unitId;
 

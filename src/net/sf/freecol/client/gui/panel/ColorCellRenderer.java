@@ -33,7 +33,6 @@ import net.sf.freecol.common.model.StringTemplate;
  * table. It is being used in the players table (StartGamePanel).
  */
 public class ColorCellRenderer extends JLabel implements TableCellRenderer {
-
 	/**
 	 * The constructor to use.
 	 *
@@ -41,15 +40,13 @@ public class ColorCellRenderer extends JLabel implements TableCellRenderer {
 	 *            Indicated whether or not a border should be drawn.
 	 */
 	public ColorCellRenderer(boolean useBorder) {
-		if (useBorder)
+		if (useBorder) {
 			setBorder(Utility.COLOR_CELL_BORDER);
+		}
 		// This must be done because the background displays the actual color:
 		setOpaque(true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus,
 			int row, int column) {

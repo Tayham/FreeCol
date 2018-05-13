@@ -31,11 +31,8 @@ import net.sf.freecol.common.model.Location;
 
 import org.w3c.dom.Element;
 
-/**
- * Represents a need for something at a given <code>Location</code>.
- */
+/** Represents a need for something at a given <code>Location</code>. */
 public abstract class Wish extends ValuedAIObject {
-
 	private static final Logger logger = Logger.getLogger(Wish.class.getName());
 
 	/** The requesting location of this wish. */
@@ -177,14 +174,11 @@ public abstract class Wish extends ValuedAIObject {
 		return result;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String DESTINATION_TAG = "destination";
 	private static final String TRANSPORTABLE_TAG = "transportable";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -199,9 +193,6 @@ public abstract class Wish extends ValuedAIObject {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);

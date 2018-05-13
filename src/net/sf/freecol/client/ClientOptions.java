@@ -78,17 +78,14 @@ import javax.xml.stream.events.XMLEvent;
  * </ul>
  */
 public class ClientOptions extends OptionGroup {
-
 	private static final String CLIENT_OPTIONS_SAVEGAMES = "clientOptions.savegames";
 
 	private static final String CLIENT_OPTIONS_GUI = "clientOptions.gui";
 
 	private static final Logger logger = Logger.getLogger(ClientOptions.class.getName());
 
-	//
 	// Constants for each client option.
 	// Keep these in sync with data/base/client-options.xml.
-	//
 
 	// clientOptions.personal
 
@@ -256,8 +253,10 @@ public class ClientOptions extends OptionGroup {
 
 	/** Option for selecting the compact colony report. */
 	public static final String COLONY_REPORT = "model.option.colonyReport";
-	// TODO Remove unused code found by UCDetector
-	// public static final int COLONY_REPORT_CLASSIC = 0;
+	/**
+	 * TODO Remove unused code found by UCDetector
+	 * public static final int COLONY_REPORT_CLASSIC = 0;.
+	 */
 	public static final int COLONY_REPORT_COMPACT = 1;
 
 	/** The type of labour report to display. */
@@ -394,7 +393,7 @@ public class ClientOptions extends OptionGroup {
 	private class MessageSourceComparator implements Comparator<ModelMessage> {
 		private final Game game;
 
-		// sort according to message source
+		/** Sort according to message source. */
 
 		private MessageSourceComparator(Game game) {
 			this.game = game;
@@ -410,10 +409,8 @@ public class ClientOptions extends OptionGroup {
 			FreeColGameObject source1 = game.getMessageSource(message1);
 			FreeColGameObject source2 = game.getMessageSource(message2);
 			int base = getClassIndex(source1) - getClassIndex(source2);
-			if (base == 0) {
-				if (source1 instanceof Colony) {
-					return getColonyComparator().compare((Colony) source1, (Colony) source2);
-				}
+			if (base == 0 && source1 instanceof Colony) {
+				return getColonyComparator().compare((Colony) source1, (Colony) source2);
 			}
 			return base;
 		}
@@ -457,8 +454,9 @@ public class ClientOptions extends OptionGroup {
 	 * @return True if the options were loaded without error.
 	 */
 	private boolean load(FreeColXMLReader xr) {
-		if (xr == null)
+		if (xr == null) {
 			return false;
+		}
 		try {
 			xr.nextTag();
 			readFromXML(xr);
@@ -476,8 +474,9 @@ public class ClientOptions extends OptionGroup {
 	 * @return True if the options were loaded without error.
 	 */
 	private boolean load(BufferedInputStream bis) {
-		if (bis == null)
+		if (bis == null) {
 			return false;
+		}
 		try {
 			return load(new FreeColXMLReader(bis));
 		} catch (IOException ioe) {
@@ -494,7 +493,7 @@ public class ClientOptions extends OptionGroup {
 	 * @return True if the options were loaded without error.
 	 */
 	private boolean load(InputStream is) {
-		return (is == null) ? false : load(new BufferedInputStream(is));
+		return is != null && load(new BufferedInputStream(is));
 	}
 
 	/**
@@ -505,8 +504,9 @@ public class ClientOptions extends OptionGroup {
 	 * @return True if the options were loaded without error.
 	 */
 	public boolean load(File file) {
-		if (file == null)
+		if (file == null) {
 			return false;
+		}
 		try {
 			return load(new FileInputStream(file));
 		} catch (FileNotFoundException fnfe) {
@@ -524,7 +524,7 @@ public class ClientOptions extends OptionGroup {
 	 */
 	public boolean merge(File file) {
 		ClientOptions clop = new ClientOptions();
-		return (!clop.load(file)) ? false : this.merge(clop);
+		return clop.load(file) && merge(clop);
 	}
 
 	/**
@@ -535,8 +535,9 @@ public class ClientOptions extends OptionGroup {
 	 * @return True if the options were loaded without error.
 	 */
 	private boolean load(FreeColSavegameFile save) {
-		if (save == null)
+		if (save == null) {
 			return false;
+		}
 		try {
 			return load(save.getInputStream(FreeColSavegameFile.CLIENT_OPTIONS));
 		} catch (IOException ioe) {
@@ -554,7 +555,7 @@ public class ClientOptions extends OptionGroup {
 	 */
 	public boolean merge(FreeColSavegameFile save) {
 		ClientOptions clop = new ClientOptions();
-		return (!clop.load(save)) ? false : this.merge(clop);
+		return clop.load(save) && merge(clop);
 	}
 
 	/**
@@ -564,13 +565,14 @@ public class ClientOptions extends OptionGroup {
 	 */
 	public List<FreeColModFile> getActiveMods() {
 		List<FreeColModFile> active = new ArrayList<>();
-		ModListOption option = (ModListOption) getOption(ClientOptions.USER_MODS);
+		ModListOption option = (ModListOption) getOption(USER_MODS);
 		if (option != null) {
 			for (FreeColModFile modInfo : option.getOptionValues()) {
 				if (modInfo != null && modInfo.getId() != null) {
 					FreeColModFile f = Mods.getFreeColModFile(modInfo.getId());
-					if (f != null)
+					if (f != null) {
 						active.add(f);
+					}
 				}
 			}
 		}
@@ -585,7 +587,7 @@ public class ClientOptions extends OptionGroup {
 	public static String getLanguageOption() {
 		File options = FreeColDirectories.getClientOptionsFile();
 		if (options.canRead()) {
-			try (FileInputStream fis = new FileInputStream(options); FreeColXMLReader xr = new FreeColXMLReader(fis);) {
+			try (FileInputStream fis = new FileInputStream(options); FreeColXMLReader xr = new FreeColXMLReader(fis)) {
 				xr.nextTag();
 				for (int type = xr.getEventType(); type != XMLEvent.END_DOCUMENT; type = xr.getEventType()) {
 					if (type == XMLEvent.START_ELEMENT && LANGUAGE.equals(xr.readId())) {

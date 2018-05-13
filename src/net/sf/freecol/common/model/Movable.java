@@ -23,18 +23,17 @@ package net.sf.freecol.common.model;
  * An object that can move from one Location to another under its own power.
  */
 public interface Movable {
-
 	/**
 	 * Returns the amount of moves this Movable has left.
 	 *
 	 * @return The amount of moves this Movable has left.
 	 */
-	public int getMovesLeft();
+	int getMovesLeft();
 
 	/**
 	 * Gets the amount of moves this Movable has at the beginning of each turn.
 	 *
 	 * @return The amount of moves this Movable has at the beginning of each turn.
 	 */
-	public int getInitialMovesLeft();
+	int getInitialMovesLeft();
 }

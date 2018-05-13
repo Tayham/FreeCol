@@ -60,16 +60,15 @@ import net.sf.freecol.server.ai.TransportableAIObject;
  * @see net.sf.freecol.common.model.Unit Unit
  */
 public class TransportMission extends Mission {
-
 	private static final Logger logger = Logger.getLogger(TransportMission.class.getName());
 
 	private static final String tag = "AI transport";
 
-	private static enum CargoResult {
-		TCONTINUE, // Cargo should continue
-		TDONE, // Cargo completed successfully
-		TFAIL, // Cargo failed badly
-		TNEXT, // Cargo changed to its next state
+	private enum CargoResult {
+		TCONTINUE, /** Cargo should continue. */
+		TDONE, /** Cargo completed successfully. */
+		TFAIL, /** Cargo failed badly. */
+		TNEXT, /** Cargo changed to its next state. */
 		TRETRY // Cargo has blocked, retry
 	}
 
@@ -118,9 +117,7 @@ public class TransportMission extends Mission {
 		readFromXML(xr);
 	}
 
-	/**
-	 * Disposes of this <code>Mission</code>.
-	 */
+	/** Disposes of this <code>Mission</code>. */
 	@Override
 	public void dispose() {
 		logger.finest(tag + " disposing (" + clearCargoes() + "): " + this
@@ -165,11 +162,12 @@ public class TransportMission extends Mission {
 	 * @return True if the attack should proceed.
 	 */
 	private boolean shouldAttack(Unit other) {
-		if (invalidAttackReason(getAIUnit(), other.getOwner()) != null)
+		if (invalidAttackReason(getAIUnit(), other.getOwner()) != null) {
 			return false;
+		}
 		final Unit carrier = getUnit();
 		final CombatModel cm = getGame().getCombatModel();
-		double offence = cm.getOffencePower(carrier, other) * ((carrier.hasCargo()) ? 0.3 : 0.80);
+		double offence = cm.getOffencePower(carrier, other) * (carrier.hasCargo() ? 0.3 : 0.80);
 		return offence > cm.getOffencePower(other, carrier);
 	}
 
@@ -217,11 +215,13 @@ public class TransportMission extends Mission {
 		synchronized (cargoes) {
 			cargoes.clear();
 			for (Cargo c : nxt) {
-				if (c.isValid())
+				if (c.isValid()) {
 					cargoes.add(c);
+				}
 			}
-			if (setSpace)
+			if (setSpace) {
 				tSpace();
+			}
 		}
 		tRetarget();
 		return old;
@@ -274,10 +274,12 @@ public class TransportMission extends Mission {
 	 * @return True if the addition succeeded or the cargo was already present.
 	 */
 	private boolean tAdd(Cargo cargo, int index) {
-		if (!cargo.isValid())
+		if (!cargo.isValid()) {
 			return false;
-		if (tFind(cargo.getTransportable()) != null)
+		}
+		if (tFind(cargo.getTransportable()) != null) {
 			return true;
+		}
 		boolean change = false;
 		synchronized (cargoes) {
 			change = cargoes.isEmpty() || index == 0;
@@ -288,8 +290,9 @@ public class TransportMission extends Mission {
 			}
 			tSpace();
 		}
-		if (change)
+		if (change) {
 			tRetarget();
+		}
 		return true;
 	}
 
@@ -314,8 +317,9 @@ public class TransportMission extends Mission {
 				}
 			}
 		}
-		if (change)
+		if (change) {
 			tRetarget();
+		}
 		return result;
 	}
 
@@ -328,16 +332,15 @@ public class TransportMission extends Mission {
 		final int maxHolds = carrier.getCargoCapacity();
 		int holds = carrier.getCargoSpaceTaken();
 		for (Cargo cargo : cargoes) {
-			if (!cargo.isValid())
+			if (!cargo.isValid()) {
 				continue;
+			}
 			holds += cargo.getNewSpace();
 			cargo.setSpaceLeft(maxHolds - holds);
 		}
 	}
 
-	/**
-	 * Reset the carrier target after a change to the first cargo.
-	 */
+	/** Reset the carrier target after a change to the first cargo. */
 	private void tRetarget() {
 		Cargo c;
 		synchronized (cargoes) {
@@ -384,8 +387,9 @@ public class TransportMission extends Mission {
 	 */
 	private void dropTransportable(TransportableAIObject t) {
 		AIUnit carrier = getAIUnit();
-		if (t.getTransport() == carrier)
+		if (t.getTransport() == carrier) {
 			t.setTransport(null);
+		}
 	}
 
 	/**
@@ -397,8 +401,9 @@ public class TransportMission extends Mission {
 	 */
 	private void takeTransportable(TransportableAIObject t) {
 		AIUnit carrier = getAIUnit();
-		if (t.getTransport() != carrier)
+		if (t.getTransport() != carrier) {
 			t.setTransport(carrier);
+		}
 	}
 
 	/**
@@ -412,8 +417,9 @@ public class TransportMission extends Mission {
 	 * @return The collection <code>Location<code>, or null if not found.
 	 */
 	public Location getTransportTarget(TransportableAIObject t) {
-		if (isCarrying(t))
+		if (isCarrying(t)) {
 			return null;
+		}
 		Cargo cargo = tFind(t);
 		return (cargo == null) ? null : cargo.getTransportTarget();
 	}
@@ -429,8 +435,9 @@ public class TransportMission extends Mission {
 	 * @return The expected transport turns.
 	 */
 	public int getTransportTurns(TransportableAIObject t) {
-		if (isCarrying(t))
+		if (isCarrying(t)) {
 			return INFINITY;
+		}
 		Cargo cargo = tFind(t);
 		return (cargo == null) ? INFINITY : cargo.getTurns();
 	}
@@ -565,11 +572,12 @@ public class TransportMission extends Mission {
 	 */
 	private boolean addCargo(Cargo cargo, int index, LogBuilder lb) {
 		boolean result = tAdd(cargo, index);
-		if (result)
+		if (result) {
 			takeTransportable(cargo.getTransportable());
+		}
 
 		if (result) {
-			lb.add(", added ", cargo.toShortString(), " at ", ((index < 0) ? "end" : Integer.toString(index)));
+			lb.add(", added ", cargo.toShortString(), " at ", (index < 0) ? "end" : Integer.toString(index));
 		} else {
 			lb.add(", failed to add ", cargo.toShortString());
 		}
@@ -612,8 +620,9 @@ public class TransportMission extends Mission {
 		final int newSpace = t.getSpaceTaken();
 
 		for (int i = ts.size() - 1; i >= 0; i--) {
-			if (ts.get(i).getSpaceLeft() < newSpace)
+			if (ts.get(i).getSpaceLeft() < newSpace) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -650,8 +659,9 @@ public class TransportMission extends Mission {
 			outer: for (int i = 0; i < ts.size(); i++) {
 				Cargo tr = ts.get(i);
 				if (Map.isSameLocation(tr.getCarrierTarget(), cargo.getCarrierTarget())) {
-					if (!cargo.canQueueAt(carrier, i, ts))
+					if (!cargo.canQueueAt(carrier, i, ts)) {
 						continue outer;
+					}
 					candidate = i;
 					break;
 				}
@@ -659,8 +669,9 @@ public class TransportMission extends Mission {
 		}
 
 		if (candidate < 0) { // Queue at end unless match required
-			if (requireMatch)
+			if (requireMatch) {
 				return false;
+			}
 			candidate = ts.size();
 		}
 		return addCargo(cargo, candidate, lb);
@@ -678,10 +689,12 @@ public class TransportMission extends Mission {
 	 */
 	public boolean dumpCargo(Cargo cargo, LogBuilder lb) {
 		TransportableAIObject t = cargo.getTransportable();
-		if (isCarrying(t))
+		if (isCarrying(t)) {
 			t.leaveTransport();
-		if (!isCarrying(t) && tFind(t) != null)
+		}
+		if (!isCarrying(t) && tFind(t) != null) {
 			removeCargo(cargo);
+		}
 		if (tFind(t) != null) {
 			String reason = cargo.dump();
 			if (reason != null) {
@@ -735,8 +748,9 @@ public class TransportMission extends Mission {
 	 */
 	private void checkCargoes(LogBuilder lb) {
 		final Unit carrier = getUnit();
-		if (carrier.isAtSea())
-			return; // Let it emerge.
+		if (carrier.isAtSea()) {
+			return;
+		} // Let it emerge.
 		final AIUnit aiCarrier = getAIUnit();
 
 		List<Unit> unitsPresent = carrier.getUnitList();
@@ -809,8 +823,9 @@ public class TransportMission extends Mission {
 			lb.add(", found unexpected units");
 			for (Unit u : unitsPresent) {
 				AIUnit aiu = getAIMain().getAIUnit(u);
-				if (aiu == null)
+				if (aiu == null) {
 					throw new IllegalStateException("Bogus:" + u);
+				}
 				todo.add(aiu);
 			}
 		}
@@ -825,8 +840,9 @@ public class TransportMission extends Mission {
 		// Try to queue the surprise transportables.
 		while (!todo.isEmpty()) {
 			TransportableAIObject t = todo.remove(0);
-			if (!queueTransportable(t, false, lb))
+			if (!queueTransportable(t, false, lb)) {
 				drop.add(t);
+			}
 		}
 
 		// Drop transportables on the drop list, or queue them to be
@@ -893,7 +909,7 @@ public class TransportMission extends Mission {
 			}
 			if ((d = cargo.getJoinDirection()) == null) {
 				logger.warning("Null pickup direction" + " for " + cargo.toShortString() + " at "
-						+ t.getLocation().toString() + " to " + carrier);
+						+ t.getLocation() + " to " + carrier);
 				return CargoResult.TFAIL;
 			}
 			tloc = tloc.getTile().getNeighbourOrNull(d.getReverseDirection());
@@ -955,7 +971,7 @@ public class TransportMission extends Mission {
 				// lb.add(", ", t, " NO-LEAVE");
 				PathNode pn = t.getDeliveryPath(carrier, t.getTransportDestination());
 				lb.add(", ", t, " NO-LEAVE(", here, "~", cargo.getLeaveDirection(), "~", t.getTransportDestination(),
-						" ", ((pn == null) ? "no-path" : pn.fullPathToString()));
+						" ", (pn == null) ? "no-path" : pn.fullPathToString());
 				return CargoResult.TRETRY;
 			}
 			lb.add(", ", t, " COMPLETED");
@@ -973,7 +989,8 @@ public class TransportMission extends Mission {
 		// Check for goods completing a wish
 		Colony colony;
 		AIColony aiColony;
-		if ((colony = (t.getLocation() == null) ? null : t.getLocation().getColony()) != null
+		colony = (t.getLocation() == null) ? null : t.getLocation().getColony();
+		if (colony != null
 				&& (aiColony = getAIMain().getAIColony(colony)) != null && aiColony.completeWish(t, lb)) {
 			aiColony.requestRearrange();
 		}
@@ -999,7 +1016,7 @@ public class TransportMission extends Mission {
 			List<Cargo> next = new ArrayList<>();
 			List<Cargo> curr = tClear();
 			for (Cargo cargo : curr) {
-				CargoResult result = (cargo.getMode().isCollection()) ? CargoResult.TCONTINUE : tryCargo(cargo, lb);
+				CargoResult result = cargo.getMode().isCollection() ? CargoResult.TCONTINUE : tryCargo(cargo, lb);
 				switch (result) {
 				case TCONTINUE:
 					cont.add(cargo);
@@ -1035,11 +1052,9 @@ public class TransportMission extends Mission {
 			lb.add(", collecting");
 			cont.clear();
 			for (Cargo cargo : tClear()) {
-				CargoResult result = (cargo.getMode().isCollection()) ? tryCargo(cargo, lb) : CargoResult.TCONTINUE;
+				CargoResult result = cargo.getMode().isCollection() ? tryCargo(cargo, lb) : CargoResult.TCONTINUE;
 				switch (result) {
 				case TCONTINUE:
-					cont.add(cargo);
-					break;
 				case TNEXT:
 					cont.add(cargo);
 					break;
@@ -1068,8 +1083,9 @@ public class TransportMission extends Mission {
 			// at the end.
 			if (!next.isEmpty()) {
 				lb.add(", requeue");
-				for (Cargo c : next)
+				for (Cargo c : next) {
 					queueCargo(c, false, lb);
+				}
 			}
 
 			// Delivering might have invalidated other cargo missions.
@@ -1086,10 +1102,9 @@ public class TransportMission extends Mission {
 		final EuropeanAIPlayer euaip = getEuropeanAIPlayer();
 		while (destinationCapacity() > 0 && tSize() < unit.getCargoCapacity() * 3 / 2) {
 			Cargo cargo = getBestCargo(unit);
-			if (cargo == null)
+			if (cargo == null || !queueCargo(cargo, false, lb)) {
 				break;
-			if (!queueCargo(cargo, false, lb))
-				break;
+			}
 			euaip.claimTransportable(cargo.getTransportable());
 		}
 	}
@@ -1122,8 +1137,9 @@ public class TransportMission extends Mission {
 			totalTurns += turns; // Might be MANY_TURNS!
 			totalHoldTurns += holds * turns * favourEarly;
 			holds += cargo.getNewSpace();
-			if (holds < 0 || holds > maxHolds)
+			if (holds < 0 || holds > maxHolds) {
 				return -1.0f;
+			}
 			now = cargo.getCarrierTarget();
 			favourEarly += 0.1f; // Slight preference for large loads first
 		}
@@ -1152,12 +1168,10 @@ public class TransportMission extends Mission {
 			// Try all the permutations of visiting order for the
 			// locations, and set the target to the first location
 			// of the best scoring route.
-			//
 			// The target may get recomputed every time a cargo change
 			// occurs, so there is no guarantee that the route chosen
 			// here is actually executed. This seems rather
 			// inefficient, but we need to be adaptable.
-			//
 			final Location current = getUnit().getLocation();
 			float bestValue = INFINITY;
 			for (List<Cargo> tl : getPermutations(ts)) {
@@ -1170,8 +1184,9 @@ public class TransportMission extends Mission {
 		}
 		if (best != null) {
 			tSet(unwrapCargoes(best), true);
-			if (oldTarget != getTarget())
+			if (oldTarget != getTarget()) {
 				lb.add("->", getTarget());
+			}
 		} else {
 			tSet(unwrapCargoes(ts), false);
 		}
@@ -1189,8 +1204,9 @@ public class TransportMission extends Mission {
 		Cargo bestDirect = null, bestFallback = null;
 		float bestDirectValue = 0.0f, bestFallbackValue = 0.0f;
 		for (TransportableAIObject t : euaip.getUrgentTransportables()) {
-			if (t.isDisposed() || !t.carriableBy(carrier))
+			if (t.isDisposed() || !t.carriableBy(carrier)) {
 				continue;
+			}
 			Location loc = t.getTransportSource();
 			Cargo cargo;
 			try {
@@ -1198,19 +1214,18 @@ public class TransportMission extends Mission {
 			} catch (FreeColException fce) {
 				cargo = null;
 			}
-			if (cargo == null)
+			if (cargo == null) {
 				continue;
+			}
 			float value = t.getTransportPriority() / (cargo.getTurns() + 1.0f);
 			if (cargo.isFallback()) {
 				if (bestFallbackValue < value) {
 					bestFallbackValue = value;
 					bestFallback = cargo;
 				}
-			} else {
-				if (bestDirectValue < value) {
-					bestDirectValue = value;
-					bestDirect = cargo;
-				}
+			} else if (bestDirectValue < value) {
+				bestDirectValue = value;
+				bestDirect = cargo;
 			}
 		}
 		return (bestDirect != null) ? bestDirect : (bestFallback != null) ? bestFallback : null;
@@ -1226,7 +1241,7 @@ public class TransportMission extends Mission {
 	 */
 	private static String invalidMissionReason(AIUnit aiUnit) {
 		String reason = invalidAIUnitReason(aiUnit);
-		return (reason != null) ? reason : (!aiUnit.getUnit().isCarrier()) ? "unit-not-a-carrier" : null;
+		return (reason != null) ? reason : !aiUnit.getUnit().isCarrier() ? "unit-not-a-carrier" : null;
 	}
 
 	/**
@@ -1286,7 +1301,7 @@ public class TransportMission extends Mission {
 	 */
 	public boolean removeTransportable(TransportableAIObject t) {
 		Cargo cargo = tFind(t);
-		return (cargo == null) ? false : tRemove(cargo);
+		return cargo != null && tRemove(cargo);
 	}
 
 	/**
@@ -1317,7 +1332,7 @@ public class TransportMission extends Mission {
 	 */
 	public boolean queueTransportable(TransportableAIObject t, boolean requireMatch, LogBuilder lb) {
 		Cargo cargo = makeCargo(t, lb);
-		return (cargo == null) ? false : queueCargo(cargo, requireMatch, lb);
+		return cargo != null && queueCargo(cargo, requireMatch, lb);
 	}
 
 	/**
@@ -1331,11 +1346,13 @@ public class TransportMission extends Mission {
 	 *         to be dumped at the next stop.
 	 */
 	public boolean dumpTransportable(TransportableAIObject t, LogBuilder lb) {
-		if (t == null)
+		if (t == null) {
 			return true;
+		}
 		Cargo cargo = tFind(t);
-		if (cargo == null)
+		if (cargo == null) {
 			return true;
+		}
 		if (!isCarrying(t)) {
 			removeTransportable(t);
 			return true;
@@ -1355,8 +1372,9 @@ public class TransportMission extends Mission {
 	 */
 	public boolean forceCollection(AIUnit aiu, LogBuilder lb) {
 		for (Cargo c : tCopy()) {
-			if (c.getMode().isCollection())
+			if (c.getMode().isCollection()) {
 				removeCargo(c);
+			}
 		}
 		return queueTransportable(aiu, false, lb);
 	}
@@ -1371,52 +1389,40 @@ public class TransportMission extends Mission {
 	 */
 	public void suppressEuropeanTrade(GoodsType type, LogBuilder lb) {
 		for (Cargo c : tCopy()) {
-			if (c.isEuropeanTrade(type))
+			if (c.isEuropeanTrade(type)) {
 				removeCargo(c);
+			}
 		}
 	}
 
-	// End of public TransportableAIObject manipulations
-
-	// Implement Mission
-	// Inherit dispose, getBaseTransportPriority, isOneTime
-
 	/**
-	 * {@inheritDoc}
+	 * End of public TransportableAIObject manipulations
+
+	 * Implement Mission
+	 * Inherit dispose, getBaseTransportPriority, isOneTime.
 	 */
+
 	@Override
 	public Tile getTransportDestination() {
 		return null; // Can not transport a carrier unit.
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTarget() {
 		return target;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setTarget(Location target) {
 		this.target = target;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location findTarget() {
 		// A noop. The target is defined by the cargoes.
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String invalidReason() {
 		final AIUnit aiUnit = getAIUnit();
@@ -1425,16 +1431,14 @@ public class TransportMission extends Mission {
 		return (reason != null) ? reason : ((cargo = tFirst()) == null) ? null : invalidCargoReason(cargo);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Mission doMission(LogBuilder lb) {
 		lb.add(tag);
 		checkCargoes(lb);
 		String reason = invalidReason();
-		if (reason != null)
+		if (reason != null) {
 			return lbFail(lb, false, reason);
+		}
 
 		final AIUnit aiCarrier = getAIUnit();
 		final Unit unit = getUnit();
@@ -1448,11 +1452,12 @@ public class TransportMission extends Mission {
 				doTransport(lb);
 				if (isEmpty() && unit.isOffensiveUnit()) {
 					Mission m = euaip.getPrivateerMission(aiCarrier, null);
-					if (m != null)
+					if (m != null) {
 						return lbDone(lb, false, "going pirate");
+					}
 				}
 				if ((reason = invalidReason()) != null) {
-					logger.warning(tag + " post-stop failure(" + reason + "): " + this.toFullString());
+					logger.warning(tag + " post-stop failure(" + reason + "): " + toFullString());
 					return lbFail(lb, false, reason);
 				}
 				if (unit.isAtLocation(target)) {
@@ -1495,16 +1500,13 @@ public class TransportMission extends Mission {
 		}
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String TARGET_TAG = "target";
-	// @compat 0.10.5
+	/** @compat 0.10.5 */
 	private static final String OLD_TRANSPORTABLE_TAG = "transportable";
-	// end @compat
+	/** End @compat. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -1514,9 +1516,6 @@ public class TransportMission extends Mission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		final AIUnit aiCarrier = getAIUnit();
@@ -1524,19 +1523,13 @@ public class TransportMission extends Mission {
 			// Sanity check first. Another nation might have captured
 			// or destroyed a target colony.
 			String reason = cargo.check(aiCarrier);
-			if (reason != null)
+			if (reason != null || cargo.getMode() == Cargo.CargoMode.DUMP) {
 				continue;
-			// Do not bother writing cargoes that will be dumped.
-			// On restore, checkCargoes will work out what to do with them.
-			if (cargo.getMode() == Cargo.CargoMode.DUMP)
-				continue;
+			}
 			cargo.toXML(xw);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -1544,9 +1537,6 @@ public class TransportMission extends Mission {
 		target = xr.getLocationAttribute(getGame(), TARGET_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -1555,9 +1545,6 @@ public class TransportMission extends Mission {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -1570,7 +1557,6 @@ public class TransportMission extends Mission {
 			// Ignore the old format, let checkCargoes sort it out
 			xr.closeTag(OLD_TRANSPORTABLE_TAG);
 			// end @compat
-
 		} else {
 			super.readChild(xr);
 		}
@@ -1584,14 +1570,12 @@ public class TransportMission extends Mission {
 	public String toFullString() {
 		LogBuilder lb = new LogBuilder(64);
 		lb.add(this);
-		for (Cargo cargo : tCopy())
+		for (Cargo cargo : tCopy()) {
 			lb.add("\n  ->", cargo);
+		}
 		return lb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

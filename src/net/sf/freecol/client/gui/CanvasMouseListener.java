@@ -35,14 +35,12 @@ import net.sf.freecol.common.model.PathNode;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * Listens to mouse buttons being pressed at the level of the Canvas.
- */
+/** Listens to mouse buttons being pressed at the level of the Canvas. */
 public final class CanvasMouseListener implements ActionListener, MouseListener {
-
 	private static final Logger logger = Logger.getLogger(CanvasMouseListener.class.getName());
 
-	private static final int doubleClickDelay = 200; // Milliseconds
+	/** Milliseconds. */
+	private static final int doubleClickDelay = 200;
 
 	private final FreeColClient freeColClient;
 
@@ -122,12 +120,14 @@ public final class CanvasMouseListener implements ActionListener, MouseListener 
 	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (!e.getComponent().isEnabled())
+		if (!e.getComponent().isEnabled()) {
 			return;
+		}
 
 		int me = e.getButton();
-		if (e.isPopupTrigger())
+		if (e.isPopupTrigger()) {
 			me = MouseEvent.BUTTON3;
+		}
 		Tile tile = canvas.convertToMapTile(e.getX(), e.getY());
 
 		switch (me) {
@@ -162,8 +162,9 @@ public final class CanvasMouseListener implements ActionListener, MouseListener 
 			break;
 		case MouseEvent.BUTTON3:
 			// Cancel goto if one is active
-			if (canvas.isGotoStarted())
+			if (canvas.isGotoStarted()) {
 				canvas.stopGoto();
+			}
 			canvas.showTilePopup(tile, e.getX(), e.getY());
 			break;
 		default:
@@ -185,7 +186,6 @@ public final class CanvasMouseListener implements ActionListener, MouseListener 
 				canvas.stopGoto();
 
 				freeColClient.getInGameController().goToTile(canvas.getActiveUnit(), temp.getLastNode().getTile());
-
 			} else if (canvas.isGotoStarted()) {
 				canvas.stopGoto();
 			}
@@ -194,11 +194,8 @@ public final class CanvasMouseListener implements ActionListener, MouseListener 
 		}
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		doubleClickTimer.stop();
@@ -209,11 +206,9 @@ public final class CanvasMouseListener implements ActionListener, MouseListener 
 			if (unit != null && unit.getTile() == tile) {
 				freeColClient.getInGameController().clearGotoOrders(unit);
 				canvas.updateCurrentPathForActiveUnit();
-			} else {
-				if (tile != null && tile.hasSettlement()) {
-					freeColClient.getGUI().showSettlement(tile.getSettlement());
-					return;
-				}
+			} else if (tile != null && tile.hasSettlement()) {
+				freeColClient.getGUI().showSettlement(tile.getSettlement());
+				return;
 			}
 		}
 		freeColClient.getGUI().setSelectedTile(tile);

@@ -35,7 +35,6 @@ import net.sf.freecol.common.option.RangeOption;
  * be both seen and changed.
  */
 public final class RangeOptionUI extends SliderOptionUI<RangeOption> {
-
 	/**
 	 * Creates a new <code>RangeOptionUI</code> for the given
 	 * <code>RangeOption</code>.
@@ -69,19 +68,13 @@ public final class RangeOptionUI extends SliderOptionUI<RangeOption> {
 		slider.setSnapToTicks(true);
 	}
 
-	// Implement OptionUpdater
+	/** Implement OptionUpdater. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValueRank(getComponent().getValue());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		getComponent().setValue(getOption().getValueRank());

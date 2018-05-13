@@ -33,7 +33,6 @@ import net.sf.freecol.common.option.Option;
  * {@link net.sf.freecol.common.option.IntegerOption} or one of its subclasses.
  */
 public class SliderOptionUI<T extends Option<Integer>> extends OptionUI<T> {
-
 	private final JSlider slider = new JSlider();
 
 	/**
@@ -58,35 +57,23 @@ public class SliderOptionUI<T extends Option<Integer>> extends OptionUI<T> {
 		initialize();
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final JLabel getJLabel() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JSlider getComponent() {
 		return slider;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValue(slider.getValue());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		slider.setValue(getOption().getValue());

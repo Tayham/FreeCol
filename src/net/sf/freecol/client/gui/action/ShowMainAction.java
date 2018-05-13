@@ -29,7 +29,6 @@ import net.sf.freecol.client.FreeColClient;
  * @see net.sf.freecol.client.gui.panel.MainPanel
  */
 public class ShowMainAction extends FreeColAction {
-
 	public static final String id = "showMainAction";
 
 	/**
@@ -42,15 +41,13 @@ public class ShowMainAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if (!getGUI().confirmStopGame())
+		if (!getGUI().confirmStopGame()) {
 			return;
+		}
 		getConnectController().quitGame(true);
 		getGUI().removeInGameComponents();
 		freeColClient.setMapEditor(false);

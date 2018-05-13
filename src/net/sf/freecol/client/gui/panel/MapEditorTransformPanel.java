@@ -73,7 +73,6 @@ import net.sf.freecol.server.model.ServerIndianSettlement;
  * @see MapTransform
  */
 public final class MapEditorTransformPanel extends FreeColPanel {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(MapEditorTransformPanel.class.getName());
 
@@ -81,9 +80,7 @@ public final class MapEditorTransformPanel extends FreeColPanel {
 	private JToggleButton settlementButton;
 	private final ButtonGroup group;
 
-	/**
-	 * A native nation to use for native settlement type and skill.
-	 */
+	/** A native nation to use for native settlement type and skill. */
 	private static Nation nativeNation = null;
 
 	/**
@@ -110,9 +107,7 @@ public final class MapEditorTransformPanel extends FreeColPanel {
 		add(sl);
 	}
 
-	/**
-	 * Builds the buttons for all the terrains.
-	 */
+	/** Builds the buttons for all the terrains. */
 	private void buildList() {
 		final Specification spec = getSpecification();
 		List<TileType> tileList = spec.getTileTypeList();
@@ -152,7 +147,6 @@ public final class MapEditorTransformPanel extends FreeColPanel {
 	 *            a <code>MapTransform</code> value
 	 */
 	private JToggleButton buildButton(Image image, String text, final MapTransform mt) {
-
 		JPanel descriptionPanel = new JPanel(new BorderLayout());
 		descriptionPanel.add(new JLabel(new ImageIcon(image)), BorderLayout.CENTER);
 		descriptionPanel.add(new JLabel(text, JLabel.CENTER), BorderLayout.SOUTH);
@@ -196,10 +190,7 @@ public final class MapEditorTransformPanel extends FreeColPanel {
 	 * @see #transform(Tile)
 	 */
 	public abstract class MapTransform implements IMapTransform {
-
-		/**
-		 * A panel with information about this transformation.
-		 */
+		/** A panel with information about this transformation. */
 		private JPanel descriptionPanel = null;
 
 		/**
@@ -320,10 +311,10 @@ public final class MapEditorTransformPanel extends FreeColPanel {
 		public void transform(Tile t) {
 			if (t.isLand()) {
 				LostCityRumour rumour = t.getLostCityRumour();
-				if (rumour == null) {
-					t.addLostCityRumour(new LostCityRumour(t.getGame(), t));
-				} else {
+				if (rumour != null) {
 					t.removeLostCityRumour();
+				} else {
+					t.addLostCityRumour(new LostCityRumour(t.getGame(), t));
 				}
 			}
 		}
@@ -332,12 +323,14 @@ public final class MapEditorTransformPanel extends FreeColPanel {
 	private class SettlementTransform extends MapTransform {
 		@Override
 		public void transform(Tile t) {
-			if (!t.isLand() || t.hasSettlement() || nativeNation == null)
+			if (!t.isLand() || t.hasSettlement() || nativeNation == null) {
 				return;
+			}
 			UnitType skill = ((IndianNationType) nativeNation.getType()).getSkills().get(0).getObject();
 			Player nativePlayer = getGame().getPlayerByNation(nativeNation);
-			if (nativePlayer == null)
+			if (nativePlayer == null) {
 				return;
+			}
 			String name = nativePlayer.getSettlementName(null);
 			ServerIndianSettlement settlement = new ServerIndianSettlement(t.getGame(), nativePlayer, name, t, false,
 					skill, null);

@@ -36,10 +36,9 @@ import java.util.StringTokenizer;
  * @see net.sf.freecol.client.gui.panel.DeclarationPanel
  */
 public class FAFile {
-
-	// FIXME: Use two hashes, to be safer?
+	/** FIXME: Use two hashes, to be safer? */
 	private final HashMap<Object, Object> letters = new HashMap<>();
-	private int maxHeight = 0;
+	private int maxHeight;
 
 	/**
 	 * Reads data from the given <code>InputStream</code> and creates an object to
@@ -98,7 +97,7 @@ public class FAFile {
 		return firstMinX;
 	}
 
-	private int getLastMax(String text, FAFile.FALetter letter) {
+	private int getLastMax(String text, FALetter letter) {
 		int lastMaxX = 0;
 		letter = getLetter(text.charAt(text.length() - 1));
 		for (int i = 0; i < letter.points.length; i++) {
@@ -155,8 +154,10 @@ public class FAFile {
 		line = in.readLine();
 		while (line != null && !line.startsWith("[Chars]")) {
 			String name = line;
-			if ((line = in.readLine()) == null)
+			line = in.readLine();
+			if (line == null) {
 				break;
+			}
 			st = new StringTokenizer(line);
 			int width = Integer.parseInt(st.nextToken());
 			int height = Integer.parseInt(st.nextToken());
@@ -164,15 +165,19 @@ public class FAFile {
 			int[] xs = new int[numberOfPoints];
 			int[] ys = new int[numberOfPoints];
 
-			if ((line = in.readLine()) == null)
+			line = in.readLine();
+			if (line == null) {
 				break;
+			}
 			st = parseInts(line, numberOfPoints, xs);
 
-			if ((line = in.readLine()) == null)
+			line = in.readLine();
+			if (line == null) {
 				break;
+			}
 			st = parseInts(line, numberOfPoints, ys);
 
-			FAFile.FAName newLetter = initializeLetter(width, height, numberOfPoints, xs, ys);
+			FAName newLetter = initializeLetter(width, height, numberOfPoints, xs, ys);
 			letters.put(name, newLetter);
 			line = in.readLine();
 		}
@@ -188,11 +193,13 @@ public class FAFile {
 			line = in.readLine();
 			st = parseInts(line, numberOfPoints, xs);
 
-			if ((line = in.readLine()) == null)
+			line = in.readLine();
+			if (line == null) {
 				break;
+			}
 			st = parseInts(line, numberOfPoints, ys);
 
-			FAFile.FALetter newLetter = getLetter2(advance, numberOfPoints, xs, ys);
+			FALetter newLetter = getLetter2(advance, numberOfPoints, xs, ys);
 			letters.put(letter, newLetter);
 			line = in.readLine();
 		}
@@ -207,7 +214,7 @@ public class FAFile {
 		return st;
 	}
 
-	private FAFile.FALetter getLetter2(int advance, int numberOfPoints, int[] xs, int[] ys) {
+	private FALetter getLetter2(int advance, int numberOfPoints, int[] xs, int[] ys) {
 		FALetter newLetter = new FALetter();
 		newLetter.advance = advance;
 		newLetter.points = new Point[numberOfPoints];
@@ -217,7 +224,7 @@ public class FAFile {
 		return newLetter;
 	}
 
-	private FAFile.FAName initializeLetter(int width, int height, int numberOfPoints, int[] xs, int[] ys) {
+	private FAName initializeLetter(int width, int height, int numberOfPoints, int[] xs, int[] ys) {
 		FAName newLetter = new FAName();
 		newLetter.width = width;
 		newLetter.height = height;

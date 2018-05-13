@@ -30,11 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when attacking.
- */
+/** The message sent when attacking. */
 public class AttackMessage extends DOMMessage {
-
 	/** The identifier of the attacker. */
 	private final String unitId;
 
@@ -101,22 +98,19 @@ public class AttackMessage extends DOMMessage {
 		}
 
 		MoveType moveType = unit.getMoveType(tile);
-		if (moveType == MoveType.ENTER_INDIAN_SETTLEMENT_WITH_SCOUT
-				|| moveType == MoveType.ENTER_FOREIGN_COLONY_WITH_SCOUT || moveType.isAttack()) {
-			; // OK
-		} else {
+		if (moveType != MoveType.ENTER_INDIAN_SETTLEMENT_WITH_SCOUT && moveType != MoveType.ENTER_FOREIGN_COLONY_WITH_SCOUT && !moveType.isAttack()) {
 			return DOMMessage.clientError("Illegal attack move for: " + unitId + " type: " + moveType + " from: "
 					+ unit.getLocation().getId() + " to: " + tile.getId());
 		}
 
 		Unit defender = tile.getDefendingUnit(unit);
-		if (defender == null) {
-			return DOMMessage.clientError(
-					"Could not find defender" + " in tile: " + tile.getId() + " from: " + unit.getLocation().getId());
+		if (defender != null) {
+			return server.getInGameController().combat(serverPlayer, unit, defender, null);
 		}
 
 		// Proceed to attack.
-		return server.getInGameController().combat(serverPlayer, unit, defender, null);
+		return DOMMessage.clientError(
+				"Could not find defender" + " in tile: " + tile.getId() + " from: " + unit.getLocation().getId());
 	}
 
 	/**

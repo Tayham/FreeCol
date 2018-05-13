@@ -23,11 +23,8 @@ import java.util.logging.Logger;
 
 import net.sf.freecol.common.ServerInfo;
 
-/**
- * This object stores information about a single running server.
- */
+/** This object stores information about a single running server. */
 public class MetaItem extends ServerInfo {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(MetaItem.class.getName());
 
@@ -55,7 +52,6 @@ public class MetaItem extends ServerInfo {
 	 */
 	public MetaItem(String name, String address, int port, int slotsAvailable, int currentlyPlaying,
 			boolean isGameStarted, String version, int gameState) {
-		super();
 		update(name, address, port, slotsAvailable, currentlyPlaying, isGameStarted, version, gameState);
 	}
 

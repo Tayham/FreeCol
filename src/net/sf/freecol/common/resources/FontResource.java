@@ -36,7 +36,6 @@ import java.util.logging.Logger;
  * @see Font
  */
 public class FontResource extends Resource {
-
 	private static final Logger logger = Logger.getLogger(FontResource.class.getName());
 
 	public static final String SCHEME = "font:";
@@ -90,7 +89,7 @@ public class FontResource extends Resource {
 	 */
 	public Font getFont() {
 		if (font == null) {
-			font = FontResource.getEmergencyFont();
+			font = getEmergencyFont();
 			logger.warning("Font is null");
 		}
 		return font;

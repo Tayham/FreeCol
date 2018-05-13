@@ -40,7 +40,6 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
  * class to hide information that is not available.
  */
 public class PlayerExploredTile extends FreeColGameObject {
-
 	private static final Logger logger = Logger.getLogger(PlayerExploredTile.class.getName());
 
 	/** The owner of this view. */
@@ -58,10 +57,10 @@ public class PlayerExploredTile extends FreeColGameObject {
 	/** All known TileItems. */
 	private List<TileItem> tileItems = null;
 
-	// Visible Colony data.
-	private int colonyUnitCount = 0;
+	/** Visible Colony data. */
+	private int colonyUnitCount;
 
-	// Visible IndianSettlement data.
+	/** Visible IndianSettlement data. */
 	private Unit missionary = null;
 	private Tension alarm = null;
 	private Player mostHated = null;
@@ -110,8 +109,9 @@ public class PlayerExploredTile extends FreeColGameObject {
 	 *            The <code>TileItem</code> to add.
 	 */
 	private void addTileItem(TileItem item) {
-		if (tileItems == null)
+		if (tileItems == null) {
 			tileItems = new ArrayList<>();
+		}
 		tileItems.add(item);
 	}
 
@@ -173,10 +173,10 @@ public class PlayerExploredTile extends FreeColGameObject {
 				}
 			}
 		}
-		tile.setCachedTile(player, (ok) ? tile : copied);
+		tile.setCachedTile(player, ok ? tile : copied);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String ALARM_TAG = "alarm";
 	private static final String COLONY_UNIT_COUNT_TAG = "colonyUnitCount";
@@ -188,13 +188,10 @@ public class PlayerExploredTile extends FreeColGameObject {
 	private static final String PLAYER_TAG = "player";
 	private static final String TILE_TAG = "tile";
 	private static final String WANTED_GOODS_TAG = "wantedGoods";
-	// @compat 0.11.3
+	/** @compat 0.11.3 */
 	private static final String OLD_TILE_IMPROVEMENT_TAG = "tileimprovement";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -203,8 +200,9 @@ public class PlayerExploredTile extends FreeColGameObject {
 
 		xw.writeAttribute(TILE_TAG, tile);
 
-		if (owner != null)
+		if (owner != null) {
 			xw.writeAttribute(OWNER_TAG, owner);
+		}
 
 		if (owningSettlement != null) {
 			xw.writeAttribute(OWNING_SETTLEMENT_TAG, owningSettlement);
@@ -214,17 +212,15 @@ public class PlayerExploredTile extends FreeColGameObject {
 			xw.writeAttribute(COLONY_UNIT_COUNT_TAG, colonyUnitCount);
 		}
 
-		if (alarm != null)
+		if (alarm != null) {
 			xw.writeAttribute(ALARM_TAG, alarm.getValue());
+		}
 
 		if (mostHated != null) {
 			xw.writeAttribute(MOST_HATED_TAG, mostHated.getId());
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -245,9 +241,6 @@ public class PlayerExploredTile extends FreeColGameObject {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -294,31 +287,27 @@ public class PlayerExploredTile extends FreeColGameObject {
 		// end @compat
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
-		if (tileItems != null)
+		if (tileItems != null) {
 			tileItems.clear();
+		}
 		missionary = null;
 
 		super.readChildren(xr);
 
 		// Workaround for BR#2508, problem possibly dates as late as 0.10.5.
 		if (tile.getIndianSettlement() == null && missionary != null) {
-			logger.warning("Dropping ghost missionary " + missionary.getId() + " from " + this.getId());
+			logger.warning("Dropping ghost missionary " + missionary.getId() + " from " + getId());
 			Player p = missionary.getOwner();
-			if (p != null)
+			if (p != null) {
 				p.removeUnit(missionary);
+			}
 			missionary = null;
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Game game = getGame();
@@ -328,28 +317,21 @@ public class PlayerExploredTile extends FreeColGameObject {
 			xr.nextTag(); // advance to the Unit tag
 			missionary = xr.readFreeColGameObject(game, Unit.class);
 			xr.closeTag(MISSIONARY_TAG);
-
 		} else if (LostCityRumour.getXMLElementTagName().equals(tag)) {
 			addTileItem(xr.readFreeColGameObject(game, LostCityRumour.class));
-
 		} else if (Resource.getXMLElementTagName().equals(tag)) {
 			addTileItem(xr.readFreeColGameObject(game, Resource.class));
-
 		} else if (TileImprovement.getXMLElementTagName().equals(tag)
 				// @compat 0.11.3
 				|| OLD_TILE_IMPROVEMENT_TAG.equals(tag)
 		// end @compat 0.11.3
 		) {
 			addTileItem(xr.readFreeColGameObject(game, TileImprovement.class));
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

@@ -40,7 +40,6 @@ import javax.imageio.ImageIO;
  * @see Resource
  */
 public class ImageResource extends Resource implements Resource.Preloadable, Resource.Cleanable {
-
 	private static final Logger logger = Logger.getLogger(ImageResource.class.getName());
 
 	private HashMap<Dimension, BufferedImage> scaledImages = new HashMap<>();
@@ -58,9 +57,7 @@ public class ImageResource extends Resource implements Resource.Preloadable, Res
 		super(resourceLocator);
 	}
 
-	/**
-	 * Preload the image.
-	 */
+	/** Preload the image. */
 	@Override
 	public void preload() {
 		synchronized (loadingLock) {
@@ -78,9 +75,7 @@ public class ImageResource extends Resource implements Resource.Preloadable, Res
 		}
 	}
 
-	/**
-	 * Clean up old cached copies.
-	 */
+	/** Clean up old cached copies. */
 	@Override
 	public void clean() {
 		scaledImages = new HashMap<>();
@@ -110,8 +105,9 @@ public class ImageResource extends Resource implements Resource.Preloadable, Res
 	 */
 	public BufferedImage getImage(float scale) {
 		final BufferedImage im = getImage();
-		if (scale == 1.0f || im == null)
+		if (scale == 1.0f || im == null) {
 			return im;
+		}
 		return getImage(new Dimension(Math.round(im.getWidth() * scale), Math.round(im.getHeight() * scale)));
 	}
 
@@ -125,25 +121,29 @@ public class ImageResource extends Resource implements Resource.Preloadable, Res
 	 */
 	public BufferedImage getImage(Dimension d) {
 		BufferedImage im = getImage();
-		if (im == null)
+		if (im == null) {
 			return null;
+		}
 		int wNew = d.width;
 		int hNew = d.height;
-		if (wNew < 0 && hNew < 0)
+		if (wNew < 0 && hNew < 0) {
 			return im;
+		}
 		int w = im.getWidth();
 		int h = im.getHeight();
-		if (wNew < 0 || (!(hNew < 0) && wNew * h > w * hNew)) {
-			wNew = (2 * w * hNew + (h + 1)) / (2 * h);
+		if (wNew < 0 || (hNew >= 0 && wNew * h > w * hNew)) {
+			wNew = (2 * w * hNew + h + 1) / (2 * h);
 		} else if (hNew < 0 || wNew * h < w * hNew) {
-			hNew = (2 * h * wNew + (w + 1)) / (2 * w);
+			hNew = (2 * h * wNew + w + 1) / (2 * w);
 		}
-		if (wNew == w && hNew == h)
+		if (wNew == w && hNew == h) {
 			return im;
+		}
 
 		final BufferedImage cached = scaledImages.get(d);
-		if (cached != null)
+		if (cached != null) {
 			return cached;
+		}
 
 		// Directly scaling to less than half size would ignore some pixels.
 		// Prevent that by halving the base image size as often as needed.
@@ -165,8 +165,7 @@ public class ImageResource extends Resource implements Resource.Preloadable, Res
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g.drawImage(im, 0, 0, w, h, null);
 		g.dispose();
-		im = halved;
-		return im;
+		return halved;
 	}
 
 	private BufferedImage scaleImage(BufferedImage im, int wNew, int hNew, int w, int h) {
@@ -191,11 +190,13 @@ public class ImageResource extends Resource implements Resource.Preloadable, Res
 	 */
 	public BufferedImage getGrayscaleImage(Dimension d) {
 		final BufferedImage cached = grayscaleImages.get(d);
-		if (cached != null)
+		if (cached != null) {
 			return cached;
+		}
 		final BufferedImage im = getImage(d);
-		if (im == null)
+		if (im == null) {
 			return null;
+		}
 		int width = im.getWidth();
 		int height = im.getHeight();
 		// TODO: Find out why making a copy is necessary here to prevent
@@ -221,9 +222,10 @@ public class ImageResource extends Resource implements Resource.Preloadable, Res
 	 */
 	public BufferedImage getGrayscaleImage(float scale) {
 		final BufferedImage im = getImage();
-		if (im == null)
-			return null;
-		return getGrayscaleImage(new Dimension(Math.round(im.getWidth() * scale), Math.round(im.getHeight() * scale)));
+		if (im != null) {
+			return getGrayscaleImage(new Dimension(Math.round(im.getWidth() * scale), Math.round(im.getHeight() * scale)));
+		}
+		return null;
 	}
 
 	public int getCount() {

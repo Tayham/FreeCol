@@ -26,16 +26,11 @@ import java.util.logging.Logger;
 import net.sf.freecol.common.model.FreeColGameObject;
 import net.sf.freecol.server.control.ChangeSet;
 
-/**
- * Root class for sessions.
- */
+/** Root class for sessions. */
 public abstract class TransactionSession {
-
 	private static final Logger logger = Logger.getLogger(TransactionSession.class.getName());
 
-	/**
-	 * A map of all active sessions.
-	 */
+	/** A map of all active sessions. */
 	protected static final Map<String, TransactionSession> allSessions = new HashMap<>();
 
 	/** Has this session been completed? */
@@ -109,15 +104,14 @@ public abstract class TransactionSession {
 	 */
 	public static void completeAll(ChangeSet cs) {
 		for (TransactionSession ts : allSessions.values()) {
-			if (!ts.completed)
+			if (!ts.completed) {
 				ts.complete(cs);
+			}
 		}
 		clearAll();
 	}
 
-	/**
-	 * Clear all transactions.
-	 */
+	/** Clear all transactions. */
 	public static void clearAll() {
 		allSessions.clear();
 	}

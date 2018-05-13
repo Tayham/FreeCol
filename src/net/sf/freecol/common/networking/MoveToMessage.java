@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when moving a unit across the high seas.
- */
+/** The message sent when moving a unit across the high seas. */
 public class MoveToMessage extends DOMMessage {
-
 	/** The identifier of the object to be moved. */
 	private final String unitId;
 
@@ -94,12 +91,12 @@ public class MoveToMessage extends DOMMessage {
 		}
 
 		Location destination = game.findFreeColLocation(destinationId);
-		if (destination == null) {
-			return DOMMessage.clientError("Not a location: " + destinationId);
+		if (destination != null) {
+			return server.getInGameController().moveTo(serverPlayer, unit, destination);
 		}
 
 		// Proceed to move.
-		return server.getInGameController().moveTo(serverPlayer, unit, destination);
+		return DOMMessage.clientError("Not a location: " + destinationId);
 	}
 
 	/**

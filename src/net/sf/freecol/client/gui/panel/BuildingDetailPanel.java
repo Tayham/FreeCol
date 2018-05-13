@@ -53,11 +53,8 @@ import net.sf.freecol.common.model.ProductionType;
 import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.UnitType;
 
-/**
- * This panel displays details of buildings in the Colopedia.
- */
+/** This panel displays details of buildings in the Colopedia. */
 public class BuildingDetailPanel extends ColopediaGameObjectTypePanel<BuildingType> {
-
 	/**
 	 * Creates a new instance of this ColopediaDetailPanel.
 	 *
@@ -70,11 +67,8 @@ public class BuildingDetailPanel extends ColopediaGameObjectTypePanel<BuildingTy
 		super(freeColClient, colopediaPanel, PanelType.BUILDINGS.getKey());
 	}
 
-	// Implement ColopediaDetailPanel
+	/** Implement ColopediaDetailPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addSubTrees(DefaultMutableTreeNode root) {
 		DefaultMutableTreeNode parent = new DefaultMutableTreeNode(
@@ -113,13 +107,11 @@ public class BuildingDetailPanel extends ColopediaGameObjectTypePanel<BuildingTy
 		root.add(parent);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void buildDetail(String id, JPanel panel) {
-		if (getId().equals(id))
+		if (getId().equals(id)) {
 			return;
+		}
 
 		BuildingType buildingType = getSpecification().getBuildingType(id);
 		panel.setLayout(new MigLayout("wrap 7, gapx 20", "", ""));
@@ -184,7 +176,6 @@ public class BuildingDetailPanel extends ColopediaGameObjectTypePanel<BuildingTy
 					count++;
 				}
 			}
-
 		} else {
 			for (ProductionType pt : buildingType.getAvailableProductionTypes(false)) {
 				List<AbstractGoods> inputs = pt.getInputs();
@@ -213,10 +204,10 @@ public class BuildingDetailPanel extends ColopediaGameObjectTypePanel<BuildingTy
 		if (workplaces > 0) {
 			panel.add(Utility.localizedLabel("colopedia.buildings.specialist"), "newline");
 			final UnitType unitType = getSpecification().getExpertForProducing(buildingType.getProducedGoodsType());
-			if (unitType == null) {
-				panel.add(Utility.localizedLabel("none"), "span");
-			} else {
+			if (unitType != null) {
 				panel.add(getUnitButton(unitType), "span");
+			} else {
+				panel.add(Utility.localizedLabel("none"), "span");
 			}
 		}
 

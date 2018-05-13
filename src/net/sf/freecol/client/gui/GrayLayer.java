@@ -42,12 +42,11 @@ import net.sf.freecol.common.model.Player;
  * paints the player's icon and wait message.
  */
 public class GrayLayer extends Component {
-
-	/** Color for graying out background component */
+	/** Color for graying out background component. */
 	private static final Color MASK_COLOR = new Color(0f, 0f, 0f, .6f);
-	/** Default font size for message text */
+	/** Default font size for message text. */
 	private static final int DEFAULT_FONT_SIZE = 18;
-	/** Font size decrement for message text to reduce length */
+	/** Font size decrement for message text to reduce length. */
 	private static final int FONT_SIZE_DECREMENT = 2;
 	/**
 	 * Maximum text width to show. This is additional constraint to the component's
@@ -55,9 +54,9 @@ public class GrayLayer extends Component {
 	 */
 	private static final int MAX_TEXT_WIDTH = 640;
 
-	/** The client for this FreeCol game */
+	/** The client for this FreeCol game. */
 	private final FreeColClient freeColClient;
-	/** Player object or <code>null</code> */
+	/** Player object or <code>null</code>. */
 	private Player player;
 
 	/**
@@ -101,7 +100,6 @@ public class GrayLayer extends Component {
 		if (player == null) {
 			message = Messages.message(freeColClient.getGame().getTurn().getLabel());
 			colour = Color.WHITE;
-
 		} else {
 			coatOfArmsIcon = new ImageIcon(ImageLibrary.getMiscIconImage(player.getNation(), 1f));
 			message = Messages.message(player.getWaitingLabel());
@@ -151,8 +149,9 @@ public class GrayLayer extends Component {
 	 *            The <code>Player</code> for status information.
 	 */
 	public void setPlayer(Player player) {
-		if (this.player == player)
+		if (this.player == player) {
 			return;
+		}
 		this.player = player;
 		repaint();
 	}

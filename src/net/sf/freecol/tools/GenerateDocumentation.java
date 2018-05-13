@@ -39,11 +39,8 @@ import javax.xml.transform.TransformerFactory;
 import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.model.StringTemplate;
 
-/**
- * Generate some documentation.
- */
+/** Generate some documentation. */
 public class GenerateDocumentation {
-
 	private static final File STRING_DIRECTORY = new File("data/strings");
 	private static final File RULE_DIRECTORY = new File("data/rules/classic");
 	private static final String XSL = "specification.xsl";
@@ -73,7 +70,7 @@ public class GenerateDocumentation {
 		System.out.println("Processing source file: resources.properties");
 		File sourceFile = new File(RULE_DIRECTORY, "resources.properties");
 		try (FileReader fileReader = new FileReader(sourceFile);
-				BufferedReader bufferedReader = new BufferedReader(fileReader);) {
+				BufferedReader bufferedReader = new BufferedReader(fileReader)) {
 			String line = bufferedReader.readLine();
 			while (line != null) {
 				int index = line.indexOf('=');
@@ -90,11 +87,9 @@ public class GenerateDocumentation {
 	}
 
 	private static void generateTMX() {
-
 		Map<String, Map<String, String>> translations = new HashMap<>();
 
 		for (String name : sourceFiles) {
-
 			System.out.println("Processing source file: " + name);
 
 			String languageCode = name.substring(15, name.length() - 11);
@@ -110,7 +105,7 @@ public class GenerateDocumentation {
 			File sourceFile = new File(STRING_DIRECTORY, name);
 
 			try (FileReader fileReader = new FileReader(sourceFile);
-					BufferedReader bufferedReader = new BufferedReader(fileReader);) {
+					BufferedReader bufferedReader = new BufferedReader(fileReader)) {
 				String line = bufferedReader.readLine();
 				while (line != null) {
 					int index = line.indexOf('=');
@@ -132,7 +127,7 @@ public class GenerateDocumentation {
 			}
 		}
 		File destinationFile = new File(DESTINATION_DIRECTORY, "freecol.tmx");
-		try (FileWriter out = new FileWriter(destinationFile);) {
+		try (FileWriter out = new FileWriter(destinationFile)) {
 			out.write("<?xml version =\"1.0\" encoding=\"UTF-8\"?>\n");
 			out.write("<tmx version=\"1.4b\">\n");
 			out.write("<body>\n");
@@ -155,7 +150,6 @@ public class GenerateDocumentation {
 
 	public static void generateDocumentation(String[] languages) {
 		for (String name : sourceFiles) {
-
 			String languageCode = name.substring(15, name.length() - 11);
 			if (languageCode.isEmpty()) {
 				languageCode = "en";

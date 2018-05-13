@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
  * @see net.sf.freecol.metaserver
  */
 public class ServerInfo {
-
 	private String name;
 	private String address;
 	private int port;
@@ -42,9 +41,7 @@ public class ServerInfo {
 	private String version;
 	private int gameState;
 
-	/**
-	 * Empty constructor that can be used by subclasses.
-	 */
+	/** Empty constructor that can be used by subclasses. */
 	protected ServerInfo() {
 	}
 
@@ -247,5 +244,4 @@ public class ServerInfo {
 		return name + "(" + address + ":" + port + ") " + currentlyPlaying + ", " + slotsAvailable + ", "
 				+ isGameStarted + ", " + version + ", " + gameState;
 	}
-
 }

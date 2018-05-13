@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying the current difficulty level.
- */
+/** An action for displaying the current difficulty level. */
 public class ShowDifficultyAction extends FreeColAction {
-
 	public static final String id = "difficultyAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ShowDifficultyAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showDifficultyDialog();

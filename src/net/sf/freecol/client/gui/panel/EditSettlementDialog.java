@@ -54,11 +54,8 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
 import net.sf.freecol.common.util.RandomChoice;
 import net.sf.freecol.server.model.ServerUnit;
 
-/**
- * This dialog is used to edit an Indian settlement (map editor only).
- */
+/** This dialog is used to edit an Indian settlement (map editor only). */
 public final class EditSettlementDialog extends FreeColDialog<IndianSettlement> implements ItemListener {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(EditSettlementDialog.class.getName());
 
@@ -171,28 +168,22 @@ public final class EditSettlementDialog extends FreeColDialog<IndianSettlement> 
 		return skillModel;
 	}
 
-	// Interface ItemListener
+	/** Interface ItemListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		Player player = getOwnerPlayer();
 		if (player != null) {
 			this.name.setText(
-					(this.capital.isSelected()) ? player.getCapitalName(null) : player.getSettlementName(null));
+					this.capital.isSelected() ? player.getCapitalName(null) : player.getSettlementName(null));
 		}
 		this.skill.setModel(getSkillModel());
 		this.skill.setSelectedItem(settlement.getLearnableSkill());
 		this.units.getModel().setValue(settlement.getUnitList().size());
 	}
 
-	// Override FreeColDialog
+	/** Override FreeColDialog. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IndianSettlement getResponse() {
 		final Specification spec = freeColClient.getGame().getSpecification();
@@ -248,19 +239,20 @@ public final class EditSettlementDialog extends FreeColDialog<IndianSettlement> 
 			settlement.setType(type);
 			settlement.getFeatureContainer().replaceSource(oldType, type);
 			ret = settlement;
-
 		} else if (options.get(1).equals(value)) {
 			if (!gui.confirm("editSettlementDialog.removeSettlement.text", "ok", "cancel")) {
 				return settlement;
 			}
 			// Dispose of units and settlement on tile
 			Tile tile = settlement.getTile();
-			for (Unit unit : tile.getUnitList())
+			for (Unit unit : tile.getUnitList()) {
 				unit.dispose();
+			}
 			settlement.exciseSettlement();
 		}
-		for (Tile t : tiles)
+		for (Tile t : tiles) {
 			gui.refreshTile(t);
+		}
 		return ret;
 	}
 }

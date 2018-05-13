@@ -28,7 +28,6 @@ import java.util.logging.Logger;
  * and a Color.
  */
 public final class GUIMessage {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(GUIMessage.class.getName());
 

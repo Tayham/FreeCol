@@ -71,27 +71,23 @@ import net.sf.freecol.common.model.WorkLocation.Suggestion;
 import net.sf.freecol.common.resources.ResourceManager;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-/**
- * This panel displays the compact colony report.
- */
+/** This panel displays the compact colony report. */
 public final class ReportCompactColonyPanel extends ReportPanel implements ActionListener {
-
 	/** Container class for all the information about a colony. */
 	private static class ColonySummary {
-
 		/** Types of production for a given goods type. */
-		public static enum ProductionStatus {
-			FAIL, // Negative production and below low alarm level
-			BAD, // Negative production
-			NONE, // No production at all
-			ZERO, // Production == consumption
-			GOOD, // Positive production
-			EXPORT, // Positive production and exporting
-			EXCESS, // Positive production and above high alarm level
-			OVERFLOW, // Positive production and above capacity
-			PRODUCTION, // Positive production but could produce more
+		public enum ProductionStatus {
+			FAIL, /** Negative production and below low alarm level. */
+			BAD, /** Negative production. */
+			NONE, /** No production at all. */
+			ZERO, /** Production == consumption. */
+			GOOD, /** Positive production. */
+			EXPORT, /** Positive production and exporting. */
+			EXCESS, /** Positive production and above high alarm level. */
+			OVERFLOW, /** Positive production and above capacity. */
+			PRODUCTION, /** Positive production but could produce more. */
 			CONSUMPTION, // Positive production but could consume more
-		};
+		}
 
 		public static BinaryOperator<GoodsProduction> goodsProductionAccumulator = (g1, g2) -> {
 			g1.amount += g2.amount;
@@ -105,7 +101,6 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 
 		/** Container class for goods production. */
 		public static class GoodsProduction {
-
 			public int amount;
 			public ProductionStatus status;
 			public int extra;
@@ -115,7 +110,7 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 				this.status = status;
 				this.extra = extra;
 			}
-		};
+		}
 
 		/** The colony being summarized. */
 		public final Colony colony;
@@ -194,8 +189,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 
 			this.sizeChange = colony.getPreferredSizeChange();
 
-			for (GoodsType gt : goodsTypes)
+			for (GoodsType gt : goodsTypes) {
 				produce(gt);
+			}
 
 			for (Unit u : colony.getTile().getUnitList()) {
 				if (u.getState() != Unit.UnitState.FORTIFIED && u.getState() != Unit.UnitState.SENTRY) {
@@ -208,13 +204,13 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 			// are not just temporarily there because they are being
 			// taught), the types for sites that really need a new
 			// unit, the teachers, and the units that are not working.
-			//
 			// FIXME: this needs to be merged with the requirements
 			// checking code, but that in turn should be opened up
 			// so the AI can use it...
 			for (WorkLocation wl : colony.getAvailableWorkLocations()) {
-				if (!wl.canBeWorked())
+				if (!wl.canBeWorked()) {
 					continue;
+				}
 				if (wl.canTeach()) {
 					for (Unit u : wl.getUnitList()) {
 						teachers.put(u, u.getNeededTurnsOfTraining() - u.getTurnsOfTraining());
@@ -234,10 +230,10 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 					Unit u = e.getKey();
 					Suggestion s = e.getValue();
 					UnitType expert = spec.getExpertForProducing(s.goodsType);
-					if (u == null) {
-						addSuggestion(this.want, expert, s);
-					} else {
+					if (u != null) {
 						addSuggestion(this.improve, expert, s);
+					} else {
+						addSuggestion(this.want, expert, s);
 					}
 				}
 			}
@@ -247,11 +243,13 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 			for (Unit u : this.notWorking) {
 				GoodsType t = u.getWorkType();
 				WorkLocation wl = u.getWorkLocation();
-				if (wl == null)
+				if (wl == null) {
 					continue;
+				}
 				GoodsType w = wl.getWorkFor(u);
-				if (w == null || w != t)
+				if (w == null || w != t) {
 					this.couldWork.add(u.getType());
+				}
 			}
 
 			this.build = colony.getCurrentlyBuilding();
@@ -293,8 +291,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 				deficit = null;
 				for (WorkLocation wl : colony.getWorkLocationsForProducing(goodsType)) {
 					ProductionInfo pi = colony.getProductionInfo(wl);
-					if (pi == null)
+					if (pi == null) {
 						continue;
+					}
 					deficit = AbstractGoods.findByType(goodsType, pi.getConsumptionDeficit());
 					if (deficit != null) {
 						status = ProductionStatus.CONSUMPTION;
@@ -319,8 +318,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 				deficit = null;
 				for (WorkLocation wl : colony.getWorkLocationsForProducing(goodsType)) {
 					ProductionInfo pi = colony.getProductionInfo(wl);
-					if (pi == null)
+					if (pi == null) {
 						continue;
+					}
 					deficit = AbstractGoods.findByType(goodsType, pi.getProductionDeficit());
 					if (deficit != null) {
 						status = ProductionStatus.PRODUCTION;
@@ -333,14 +333,15 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		}
 
 		private void addSuggestion(Map<UnitType, Suggestion> suggestions, UnitType expert, Suggestion suggestion) {
-			if (suggestion == null || expert == null)
+			if (suggestion == null || expert == null) {
 				return;
+			}
 			Suggestion now = suggestions.get(expert);
 			if (now == null || now.amount < suggestion.amount) {
 				suggestions.put(expert, suggestion);
 			}
 		}
-	};
+	}
 
 	private static final String BUILDQUEUE = "buildQueue.";
 	private static final String cAlarmKey = "color.report.colony.alarm";
@@ -400,8 +401,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		Iterator<GoodsType> gti = goodsTypes.iterator();
 		while (gti.hasNext()) {
 			GoodsType gt = gti.next();
-			if (!gt.isStorable() || gt.isTradeGoods())
+			if (!gt.isStorable() || gt.isTradeGoods()) {
 				gti.remove();
+			}
 		}
 		Collections.sort(this.goodsTypes, GoodsType.goodsTypeComparator);
 
@@ -411,18 +413,19 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 	}
 
 	private synchronized void loadResources() {
-		if (cAlarm != null)
+		if (cAlarm != null) {
 			return;
+		}
 
-		cAlarm = (ResourceManager.hasColorResource(cAlarmKey)) ? ResourceManager.getColor(cAlarmKey) : Color.RED;
-		cWarn = (ResourceManager.hasColorResource(cWarnKey)) ? ResourceManager.getColor(cWarnKey) : Color.MAGENTA;
-		cPlain = (ResourceManager.hasColorResource(cPlainKey)) ? ResourceManager.getColor(cPlainKey) : Color.DARK_GRAY;
-		cExport = (ResourceManager.hasColorResource(cExportKey)) ? ResourceManager.getColor(cExportKey) : Color.GREEN;
-		cGood = (ResourceManager.hasColorResource(cGoodKey)) ? ResourceManager.getColor(cGoodKey) : Color.BLUE;
+		cAlarm = ResourceManager.hasColorResource(cAlarmKey) ? ResourceManager.getColor(cAlarmKey) : Color.RED;
+		cWarn = ResourceManager.hasColorResource(cWarnKey) ? ResourceManager.getColor(cWarnKey) : Color.MAGENTA;
+		cPlain = ResourceManager.hasColorResource(cPlainKey) ? ResourceManager.getColor(cPlainKey) : Color.DARK_GRAY;
+		cExport = ResourceManager.hasColorResource(cExportKey) ? ResourceManager.getColor(cExportKey) : Color.GREEN;
+		cGood = ResourceManager.hasColorResource(cGoodKey) ? ResourceManager.getColor(cGoodKey) : Color.BLUE;
 	}
 
 	private static StringTemplate stpl(String messageId) {
-		return (Messages.containsKey(messageId)) ? StringTemplate.template(messageId) : null;
+		return Messages.containsKey(messageId) ? StringTemplate.template(messageId) : null;
 	}
 
 	private static StringTemplate stpld(String messageId) {
@@ -437,21 +440,25 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 	}
 
 	private JLabel newLabel(String h, ImageIcon i, Color c, StringTemplate t) {
-		if (h != null && Messages.containsKey(h))
+		if (h != null && Messages.containsKey(h)) {
 			h = Messages.message(h);
+		}
 		JLabel l = newLabel(h, i, c);
-		if (t != null)
+		if (t != null) {
 			Utility.localizeToolTip(l, t);
+		}
 		return l;
 	}
 
 	private JButton newButton(String action, String h, ImageIcon i, Color c, StringTemplate t) {
-		if (h != null && Messages.containsKey(h))
+		if (h != null && Messages.containsKey(h)) {
 			h = Messages.message(h);
+		}
 		JButton b = Utility.getLinkButton(h, i, action);
 		b.setForeground((c == null) ? Color.BLACK : c);
-		if (t != null)
+		if (t != null) {
 			Utility.localizeToolTip(b, t);
+		}
 		b.addActionListener(this);
 		return b;
 	}
@@ -488,8 +495,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		c = (s.bonus <= -2) ? cAlarm
 				: (s.bonus == -1) ? cWarn : (s.bonus == 0) ? cPlain : (s.bonus == 1) ? cExport : cGood;
 		b = newButton(cac, s.colony.getName(), null, c, null);
-		if (s.famine)
+		if (s.famine) {
 			b.setFont(b.getFont().deriveFont(Font.BOLD));
+		}
 		reportPanel.add(b, "newline");
 
 		// Field: The number of colonists that can be added to a
@@ -517,8 +525,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		// Colour: Always cAlarm
 		int n = 0;
 		for (TileImprovementSuggestion tis : s.tileSuggestions) {
-			if (tis.isExploration())
+			if (tis.isExploration()) {
 				n++;
+			}
 		}
 		if (n > 0) {
 			t = stpld("report.colony.exploring").addName("%colony%", s.colony.getName()).addAmount("%amount%", n);
@@ -533,15 +542,17 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		// Colour: Always cAlarm
 		// Font: Bold if one of the tiles is the colony center.
 		for (TileImprovementType ti : spec.getTileImprovementTypeList()) {
-			if (ti.isNatural())
+			if (ti.isNatural()) {
 				continue;
+			}
 			n = 0;
 			boolean center = false;
 			for (TileImprovementSuggestion tis : s.tileSuggestions) {
 				if (tis.tileImprovementType == ti) {
 					n++;
-					if (tis.tile == s.colony.getTile())
+					if (tis.tile == s.colony.getTile()) {
 						center = true;
+					}
 				}
 			}
 			if (n > 0) {
@@ -563,8 +574,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 							.addAmount("%amount%", n);
 				}
 				b = newButton(cac, Integer.toString(n), null, c, t);
-				if (center)
+				if (center) {
 					b.setFont(b.getFont().deriveFont(Font.BOLD));
+				}
 			} else {
 				b = null;
 			}
@@ -643,12 +655,13 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 					.addNamed("%unit%", defaultUnitType).addAmount("%turns%", s.newColonist);
 			b = newButton(cac, Integer.toString(s.newColonist), null, cGood, t);
 		} else if (s.newColonist < 0) {
-			c = (s.famine) ? cAlarm : cWarn;
+			c = s.famine ? cAlarm : cWarn;
 			t = stpld("report.colony.starving").addName("%colony%", s.colony.getName()).addAmount("%turns%",
 					-s.newColonist);
 			b = newButton(cac, Integer.toString(-s.newColonist), null, c, t);
-			if (s.famine)
+			if (s.famine) {
 				b.setFont(b.getFont().deriveFont(Font.BOLD));
+			}
 		} else {
 			b = null;
 		}
@@ -671,15 +684,16 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 			} else if (turns >= 0) {
 				t = stpld("report.colony.making.constructing").addName("%colony%", s.colony.getName())
 						.addNamed("%buildable%", s.build).addAmount("%turns%", turns);
-				b = newButton(qac, name + " " + Integer.toString(turns), null, cGood, t);
+				b = newButton(qac, name + " " + turns, null, cGood, t);
 			} else if (turns < 0) {
 				turns = -(turns + 1);
 				t = stpld("report.colony.making.blocking").addName("%colony%", s.colony.getName())
 						.addAmount("%amount%", s.needed.getAmount()).addNamed("%goods%", s.needed.getType())
 						.addNamed("%buildable%", s.build).addAmount("%turns%", turns);
-				b = newButton(qac, name + " " + Integer.toString(turns), null, cAlarm, t);
-				if (turns == 0)
+				b = newButton(qac, name + " " + turns, null, cAlarm, t);
+				if (turns == 0) {
 					b.setFont(b.getFont().deriveFont(Font.BOLD));
+				}
 			}
 			buttons.add(b);
 		}
@@ -689,8 +703,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		// Colour: cAlarm if completion is blocked, otherwise cPlain.
 		int empty = 0;
 		Building school = s.colony.getWorkLocationWithAbility(Ability.TEACH, Building.class);
-		if (school != null)
+		if (school != null) {
 			empty = school.getType().getWorkPlaces();
+		}
 		for (Entry<Unit, Integer> e : mapEntriesByValue(s.teachers, descendingIntegerComparator)) {
 			Unit u = e.getKey();
 			ImageIcon ii = new ImageIcon(this.lib.getTinyUnitImage(u.getType(), false));
@@ -727,8 +742,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 			buttons.addAll(unitButtons(s.improve, s.couldWork, s.colony));
 			buttons.add(new JLabel("/"));
 			// Prefer to suggest an improvement over and addition.
-			for (UnitType ut : s.improve.keySet())
+			for (UnitType ut : s.improve.keySet()) {
 				s.want.remove(ut);
+			}
 			buttons.addAll(unitButtons(s.want, s.couldWork, s.colony));
 			addTogether(buttons);
 		}
@@ -739,8 +755,7 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 	private List<JButton> unitButtons(final Map<UnitType, Suggestion> suggestions, List<UnitType> have, Colony colony) {
 		final String cac = colony.getId();
 		List<JButton> result = new ArrayList<>();
-		List<UnitType> types = new ArrayList<>();
-		types.addAll(suggestions.keySet());
+		List<UnitType> types = new ArrayList<>(suggestions.keySet());
 		Collections.sort(types, new Comparator<UnitType>() {
 			@Override
 			public int compare(UnitType t1, UnitType t2) {
@@ -762,9 +777,10 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 							.addNamed("%oldUnit%", suggestion.oldType).addNamed("%unit%", type)
 							.addStringTemplate("%location%", suggestion.workLocation.getLabel())
 							.addNamed("%goods%", suggestion.goodsType).addAmount("%amount%", suggestion.amount);
-			JButton b = newButton(cac, label, icon, (present) ? cGood : cPlain, tip);
-			if (present)
+			JButton b = newButton(cac, label, icon, present ? cGood : cPlain, tip);
+			if (present) {
 				b.setFont(b.getFont().deriveFont(Font.BOLD));
+			}
 			result.add(b);
 		}
 		return result;
@@ -797,10 +813,12 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		for (ColonySummary s : summaries) {
 			accumulateToMap(rRegionMap, s.colony.getTile().getRegion(), 1, integerAccumulator);
 			rTileSuggestions.addAll(s.tileSuggestions);
-			if (s.famine)
+			if (s.famine) {
 				rFamine++;
-			if (s.newColonist > 0)
+			}
+			if (s.newColonist > 0) {
 				rNewColonist += s.newColonist;
+			}
 			rBonus += s.bonus;
 			rSizeChange += s.sizeChange;
 			accumulateMap(rProduction, s.production, ColonySummary.goodsProductionAccumulator);
@@ -843,22 +861,23 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 				tiles.add(tis.tile);
 			}
 		}
-		reportPanel.add((tiles.isEmpty()) ? new JLabel()
+		reportPanel.add(tiles.isEmpty() ? new JLabel()
 				: newLabel(Integer.toString(tiles.size()), null, cAlarm, stpld("report.colony.exploring.summary")));
 
 		// Fields: The number of existing colony tiles that would
 		// benefit from improvements.
 		// Colour: cAlarm
 		for (TileImprovementType ti : spec.getTileImprovementTypeList()) {
-			if (ti.isNatural())
+			if (ti.isNatural()) {
 				continue;
+			}
 			tiles.clear();
 			for (TileImprovementSuggestion tis : rTileSuggestions) {
 				if (tis.tileImprovementType == ti && !tiles.contains(tis.tile)) {
 					tiles.add(tis.tile);
 				}
 			}
-			reportPanel.add((tiles.isEmpty()) ? new JLabel()
+			reportPanel.add(tiles.isEmpty() ? new JLabel()
 					: newLabel(Integer.toString(tiles.size()), null, cAlarm,
 							stpld("report.colony.tile." + ti.getSuffix() + ".summary")));
 		}
@@ -920,8 +939,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		for (Entry<UnitType, Integer> e : mapEntriesByValue(unitTypeMap, descendingIntegerComparator)) {
 			ImageIcon icon = new ImageIcon(this.lib.getTinyUnitImage(e.getKey(), false));
 			result.add(newLabel(Integer.toString(e.getValue()), icon, cPlain, t));
-			if (++n >= maxSize)
+			if (++n >= maxSize) {
 				break;
+			}
 		}
 
 		return result;
@@ -940,8 +960,9 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		reportPanel.add(newLabel("report.colony.grow.header", null, null, stpld("report.colony.grow")));
 		reportPanel.add(newLabel("report.colony.explore.header", null, null, stpld("report.colony.explore")));
 		for (TileImprovementType ti : this.spec.getTileImprovementTypeList()) {
-			if (ti.isNatural())
+			if (ti.isNatural()) {
 				continue;
+			}
 			String key = "report.colony.tile." + ti.getSuffix() + ".header";
 			reportPanel.add(newLabel(key, null, null, stpld(key)));
 		}
@@ -961,16 +982,15 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		reportPanel.add(new JSeparator(JSeparator.HORIZONTAL), "newline, span, growx");
 	}
 
-	/**
-	 * Update the panel.
-	 */
+	/** Update the panel. */
 	private void update() {
 		reportPanel.removeAll();
 
 		// Define the layout, with a column for each goods type.
 		String cols = "[l][c][c][c]";
-		for (int i = 0; i < this.goodsTypes.size(); i++)
+		for (int i = 0; i < this.goodsTypes.size(); i++) {
 			cols += "[c]";
+		}
 		cols += "[c][c][l][l][l]";
 		reportPanel.setLayout(new MigLayout("fillx, insets 0, gap 0 0", cols, ""));
 
@@ -990,11 +1010,8 @@ public final class ReportCompactColonyPanel extends ReportPanel implements Actio
 		}
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final Game game = getGame();

@@ -25,9 +25,8 @@ package net.sf.freecol.common.networking;
  * {@link #setResponse} is called.
  */
 public class NetworkReplyObject {
-
 	private Object response = null;
-	private boolean responseGiven = false;
+	private boolean responseGiven;
 	private final int networkReplyId;
 
 	/**
@@ -85,9 +84,7 @@ public class NetworkReplyObject {
 		return networkReplyId;
 	}
 
-	/**
-	 * Interrupts any thread waiting for a response.
-	 */
+	/** Interrupts any thread waiting for a response. */
 	public synchronized void interrupt() {
 		responseGiven = true;
 		notify();

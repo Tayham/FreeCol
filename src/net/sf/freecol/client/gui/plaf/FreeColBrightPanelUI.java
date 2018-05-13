@@ -32,7 +32,6 @@ import net.sf.freecol.client.gui.ImageLibrary;
  * annotations, for example, many of the subpanels in the ColonyPanel.
  */
 public class FreeColBrightPanelUI extends BasicPanelUI {
-
 	private static final FreeColBrightPanelUI sharedInstance = new FreeColBrightPanelUI();
 
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
@@ -40,10 +39,9 @@ public class FreeColBrightPanelUI extends BasicPanelUI {
 	}
 
 	@Override
-	public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+	public void paint(java.awt.Graphics g, JComponent c) {
 		if (c.isOpaque()) {
 			ImageLibrary.drawTiledImage("image.background.FreeColBrightPanel", g, c, null);
 		}
 	}
-
 }

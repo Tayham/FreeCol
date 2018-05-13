@@ -32,7 +32,6 @@ import net.sf.freecol.common.model.Unit;
  * artificial tile improvements were clearing, plowing and building a road.
  */
 public class ImprovementAction extends UnitAction {
-
 	private final TileImprovementType improvement;
 
 	/**
@@ -50,11 +49,8 @@ public class ImprovementAction extends UnitAction {
 		addImageIcons(improvement.getSuffix());
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		if (super.shouldBeEnabled()) {
@@ -66,16 +62,14 @@ public class ImprovementAction extends UnitAction {
 		return false;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		Unit unit = getGUI().getActiveUnit();
-		if (unit == null)
+		if (unit == null) {
 			return;
+		}
 
 		igc().changeWorkImprovementType(unit, improvement);
 	}

@@ -53,11 +53,8 @@ import net.sf.freecol.common.model.UnitType;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import net.sf.freecol.common.util.RandomChoice;
 
-/**
- * This panel displays details of units in the Colopedia.
- */
+/** This panel displays details of units in the Colopedia. */
 public class UnitDetailPanel extends ColopediaGameObjectTypePanel<UnitType> {
-
 	/** Layout of production modifier panel. */
 	private static final int MODIFIERS_PER_ROW = 5;
 
@@ -73,23 +70,18 @@ public class UnitDetailPanel extends ColopediaGameObjectTypePanel<UnitType> {
 		super(freeColClient, colopediaPanel, PanelType.UNITS.getKey());
 	}
 
-	// Implement ColopediaDetailPanel
+	/** Implement ColopediaDetailPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addSubTrees(DefaultMutableTreeNode root) {
 		super.addSubTrees(root, getId(), new ArrayList<>(getSpecification().getUnitTypeList()));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void buildDetail(String id, JPanel panel) {
-		if (getId().equals(id))
+		if (getId().equals(id)) {
 			return;
+		}
 
 		final Specification spec = getSpecification();
 		UnitType type = spec.getUnitType(id);
@@ -167,7 +159,6 @@ public class UnitDetailPanel extends ColopediaGameObjectTypePanel<UnitType> {
 					count++;
 				}
 			}
-
 		}
 
 		// Requires - prerequisites to build

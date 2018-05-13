@@ -22,11 +22,8 @@ package net.sf.freecol.common.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Container for information about production in a colony.
- */
+/** Container for information about production in a colony. */
 public class ProductionInfo {
-
 	/** The maximum production possible given unlimited input. */
 	private List<AbstractGoods> maximumProduction = new ArrayList<>();
 
@@ -92,8 +89,9 @@ public class ProductionInfo {
 		List<AbstractGoods> result = new ArrayList<>();
 		for (AbstractGoods ag : this.production) {
 			AbstractGoods agMax = AbstractGoods.findByType(ag.getType(), this.maximumProduction);
-			if (agMax == null)
+			if (agMax == null) {
 				continue;
+			}
 			int amount = agMax.getAmount() - ag.getAmount();
 			if (amount != 0) {
 				result.add(new AbstractGoods(ag.getType(), amount));
@@ -115,8 +113,9 @@ public class ProductionInfo {
 		List<AbstractGoods> result = new ArrayList<>();
 		for (AbstractGoods ag : this.consumption) {
 			AbstractGoods agMax = AbstractGoods.findByType(ag.getType(), this.maximumConsumption);
-			if (agMax == null)
+			if (agMax == null) {
 				continue;
+			}
 			int amount = agMax.getAmount() - ag.getAmount();
 			if (amount != 0) {
 				result.add(new AbstractGoods(ag.getType(), amount));
@@ -131,15 +130,18 @@ public class ProductionInfo {
 	 * @return True if at maximum production.
 	 */
 	public boolean hasMaximumProduction() {
-		if (maximumProduction.isEmpty())
+		if (maximumProduction.isEmpty()) {
 			return true;
+		}
 
 		for (int index = 0; index < production.size(); index++) {
-			if (maximumProduction.size() < index)
+			if (maximumProduction.size() < index) {
 				return true;
+			}
 
-			if (maximumProduction.get(index).getAmount() > production.get(index).getAmount())
+			if (maximumProduction.get(index).getAmount() > production.get(index).getAmount()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -157,8 +159,9 @@ public class ProductionInfo {
 	}
 
 	private void append(StringBuilder result, String key, List<AbstractGoods> list) {
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			return;
+		}
 
 		result.append(key).append(": ");
 		for (AbstractGoods goods : list) {
@@ -172,9 +175,6 @@ public class ProductionInfo {
 		result.replace(length - 2, length, "\n");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();

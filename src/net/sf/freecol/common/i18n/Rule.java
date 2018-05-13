@@ -32,7 +32,6 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
  * features.
  */
 public class Rule {
-
 	private final List<List<Relation>> conditions = new ArrayList<>();
 
 	public Rule(String input) {

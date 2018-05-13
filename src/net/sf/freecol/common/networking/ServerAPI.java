@@ -65,21 +65,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * The API for client->server messaging.
- */
+/** The API for client->server messaging. */
 public abstract class ServerAPI {
-
 	private static final Logger logger = Logger.getLogger(ServerAPI.class.getName());
 
 	/** The Client used to communicate with the server. */
 	private Client client;
-
-	/**
-	 * Creates a new <code>ServerAPI</code>.
-	 */
-	public ServerAPI() {
-	}
 
 	/**
 	 * Do local client processing for a reply.
@@ -209,8 +200,9 @@ public abstract class ServerAPI {
 	 */
 	private Element askExpecting(DOMMessage message, String tag, HashMap<String, String> results) {
 		Element reply = ask(message);
-		if (reply == null)
+		if (reply == null) {
 			return null;
+		}
 
 		if ("error".equals(reply.getTagName())) {
 			String messageId = reply.getAttribute("messageID");
@@ -263,13 +255,15 @@ public abstract class ServerAPI {
 					result = (Element) nodes.item(i);
 				} else {
 					Element e = client.handleReply((Element) nodes.item(i));
-					if (e != null)
+					if (e != null) {
 						replies.add(e);
+					}
 				}
 			}
 			resolve(DOMMessage.collapseElements(replies));
-			if (result != null)
+			if (result != null) {
 				return result;
+			}
 		}
 
 		// Unexpected reply. Whine and fail.
@@ -294,8 +288,9 @@ public abstract class ServerAPI {
 	 */
 	private boolean askHandling(DOMMessage message, String tag, HashMap<String, String> results) {
 		Element reply = askExpecting(message, tag, results);
-		if (reply == null)
+		if (reply == null) {
 			return false;
+		}
 		resolve(client.handleReply(reply));
 		return true;
 	}
@@ -309,8 +304,9 @@ public abstract class ServerAPI {
 	 */
 	private HashMap<String, String> loadMap(String... queries) {
 		HashMap<String, String> result = new HashMap<>();
-		for (String q : queries)
+		for (String q : queries) {
 			result.put(q, null);
+		}
 		return result;
 	}
 
@@ -358,9 +354,7 @@ public abstract class ServerAPI {
 		}
 	}
 
-	/**
-	 * Disconnect the client.
-	 */
+	/** Disconnect the client. */
 	public void disconnect() {
 		if (client != null) {
 			client.disconnect();
@@ -368,9 +362,7 @@ public abstract class ServerAPI {
 		}
 	}
 
-	/**
-	 * Just forget about the client. Only call this if sure it is dead.
-	 */
+	/** Just forget about the client. Only call this if sure it is dead. */
 	public void reset() {
 		client = null;
 	}
@@ -399,11 +391,13 @@ public abstract class ServerAPI {
 		for (int i = tries; i > 0; i--) {
 			try {
 				client = new Client(host, port, messageHandler, threadName);
-				if (client != null)
+				if (client != null) {
 					break;
+				}
 			} catch (IOException e) {
-				if (i <= 1)
+				if (i <= 1) {
 					throw e;
+				}
 			}
 		}
 		return client != null;
@@ -916,8 +910,9 @@ public abstract class ServerAPI {
 	 */
 	public List<HighScore> getHighScores() {
 		Element reply = askExpecting(new TrivialMessage("getHighScores"), null, null);
-		if (reply == null)
+		if (reply == null) {
 			return Collections.<HighScore>emptyList();
+		}
 
 		List<HighScore> result = new ArrayList<>();
 		NodeList childElements = reply.getChildNodes();
@@ -937,10 +932,11 @@ public abstract class ServerAPI {
 	public NationSummary getNationSummary(Player player) {
 		GetNationSummaryMessage message = new GetNationSummaryMessage(player);
 		Element reply = askExpecting(message, GetNationSummaryMessage.getXMLElementTagName(), null);
-		if (reply == null)
-			return null;
+		if (reply != null) {
+			return new GetNationSummaryMessage(reply).getNationSummary();
+		}
 
-		return new GetNationSummaryMessage(reply).getNationSummary();
+		return null;
 	}
 
 	/**
@@ -959,8 +955,9 @@ public abstract class ServerAPI {
 	 */
 	public List<AbstractUnit> getREFUnits() {
 		Element reply = askExpecting(new TrivialMessage("getREFUnits"), null, null);
-		if (reply == null)
+		if (reply == null) {
 			return Collections.<AbstractUnit>emptyList();
+		}
 
 		List<AbstractUnit> result = new ArrayList<>();
 		NodeList childElements = reply.getChildNodes();
@@ -999,8 +996,9 @@ public abstract class ServerAPI {
 	 */
 	public int incite(Unit unit, Direction direction, Player enemy, int gold) {
 		HashMap<String, String> results = loadMap("gold");
-		if (!askHandling(new InciteMessage(unit, direction, enemy, gold), null, results))
+		if (!askHandling(new InciteMessage(unit, direction, enemy, gold), null, results)) {
 			return -1;
+		}
 		try {
 			return Integer.parseInt(results.get("gold"));
 		} catch (NumberFormatException e) {
@@ -1177,8 +1175,9 @@ public abstract class ServerAPI {
 	public boolean[] openTransactionSession(Unit unit, Settlement settlement) {
 		HashMap<String, String> results = loadMap("canBuy", "canSell", "canGift");
 		if (askExpecting(new GetTransactionMessage(unit, settlement), null, results) == null
-				|| results.get("canBuy") == null || results.get("canSell") == null || results.get("canGift") == null)
+				|| results.get("canBuy") == null || results.get("canSell") == null || results.get("canGift") == null) {
 			return null;
+		}
 		return new boolean[] { Boolean.parseBoolean(results.get("canBuy")),
 				Boolean.parseBoolean(results.get("canSell")), Boolean.parseBoolean(results.get("canGift")) };
 	}
@@ -1260,7 +1259,7 @@ public abstract class ServerAPI {
 	 */
 	public String scoutSettlement(Unit unit, Direction direction) {
 		HashMap<String, String> results = loadMap("settlements");
-		return (askHandling(new ScoutIndianSettlementMessage(unit, direction), null, results))
+		return askHandling(new ScoutIndianSettlementMessage(unit, direction), null, results)
 				? results.get("settlements")
 				: null;
 	}
@@ -1277,7 +1276,7 @@ public abstract class ServerAPI {
 	 */
 	public String scoutSpeakToChief(Unit unit, Direction direction) {
 		HashMap<String, String> results = loadMap("result");
-		return (askHandling(new ScoutSpeakToChiefMessage(unit, direction), null, results)) ? results.get("result")
+		return askHandling(new ScoutSpeakToChiefMessage(unit, direction), null, results) ? results.get("result")
 				: null;
 	}
 

@@ -29,10 +29,9 @@ import java.util.logging.Logger;
  * Common Locale Data Repository</a>.
  */
 public abstract class Number implements Selector {
-
 	public enum Category {
 		zero, one, two, few, many, other
-	};
+	}
 
 	private static final Logger logger = Logger.getLogger(Number.class.getName());
 
@@ -45,9 +44,6 @@ public abstract class Number implements Selector {
 	 */
 	public abstract Category getCategory(double selector);
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getKey(String selector, String template) {
 		try {

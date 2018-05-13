@@ -31,11 +31,8 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.StringUtils.*;
 
-/**
- * Represents a building in a colony.
- */
+/** Represents a building in a colony. */
 public class Building extends WorkLocation implements Named, Consumer {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(Building.class.getName());
 
@@ -115,16 +112,18 @@ public class Building extends WorkLocation implements Named, Consumer {
 
 			// Colonists which can't work here must be put outside
 			for (Unit unit : getUnitList()) {
-				if (!canAddType(unit.getType()))
+				if (!canAddType(unit.getType())) {
 					eject.add(unit);
+				}
 			}
 		}
 
 		// Colonists exceding units limit must be put outside
 		int extra = getUnitCount() - getUnitCapacity() - eject.size();
 		for (Unit unit : getUnitList()) {
-			if (extra <= 0)
+			if (extra <= 0) {
 				break;
+			}
 			if (!eject.contains(unit)) {
 				eject.add(unit);
 				extra -= 1;
@@ -170,8 +169,9 @@ public class Building extends WorkLocation implements Named, Consumer {
 	 *         downgraded, or null on failure.
 	 */
 	public List<Unit> downgrade() {
-		if (!canBeDamaged())
+		if (!canBeDamaged()) {
 			return null;
+		}
 		List<Unit> ret = setType(getType().getUpgradesFrom());
 		getColony().invalidateCache();
 		return ret;
@@ -186,8 +186,9 @@ public class Building extends WorkLocation implements Named, Consumer {
 	 *         upgraded, or null on failure.
 	 */
 	public List<Unit> upgrade() {
-		if (!canBuildNext())
+		if (!canBuildNext()) {
 			return null;
+		}
 		List<Unit> ret = setType(getType().getUpgradesTo());
 		getColony().invalidateCache();
 		return ret;
@@ -232,8 +233,9 @@ public class Building extends WorkLocation implements Named, Consumer {
 	 */
 	public ProductionInfo getAdjustedProductionInfo(List<AbstractGoods> inputs, List<AbstractGoods> outputs) {
 		ProductionInfo result = new ProductionInfo();
-		if (!hasOutputs())
+		if (!hasOutputs()) {
 			return result;
+		}
 		final Specification spec = getSpecification();
 		final Turn turn = getGame().getTurn();
 		final boolean avoidOverflow = hasAbility(Ability.AVOID_EXCESS_PRODUCTION);
@@ -249,8 +251,9 @@ public class Building extends WorkLocation implements Named, Consumer {
 		if (canAutoProduce()) {
 			// Autoproducers are special
 			for (AbstractGoods output : getOutputs()) {
-				if (output.getAmount() <= 0)
+				if (output.getAmount() <= 0) {
 					continue;
+				}
 				final GoodsType goodsType = output.getType();
 				int available = getColony().getGoodsCount(goodsType);
 				if (available >= capacity) {
@@ -287,8 +290,9 @@ public class Building extends WorkLocation implements Named, Consumer {
 			long required = (long) Math.floor(input.getAmount() * minimumRatio);
 			long available = getAvailable(input.getType(), inputs);
 			// Do not allow auto-production to go negative.
-			if (canAutoProduce())
+			if (canAutoProduce()) {
 				available = Math.max(0, available);
+			}
 			// Experts in factory level buildings may produce a
 			// certain amount of goods even when no input is available.
 			// Factories have the EXPERTS_USE_CONNECTIONS ability.
@@ -312,8 +316,9 @@ public class Building extends WorkLocation implements Named, Consumer {
 		if (avoidOverflow) {
 			for (AbstractGoods output : getOutputs()) {
 				double production = output.getAmount() * minimumRatio;
-				if (production <= 0)
+				if (production <= 0) {
 					continue;
+				}
 				double headroom = (double) capacity - getAvailable(output.getType(), outputs);
 				// Clamp production at warehouse capacity
 				if (production > headroom) {
@@ -364,140 +369,108 @@ public class Building extends WorkLocation implements Named, Consumer {
 				+ getType().getRequiredGoods().stream().mapToInt(ag -> ag.evaluateFor(player)).sum();
 	}
 
-	// Interface Location
-	// Inherits:
-	// FreeColObject.getId
-	// WorkLocation.getTile
-	// UnitLocation.getLocationLabelFor
-	// UnitLocation.contains
-	// UnitLocation.canAdd
-	// WorkLocation.remove
-	// UnitLocation.getUnitCount
-	// final UnitLocation.getUnitIterator
-	// UnitLocation.getUnitList
-	// UnitLocation.getGoodsContainer
-	// final WorkLocation.getSettlement
-	// final WorkLocation.getColony
-	// final WorkLocation.getRank
-
 	/**
-	 * {@inheritDoc}
+	 * Interface Location
+	 * Inherits:
+	 * FreeColObject.getId
+	 * WorkLocation.getTile
+	 * UnitLocation.getLocationLabelFor
+	 * UnitLocation.contains
+	 * UnitLocation.canAdd
+	 * WorkLocation.remove
+	 * UnitLocation.getUnitCount
+	 * final UnitLocation.getUnitIterator
+	 * UnitLocation.getUnitList
+	 * UnitLocation.getGoodsContainer
+	 * final WorkLocation.getSettlement
+	 * final WorkLocation.getColony
+	 * final WorkLocation.getRank
 	 */
+
 	@Override
 	public StringTemplate getLocationLabel() {
 		return StringTemplate.template("model.building.locationLabel").addNamed("%location%", this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location up() {
 		return getColony();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toShortString() {
 		return getColony().getName() + "-" + getType().getSuffix();
 	}
 
-	// Interface UnitLocation
-	// Inherits:
-	// UnitLocation.getSpaceTaken
-	// UnitLocation.moveToFront
-	// UnitLocation.clearUnitList
-	// UnitLocation.equipForRole
-
 	/**
-	 * {@inheritDoc}
+	 * Interface UnitLocation
+	 * Inherits:
+	 * UnitLocation.getSpaceTaken
+	 * UnitLocation.moveToFront
+	 * UnitLocation.clearUnitList
+	 * UnitLocation.equipForRole
 	 */
+
 	@Override
 	public NoAddReason getNoAddReason(Locatable locatable) {
 		NoAddReason reason = super.getNoAddReason(locatable);
 		if (reason == NoAddReason.NONE) {
 			reason = getType().getNoAddReason(((Unit) locatable).getType());
-			if (reason == NoAddReason.NONE)
+			if (reason == NoAddReason.NONE) {
 				reason = getNoWorkReason();
+			}
 		}
 		return reason;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getUnitCapacity() {
 		return getType().getWorkPlaces();
 	}
 
-	// Interface WorkLocation
-	// Inherits:
-	// WorkLocation.getClaimTemplate: buildings do not need to be claimed.
-
 	/**
-	 * {@inheritDoc}
+	 * Interface WorkLocation
+	 * Inherits:
+	 * WorkLocation.getClaimTemplate: buildings do not need to be claimed.
 	 */
+
 	@Override
 	public StringTemplate getLabel() {
 		return (buildingType == null) ? null : StringTemplate.key(buildingType);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isAvailable() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isCurrent() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public NoAddReason getNoWorkReason() {
 		return NoAddReason.NONE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canAutoProduce() {
 		return hasAbility(Ability.AUTO_PRODUCTION);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canProduce(GoodsType goodsType, UnitType unitType) {
 		final BuildingType type = getType();
 		return type != null && type.canProduce(goodsType, unitType);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getBaseProduction(ProductionType productionType, GoodsType goodsType, UnitType unitType) {
 		final BuildingType type = getType();
 		return (type == null) ? 0 : getType().getBaseProduction(productionType, goodsType, unitType);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Modifier> getProductionModifiers(GoodsType goodsType, UnitType unitType) {
 		final BuildingType type = getType();
@@ -512,9 +485,8 @@ public class Building extends WorkLocation implements Named, Consumer {
 			if (owner != null) {
 				mods.addAll(owner.getModifiers(id, type, turn));
 			}
-
 		} else { // If a unit is present add unit specific bonuses.
-			mods.addAll(this.getModifiers(id, unitType, turn));
+			mods.addAll(getModifiers(id, unitType, turn));
 			mods.addAll(colony.getProductionModifiers(goodsType));
 			mods.addAll(unitType.getModifiers(id, goodsType, turn));
 			if (owner != null) {
@@ -525,66 +497,45 @@ public class Building extends WorkLocation implements Named, Consumer {
 		return mods;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<ProductionType> getAvailableProductionTypes(boolean unattended) {
 		return (buildingType == null) ? Collections.<ProductionType>emptyList()
 				: getType().getAvailableProductionTypes(unattended);
 	}
 
-	// Interface Consumer
+	/** Interface Consumer. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<AbstractGoods> getConsumedGoods() {
 		return getInputs();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getPriority() {
 		return getType().getPriority();
 	}
 
-	// Interface Named
+	/** Interface Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getNameKey() {
 		return getType().getNameKey();
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Set<Ability> getAbilities(String id, FreeColGameObjectType type, Turn turn) {
 		// Buildings have no abilities independent of their type (for now).
 		return getType().getAbilities(id, type, turn);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Set<Modifier> getModifiers(String id, FreeColGameObjectType fcgot, Turn turn) {
 		// Buildings have no modifiers independent of type
 		return getType().getModifiers(id, fcgot, turn);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int compareTo(FreeColObject other) {
 		int cmp = 0;
@@ -592,18 +543,16 @@ public class Building extends WorkLocation implements Named, Consumer {
 			Building building = (Building) other;
 			cmp = getType().compareTo(building.getType());
 		}
-		if (cmp == 0)
+		if (cmp == 0) {
 			cmp = super.compareTo(other);
+		}
 		return cmp;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String BUILDING_TYPE_TAG = "buildingType";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -611,9 +560,6 @@ public class Building extends WorkLocation implements Named, Consumer {
 		xw.writeAttribute(BUILDING_TYPE_TAG, buildingType);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -623,9 +569,6 @@ public class Building extends WorkLocation implements Named, Consumer {
 		buildingType = xr.getType(spec, BUILDING_TYPE_TAG, BuildingType.class, (BuildingType) null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
@@ -635,9 +578,6 @@ public class Building extends WorkLocation implements Named, Consumer {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

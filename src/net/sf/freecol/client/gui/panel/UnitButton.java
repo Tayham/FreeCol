@@ -40,7 +40,6 @@ import net.sf.freecol.common.resources.ResourceManager;
  * on a JComponent in order to be useable.
  */
 public final class UnitButton extends JButton {
-
 	private final String actionId;
 	private final ActionManager am;
 

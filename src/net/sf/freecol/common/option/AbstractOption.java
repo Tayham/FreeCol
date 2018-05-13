@@ -35,7 +35,6 @@ import net.sf.freecol.common.model.Specification;
  * option object, followed by a ".", followed by "name" or "shortDescription".
  */
 public abstract class AbstractOption<T> extends FreeColObject implements Option<T> {
-
 	private static final Logger logger = Logger.getLogger(AbstractOption.class.getName());
 
 	/** The option group prefix. */
@@ -45,7 +44,7 @@ public abstract class AbstractOption<T> extends FreeColObject implements Option<
 	 * Determine if the option has been defined. When defined an option won't change
 	 * when a default value is read from an XML file.
 	 */
-	protected boolean isDefined = false;
+	protected boolean isDefined;
 
 	/**
 	 * Creates a new <code>AbstractOption</code>.
@@ -151,11 +150,8 @@ public abstract class AbstractOption<T> extends FreeColObject implements Option<
 		return false;
 	}
 
-	// Interface Option
+	/** Interface Option. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public abstract AbstractOption<T> clone() throws CloneNotSupportedException;
 
@@ -176,14 +172,11 @@ public abstract class AbstractOption<T> extends FreeColObject implements Option<
 	@Override
 	public abstract void setValue(T value);
 
-	// Serialization
+	/** Serialization. */
 
 	protected static final String ACTION_TAG = "action";
 	protected static final String DEFAULT_VALUE_TAG = "defaultValue";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -221,62 +214,46 @@ public abstract class AbstractOption<T> extends FreeColObject implements Option<
 			// FIXME: load FreeColActions from client options?
 			logger.finest("Skipping action " + xr.readId());
 			xr.nextTag();
-
 		} else if (AbstractUnitOption.getXMLElementTagName().equals(tag)) {
 			option = new AbstractUnitOption(spec);
-
 		} else if (AudioMixerOption.getXMLElementTagName().equals(tag)) {
 			option = new AudioMixerOption(spec);
-
 		} else if (BooleanOption.getXMLElementTagName().equals(tag)) {
 			option = new BooleanOption(spec);
-
 		} else if (FileOption.getXMLElementTagName().equals(tag)) {
 			option = new FileOption(spec);
-
 		} else if (IntegerOption.getXMLElementTagName().equals(tag)) {
 			option = new IntegerOption(spec);
-
 		} else if (LanguageOption.getXMLElementTagName().equals(tag)) {
 			option = new LanguageOption(spec);
-
 		} else if (ModListOption.getXMLElementTagName().equals(tag)) {
 			option = new ModListOption(spec);
-
 		} else if (ModOption.getXMLElementTagName().equals(tag)) {
 			option = new ModOption(spec);
-
 		} else if (OptionGroup.getXMLElementTagName().equals(tag)) {
 			option = new OptionGroup(spec);
-
 		} else if (PercentageOption.getXMLElementTagName().equals(tag)) {
 			option = new PercentageOption(spec);
-
 		} else if (RangeOption.getXMLElementTagName().equals(tag)) {
 			option = new RangeOption(spec);
-
 		} else if (SelectOption.getXMLElementTagName().equals(tag)) {
 			option = new SelectOption(spec);
-
 		} else if (StringOption.getXMLElementTagName().equals(tag)) {
 			option = new StringOption(spec);
-
 		} else if (UnitListOption.getXMLElementTagName().equals(tag)) {
 			option = new UnitListOption(spec);
-
 		} else if (UnitTypeOption.getXMLElementTagName().equals(tag)) {
 			option = new UnitTypeOption(spec);
-
 		} else if (TextOption.getXMLElementTagName().equals(tag)) {
 			option = new TextOption(spec);
-
 		} else {
 			logger.warning("Not an option type: " + tag);
 			xr.nextTag();
 		}
 
-		if (option != null)
+		if (option != null) {
 			option.readFromXML(xr);
+		}
 		return option;
 	}
 }

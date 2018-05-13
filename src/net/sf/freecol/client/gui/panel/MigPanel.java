@@ -28,7 +28,6 @@ import javax.swing.JPanel;
  * versions of MigLayout.
  */
 public class MigPanel extends JPanel {
-
 	private String uiClassId = null;
 
 	public MigPanel() {
@@ -42,21 +41,15 @@ public class MigPanel extends JPanel {
 		super(layout);
 	}
 
-	// Override JPanel
+	/** Override JPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getUIClassID() {
 		return (uiClassId != null) ? uiClassId : super.getUIClassID();
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

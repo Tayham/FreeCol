@@ -38,7 +38,6 @@ import net.sf.freecol.common.resources.ResourceManager;
  * {@link net.sf.freecol.client.FreeColClient#isMapEditor()} map editor mode.
  */
 public final class RiverStyleDialog extends FreeColChoiceDialog<String> {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(RiverStyleDialog.class.getName());
 

@@ -45,7 +45,6 @@ import net.sf.freecol.client.gui.panel.Utility;
  * <code>FreeColAction</code>.
  */
 public final class FreeColActionUI extends OptionUI<FreeColAction> implements ActionListener {
-
 	private OptionGroupUI optionGroupUI;
 	private KeyStroke keyStroke;
 	private final JButton recordButton;
@@ -135,8 +134,9 @@ public final class FreeColActionUI extends OptionUI<FreeColAction> implements Ac
 		}
 
 		String s = KeyEvent.getKeyModifiersText(keyStroke.getModifiers());
-		if (!s.isEmpty())
+		if (!s.isEmpty()) {
 			s += "+";
+		}
 		return s + KeyEvent.getKeyText(keyStroke.getKeyCode());
 	}
 
@@ -160,11 +160,8 @@ public final class FreeColActionUI extends OptionUI<FreeColAction> implements Ac
 		this.optionGroupUI = ui;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == recordButton) {
@@ -177,13 +174,10 @@ public final class FreeColActionUI extends OptionUI<FreeColAction> implements Ac
 		}
 	}
 
-	/**
-	 * Label for displaying a <code>KeyStroke</code>.
-	 */
+	/** Label for displaying a <code>KeyStroke</code>. */
 	class BlinkingLabel extends JLabel implements ActionListener, KeyListener, MouseListener {
-
 		private final Timer blinkingTimer = new Timer(500, this);
-		private boolean blinkOn = false;
+		private boolean blinkOn;
 
 		BlinkingLabel() {
 			super(getHumanKeyStrokeText(keyStroke), JLabel.CENTER);
@@ -260,50 +254,38 @@ public final class FreeColActionUI extends OptionUI<FreeColAction> implements Ac
 			recordButton.requestFocus();
 		}
 
-		// Interface ActionListener
+		/** Interface ActionListener. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void actionPerformed(ActionEvent ae) {
-			if (!hasFocus())
+			if (!hasFocus()) {
 				stopBlinking();
+			}
 
 			if (blinkOn) {
 				setOpaque(false);
 				blinkOn = false;
-				repaint();
 			} else {
 				setOpaque(true);
 				setBackground(Color.RED);
 				blinkOn = true;
-				repaint();
 			}
+			repaint();
 		}
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JPanel getComponent() {
 		return panel;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setAccelerator(keyStroke);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		keyStroke = getOption().getAccelerator();

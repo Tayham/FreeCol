@@ -41,7 +41,6 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
  * Specification after it has loaded completely.
  */
 public abstract class FreeColGameObjectType extends FreeColObject implements Named {
-
 	/** Whether the type is abstract, or can be instantiated. */
 	private boolean abstractType;
 
@@ -62,9 +61,7 @@ public abstract class FreeColGameObjectType extends FreeColObject implements Nam
 	 */
 	private int index = -1;
 
-	/**
-	 * Deliberately empty constructor.
-	 */
+	/** Deliberately empty constructor. */
 	protected FreeColGameObjectType() {
 	}
 
@@ -109,8 +106,9 @@ public abstract class FreeColGameObjectType extends FreeColObject implements Nam
 	 */
 	@Override
 	public final FeatureContainer getFeatureContainer() {
-		if (featureContainer == null)
+		if (featureContainer == null) {
 			featureContainer = new FeatureContainer();
+		}
 		return featureContainer;
 	}
 
@@ -158,32 +156,28 @@ public abstract class FreeColGameObjectType extends FreeColObject implements Nam
 		return abstractType;
 	}
 
-	// Interface Named
+	/** Interface Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final String getNameKey() {
 		return Messages.nameKey(getId());
 	}
 
-	// Serialization
+	/**
+	 * Serialization
 
-	// We do not serialize index, so no INDEX_TAG.
-	// We do not need to write the abstractType attribute, as once
-	// the spec is read, all cases of abstractType==true are removed.
+	 * We do not serialize index, so no INDEX_TAG.
+	 * We do not need to write the abstractType attribute, as once
+	 * the spec is read, all cases of abstractType==true are removed.
+	 */
 	private static final String ABSTRACT_TAG = "abstract";
-	// Denotes deletion of a child element.
+	/** Denotes deletion of a child element. */
 	protected static final String DELETE_TAG = "delete";
-	// Denotes that this type extends another.
+	/** Denotes that this type extends another. */
 	public static final String EXTENDS_TAG = "extends";
-	// Denotes preservation of attributes and children.
+	/** Denotes preservation of attributes and children. */
 	public static final String PRESERVE_TAG = "preserve";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -197,35 +191,26 @@ public abstract class FreeColGameObjectType extends FreeColObject implements Nam
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
-		if (getId() == null)
+		if (getId() == null) {
 			throw new XMLStreamException("Null id");
+		}
 
 		abstractType = xr.getAttribute(ABSTRACT_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
-		if (xr.shouldClearContainers()) {
-			if (featureContainer != null)
-				featureContainer.clear();
+		if (xr.shouldClearContainers() && featureContainer != null) {
+			featureContainer.clear();
 		}
 
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -235,36 +220,31 @@ public abstract class FreeColGameObjectType extends FreeColObject implements Nam
 			if (xr.getAttribute(DELETE_TAG, false)) {
 				removeAbilities(xr.readId());
 				xr.closeTag(Ability.getXMLElementTagName());
-
 			} else {
 				Ability ability = new Ability(xr, spec); // Closes the element
-				if (ability.getSource() == null)
+				if (ability.getSource() == null) {
 					ability.setSource(this);
+				}
 				addAbility(ability);
 				spec.addAbility(ability);
 			}
-
 		} else if (Modifier.getXMLElementTagName().equals(tag)) {
 			if (xr.getAttribute(DELETE_TAG, false)) {
 				removeModifiers(xr.readId());
 				xr.closeTag(Modifier.getXMLElementTagName());
-
 			} else {
 				Modifier modifier = new Modifier(xr, spec);// Closes the element
-				if (modifier.getSource() == null)
+				if (modifier.getSource() == null) {
 					modifier.setSource(this);
+				}
 				addModifier(modifier);
 				spec.addModifier(modifier);
 			}
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return getId();

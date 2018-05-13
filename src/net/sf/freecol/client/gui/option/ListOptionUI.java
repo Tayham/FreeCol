@@ -49,7 +49,6 @@ import net.sf.freecol.common.option.Option;
  * values to be both seen and changed.
  */
 public final class ListOptionUI<T> extends OptionUI<ListOption<T>> implements ListSelectionListener {
-
 	private static final Logger logger = Logger.getLogger(ListOptionUI.class.getName());
 
 	private final JPanel panel;
@@ -171,35 +170,23 @@ public final class ListOptionUI<T> extends OptionUI<ListOption<T>> implements Li
 		return result;
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final JLabel getJLabel() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JPanel getComponent() {
 		return this.panel;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValue(getValue());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		model.clear();
@@ -208,15 +195,12 @@ public final class ListOptionUI<T> extends OptionUI<ListOption<T>> implements Li
 		}
 	}
 
-	// Interface ListSelectionListener
+	/** Interface ListSelectionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false) {
-			boolean enabled = (isEditable() && list.getSelectedValue() != null);
+		if (!e.getValueIsAdjusting()) {
+			boolean enabled = isEditable() && list.getSelectedValue() != null;
 			editButton.setEnabled(enabled);
 			removeButton.setEnabled(enabled);
 			upButton.setEnabled(enabled);

@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * The message sent when summarizing a nation.
- */
+/** The message sent when summarizing a nation. */
 public class GetNationSummaryMessage extends DOMMessage {
-
 	/** The identifier of the player to summarize. */
 	private final String playerId;
 

@@ -35,7 +35,6 @@ import net.sf.freecol.common.model.Specification;
  * values (choices).
  */
 public class StringOption extends AbstractOption<String> {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(StringOption.class.getName());
 
@@ -87,11 +86,8 @@ public class StringOption extends AbstractOption<String> {
 		this.choices.addAll(newChoices);
 	}
 
-	// Interface Option.
+	/** Interface Option. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public StringOption clone() {
 		StringOption result = new StringOption(getId(), getSpecification());
@@ -100,17 +96,11 @@ public class StringOption extends AbstractOption<String> {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getValue() {
 		return value;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setValue(String value) {
 		final String oldValue = this.value;
@@ -122,23 +112,17 @@ public class StringOption extends AbstractOption<String> {
 		isDefined = true;
 	}
 
-	// Override AbstractOption
+	/** Override AbstractOption. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void setValue(String valueString, String defaultValueString) {
 		setValue((valueString != null) ? valueString : defaultValueString);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String CHOICE_TAG = "choice";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -146,9 +130,6 @@ public class StringOption extends AbstractOption<String> {
 		xw.writeAttribute(VALUE_TAG, value);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -162,9 +143,6 @@ public class StringOption extends AbstractOption<String> {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -173,9 +151,6 @@ public class StringOption extends AbstractOption<String> {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -183,30 +158,24 @@ public class StringOption extends AbstractOption<String> {
 		if (CHOICE_TAG.equals(tag)) {
 			choices.add(xr.getAttribute(VALUE_TAG, (String) null));
 			xr.closeTag(CHOICE_TAG);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
 		sb.append("[").append(getId()).append(" value=").append(value).append(" choices=[");
 		if (choices != null) {
-			for (String choice : choices)
+			for (String choice : choices) {
 				sb.append(" ").append(choice);
+			}
 		}
 		sb.append("]]");
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

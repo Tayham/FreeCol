@@ -38,16 +38,11 @@ import net.sf.freecol.common.util.LogBuilder;
 import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 
-/**
- * The server version of a building.
- */
+/** The server version of a building. */
 public class ServerBuilding extends Building implements ServerModelObject {
-
 	private static final Logger logger = Logger.getLogger(ServerBuilding.class.getName());
 
-	/**
-	 * Trivial constructor required for all ServerModelObjects.
-	 */
+	/** Trivial constructor required for all ServerModelObjects. */
 	public ServerBuilding(Game game, String id) {
 		super(game, id);
 	}
@@ -80,8 +75,9 @@ public class ServerBuilding extends Building implements ServerModelObject {
 	public void csNewTurn(Random random, LogBuilder lb, ChangeSet cs) {
 		BuildingType type = getType();
 
-		if (canTeach())
+		if (canTeach()) {
 			csTeach(cs);
+		}
 
 		if (type.hasAbility(Ability.REPAIR_UNITS)) {
 			csRepairUnits(cs);
@@ -142,8 +138,9 @@ public class ServerBuilding extends Building implements ServerModelObject {
 			csTrainStudent(teacher, student, cs);
 			// Student will have changed, teacher already added in csTeach
 			cs.add(See.only(owner), student);
-			if (teacher.getStudent() == null)
+			if (teacher.getStudent() == null) {
 				csAssignStudent(teacher, cs);
+			}
 			return true;
 		}
 		return false;
@@ -240,7 +237,7 @@ public class ServerBuilding extends Building implements ServerModelObject {
 	 */
 	public void csCheckMissingInput(ProductionInfo pi, ChangeSet cs) {
 		List<AbstractGoods> inputs = getInputs();
-		if (!(inputs.isEmpty() || isEmpty() || canAutoProduce()) && pi.getProduction().isEmpty()) {
+		if (!inputs.isEmpty() && !isEmpty() && !canAutoProduce() && pi.getProduction().isEmpty()) {
 			for (AbstractGoods goods : inputs) {
 				cs.addMessage(See.only((ServerPlayer) getOwner()),
 						new ModelMessage(ModelMessage.MessageType.MISSING_GOODS, "model.building.notEnoughInput", this,

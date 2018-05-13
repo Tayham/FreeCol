@@ -25,11 +25,8 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-/**
- * A trade item consisting of just some gold.
- */
+/** A trade item consisting of just some gold. */
 public class GoldTradeItem extends TradeItem {
-
 	/** The amount of gold to change hands. */
 	private int gold;
 
@@ -64,85 +61,56 @@ public class GoldTradeItem extends TradeItem {
 		super(game, xr);
 	}
 
-	// Interface TradeItem
+	/** Interface TradeItem. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isValid() {
 		return gold >= 0 && getSource().checkGold(gold);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isUnique() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public StringTemplate getLabel() {
 		return StringTemplate.template(Messages.descriptionKey("model.tradeItem.gold")).addAmount("%amount%", gold);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getGold() {
 		return gold;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setGold(int gold) {
 		this.gold = gold;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public int evaluateFor(Player player) {
 		int gold = getGold();
-		return (!isValid()) ? Integer.MIN_VALUE : (getSource() == player) ? -gold : gold;
+		return !isValid() ? Integer.MIN_VALUE : (getSource() == player) ? -gold : gold;
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof GoldTradeItem) {
-			return this.gold == ((GoldTradeItem) other).gold && super.equals(other);
-		}
-		return false;
+		return other instanceof GoldTradeItem && this.gold == ((GoldTradeItem) other).gold && super.equals(other);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
 		return 37 * hash + this.gold;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String GOLD_TAG = "gold";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -150,9 +118,6 @@ public class GoldTradeItem extends TradeItem {
 		xw.writeAttribute(GOLD_TAG, gold);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -160,9 +125,6 @@ public class GoldTradeItem extends TradeItem {
 		gold = xr.getAttribute(GOLD_TAG, UNDEFINED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(16);
@@ -170,9 +132,6 @@ public class GoldTradeItem extends TradeItem {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

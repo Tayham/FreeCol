@@ -44,7 +44,6 @@ import net.sf.freecol.client.gui.panel.Flag.UnionPosition;
 import net.sf.freecol.client.gui.panel.Flag.UnionShape;
 
 public class FlagTest extends JFrame implements ActionListener, ItemListener {
-
 	private final Flag[] FLAGS = { ConfirmDeclarationDialog.ENGLISH_FLAG, ConfirmDeclarationDialog.SPANISH_FLAG,
 			ConfirmDeclarationDialog.FRENCH_FLAG, ConfirmDeclarationDialog.DUTCH_FLAG,
 			ConfirmDeclarationDialog.PORTUGUESE_FLAG, ConfirmDeclarationDialog.SWEDISH_FLAG,

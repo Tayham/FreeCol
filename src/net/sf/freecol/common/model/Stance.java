@@ -21,8 +21,6 @@ package net.sf.freecol.common.model;
 
 import net.sf.freecol.common.i18n.Messages;
 
-
-
 import static net.sf.freecol.common.util.StringUtils.*;
 
 /**
@@ -37,7 +35,7 @@ import static net.sf.freecol.common.util.StringUtils.*;
 public enum Stance implements Named {
 	UNCONTACTED, ALLIANCE, PEACE, CEASE_FIRE, WAR;
 
-	// Helpers to enforce valid transitions
+	/** Helpers to enforce valid transitions. */
 	private void badStance() {
 		throw new IllegalStateException("Bogus stance");
 	}
@@ -77,7 +75,7 @@ public enum Stance implements Named {
 		case UNCONTACTED:
 			break;
 		default:
-			this.badStance();
+			badStance();
 		}
 		return this;
 	}
@@ -106,7 +104,7 @@ public enum Stance implements Named {
 			case WAR:
 				return Tension.ALLIANCE_MODIFIER + Tension.CEASE_FIRE_MODIFIER + Tension.PEACE_TREATY_MODIFIER;
 			default:
-				this.badStance();
+				badStance();
 			}
 		case PEACE:
 			switch (this) {
@@ -121,7 +119,7 @@ public enum Stance implements Named {
 			case WAR:
 				return Tension.CEASE_FIRE_MODIFIER + Tension.PEACE_TREATY_MODIFIER;
 			default:
-				this.badStance();
+				badStance();
 			}
 		case CEASE_FIRE:
 			switch (this) {
@@ -136,7 +134,7 @@ public enum Stance implements Named {
 			case WAR:
 				return Tension.CEASE_FIRE_MODIFIER;
 			default:
-				this.badStance();
+				badStance();
 			}
 		case WAR:
 			switch (this) {
@@ -151,7 +149,7 @@ public enum Stance implements Named {
 			case WAR:
 				return 0;
 			default:
-				this.badStance();
+				badStance();
 			}
 		default:
 			throw new IllegalStateException("Bogus newStance");
@@ -188,9 +186,7 @@ public enum Stance implements Named {
 
 	// Implement Named
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public String getNameKey() {
 		return Messages.nameKey("model." + getKey());
 	}

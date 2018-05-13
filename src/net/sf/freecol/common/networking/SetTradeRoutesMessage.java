@@ -32,11 +32,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/**
- * The message sent when setting the trade routes.
- */
+/** The message sent when setting the trade routes. */
 public class SetTradeRoutesMessage extends DOMMessage {
-
 	private static final String idPrefix = "shadow-";
 
 	/** The trade routes to set. */
@@ -69,8 +66,9 @@ public class SetTradeRoutesMessage extends DOMMessage {
 		NodeList nodes = element.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			TradeRoute route = tradeRouteFromElement(game, (Element) nodes.item(i));
-			if (route != null)
+			if (route != null) {
 				newRoutes.add(route);
+			}
 		}
 		this.tradeRoutes = newRoutes;
 	}
@@ -141,8 +139,9 @@ public class SetTradeRoutesMessage extends DOMMessage {
 				continue;
 			}
 		}
-		if (errors != null && !errors.isEmpty())
+		if (errors != null && !errors.isEmpty()) {
 			return DOMMessage.clientError(errors);
+		}
 
 		List<TradeRoute> newRoutes = new ArrayList<>();
 		for (TradeRoute tradeRoute : tradeRoutes) {

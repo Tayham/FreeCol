@@ -40,14 +40,13 @@ import org.w3c.dom.Element;
  * Therefore, the game attribute must not be null.
  */
 public abstract class FreeColGameObject extends FreeColObject {
-
 	private static final Logger logger = Logger.getLogger(FreeColGameObject.class.getName());
 
 	/** The game this object belongs to. */
 	private Game game;
 
 	/** Has this object been disposed. */
-	private boolean disposed = false;
+	private boolean disposed;
 
 	/** Has this object been initialized. */
 	private boolean uninitialized;
@@ -65,11 +64,9 @@ public abstract class FreeColGameObject extends FreeColObject {
 		if (game != null) {
 			this.game = game;
 			internId(getXMLTagName() + ":" + game.getNextId());
-
 		} else if (this instanceof Game) {
 			this.game = (Game) this;
 			setId("0");
-
 		} else {
 			throw new IllegalArgumentException("FCGO with null game.");
 		}
@@ -94,8 +91,9 @@ public abstract class FreeColGameObject extends FreeColObject {
 		}
 
 		this.game = game;
-		if (id != null)
+		if (id != null) {
 			internId(id);
+		}
 		this.uninitialized = true;
 	}
 
@@ -151,9 +149,7 @@ public abstract class FreeColGameObject extends FreeColObject {
 		return fcgos;
 	}
 
-	/**
-	 * Low level base dispose, removing the object from the game.
-	 */
+	/** Low level base dispose, removing the object from the game. */
 	public final void fundamentalDispose() {
 		getGame().removeFreeColGameObject(getId(), "dispose");
 		this.disposed = true;
@@ -173,8 +169,9 @@ public abstract class FreeColGameObject extends FreeColObject {
 	 * references.
 	 */
 	public final void dispose() {
-		if (this.disposed)
+		if (this.disposed) {
 			return;
+		}
 		LogBuilder lb = new LogBuilder(64);
 		lb.add("Destroying:");
 		for (FreeColGameObject fcgo : getDisposeList()) {
@@ -196,16 +193,15 @@ public abstract class FreeColGameObject extends FreeColObject {
 	public <T extends FreeColGameObject> T cloneFreeColGameObject(Class<T> returnClass) {
 		final Game game = getGame();
 		try {
-			String xml = this.serialize();
+			String xml = serialize();
 
 			Field nextId = Game.class.getDeclaredField("nextId");
 			nextId.setAccessible(true);
 			int id = nextId.getInt(game);
 			nextId.setInt(game, id + 1);
-			xml = xml.replace(getId(), T.getXMLElementTagName() + ":" + id);
+			xml = xml.replace(getId(), getXMLElementTagName() + ":" + id);
 
 			return game.unserialize(xml, returnClass);
-
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Failed to clone " + getId(), e);
 		}
@@ -277,27 +273,22 @@ public abstract class FreeColGameObject extends FreeColObject {
 		return (game == null) ? null : game.getSpecification();
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof FreeColGameObject) {
 			// FreeColGameObjects are equal if the two fcgos are in
 			// the same game and have the same identifier.
 			FreeColGameObject fco = (FreeColGameObject) o;
-			return this.getGame() == fco.getGame() && super.equals(o);
+			return getGame() == fco.getGame() && super.equals(o);
 		}
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();

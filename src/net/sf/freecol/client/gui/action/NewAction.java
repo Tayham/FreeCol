@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for starting a new game.
- */
+/** An action for starting a new game. */
 public class NewAction extends FreeColAction {
-
 	public static final String id = "newAction";
 
 	/**
@@ -40,11 +37,8 @@ public class NewAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (freeColClient.isMapEditor()) {

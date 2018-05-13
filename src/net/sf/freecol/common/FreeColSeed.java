@@ -22,11 +22,8 @@ package net.sf.freecol.common;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
 
-/**
- * A wrapper for the pseudo-random number generator seed.
- */
+/** A wrapper for the pseudo-random number generator seed. */
 public class FreeColSeed {
-
 	private static final Logger logger = Logger.getLogger(FreeColSeed.class.getName());
 
 	public static final long DEFAULT_SEED = 0L;
@@ -56,14 +53,12 @@ public class FreeColSeed {
 	 */
 	public static void setFreeColSeed(String arg) {
 		try {
-			FreeColSeed.freeColSeed = Long.parseLong(arg);
+			freeColSeed = Long.parseLong(arg);
 		} catch (NumberFormatException nfe) {
 		}
 	}
 
-	/**
-	 * Increments the seed for the PRNG.
-	 */
+	/** Increments the seed for the PRNG. */
 	public static void incrementFreeColSeed() {
 		freeColSeed = getFreeColSeed(false) + 1;
 		logger.info("Reseeded with: " + freeColSeed);

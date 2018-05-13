@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when a unit joins a colony.
- */
+/** The message sent when a unit joins a colony. */
 public class JoinColonyMessage extends DOMMessage {
-
 	/** The identifier of the colony. */
 	private final String colonyId;
 

@@ -24,10 +24,8 @@ package net.sf.freecol.common.i18n;
  * The category returned is always other.
  */
 public class OtherNumberRule extends Number {
-
 	@Override
 	public Category getCategory(double input) {
 		return Category.other;
 	}
-
 }

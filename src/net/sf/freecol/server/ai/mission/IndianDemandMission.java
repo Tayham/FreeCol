@@ -44,11 +44,8 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
-/**
- * Mission for demanding goods from a specified player.
- */
+/** Mission for demanding goods from a specified player. */
 public class IndianDemandMission extends Mission {
-
 	private static final Logger logger = Logger.getLogger(IndianDemandMission.class.getName());
 
 	/** The minimum amount of goods to demand. */
@@ -241,8 +238,9 @@ public class IndianDemandMission extends Mission {
 	 */
 	private static String invalidColonyReason(AIUnit aiUnit, Colony colony) {
 		String reason = invalidTargetReason(colony);
-		if (reason != null)
+		if (reason != null) {
 			return reason;
+		}
 		final Unit unit = aiUnit.getUnit();
 		final Player owner = unit.getOwner();
 		Player targetPlayer = colony.getOwner();
@@ -254,8 +252,9 @@ public class IndianDemandMission extends Mission {
 		case WAR:
 		case CEASE_FIRE:
 			Tension tension = unit.getHomeIndianSettlement().getAlarm(targetPlayer);
-			if (tension != null && tension.getLevel().compareTo(Tension.Level.CONTENT) <= 0)
+			if (tension != null && tension.getLevel().compareTo(Tension.Level.CONTENT) <= 0) {
 				return "happy";
+			}
 			break;
 		}
 		return null;
@@ -289,28 +288,18 @@ public class IndianDemandMission extends Mission {
 								: Mission.TARGETINVALID;
 	}
 
-	// Implement Mission
-	// Inherit dispose, getBaseTransportPriority, isOneTime
+	/** Implement Mission Inherit dispose, getBaseTransportPriority, isOneTime. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTransportDestination() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTarget() {
-		return (this.demanded) ? getUnit().getHomeIndianSettlement() : this.colony;
+		return this.demanded ? getUnit().getHomeIndianSettlement() : this.colony;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setTarget(Location target) {
 		if (target instanceof Colony) {
@@ -318,31 +307,23 @@ public class IndianDemandMission extends Mission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location findTarget() {
 		return getTarget();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String invalidReason() {
 		return invalidReason(getAIUnit(), getTarget());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Mission doMission(LogBuilder lb) {
 		lb.add(tag);
 		String reason = invalidReason();
-		if (reason != null)
+		if (reason != null) {
 			return lbFail(lb, false, reason);
+		}
 
 		final AIUnit aiUnit = getAIUnit();
 		final Unit unit = getUnit();
@@ -363,8 +344,9 @@ public class IndianDemandMission extends Mission {
 
 			case ATTACK_SETTLEMENT: // Arrived?
 				d = unit.getTile().getDirection(getTarget().getTile());
-				if (d != null)
-					break; // Yes, arrived at target
+				if (d != null) {
+					break;
+				} // Yes, arrived at target
 				// Fall through
 			case ATTACK_UNIT: // Something is blocking our path
 				Location blocker = resolveBlockage(aiUnit, getTarget());
@@ -394,8 +376,9 @@ public class IndianDemandMission extends Mission {
 					return lbDone(lb, false, "empty handed");
 				}
 				amount = enemy.getGold() / 20;
-				if (amount == 0)
+				if (amount == 0) {
 					amount = enemy.getGold();
+				}
 			}
 			this.demanded = AIMessage.askIndianDemand(aiUnit, colony, type, amount);
 			if (this.demanded && (goods == null || hasTribute())) {
@@ -410,9 +393,8 @@ public class IndianDemandMission extends Mission {
 			int unitTension = (is == null) ? 0 : is.getAlarm(enemy).getValue();
 			int tension = Math.max(unitTension, unit.getOwner().getTension(enemy).getValue());
 			d = unit.getTile().getDirection(colony.getTile());
-			if (tension >= Tension.Level.CONTENT.getLimit() && d != null) {
-				if (AIMessage.askAttack(aiUnit, d))
-					lbAttack(lb, colony);
+			if (tension >= Tension.Level.CONTENT.getLimit() && d != null && AIMessage.askAttack(aiUnit, d)) {
+				lbAttack(lb, colony);
 			}
 			return lbDone(lb, false, "refused at ", colony);
 		}
@@ -448,14 +430,11 @@ public class IndianDemandMission extends Mission {
 		}
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String COLONY_TAG = "colony";
 	private static final String DEMANDED_TAG = "demanded";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -467,9 +446,6 @@ public class IndianDemandMission extends Mission {
 		xw.writeAttribute(DEMANDED_TAG, this.demanded);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -479,9 +455,6 @@ public class IndianDemandMission extends Mission {
 		this.demanded = xr.getAttribute(DEMANDED_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

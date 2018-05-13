@@ -27,7 +27,6 @@ import net.sf.freecol.common.model.Specification;
  * the units of the REF.
  */
 public class UnitListOption extends ListOption<AbstractUnit> {
-
 	/**
 	 * Creates a new <code>UnitListOption</code>.
 	 *
@@ -50,9 +49,6 @@ public class UnitListOption extends ListOption<AbstractUnit> {
 		super(id, specification);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public UnitListOption clone() {
 		UnitListOption ret = new UnitListOption(getId(), getSpecification());
@@ -60,11 +56,8 @@ public class UnitListOption extends ListOption<AbstractUnit> {
 		return ret;
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

@@ -36,7 +36,6 @@ import net.sf.freecol.common.util.Utils;
  * applied to any action within the game, most obviously combat.
  */
 public abstract class Feature extends FreeColObject implements Named {
-
 	/** The source of this Feature, e.g. a UnitType. */
 	private FreeColObject source;
 
@@ -47,7 +46,7 @@ public abstract class Feature extends FreeColObject implements Named {
 	private Turn lastTurn;
 
 	/** The duration of this Feature. By default, the duration is unlimited. */
-	private int duration = 0;
+	private int duration;
 
 	/**
 	 * Transient features are provided by events such as disasters and goods
@@ -83,7 +82,7 @@ public abstract class Feature extends FreeColObject implements Named {
 	 * @return True if the feature is time limited.
 	 */
 	public final boolean hasTimeLimit() {
-		return (firstTurn != null || lastTurn != null);
+		return firstTurn != null || lastTurn != null;
 	}
 
 	/**
@@ -159,8 +158,9 @@ public abstract class Feature extends FreeColObject implements Named {
 	 *            The <code>Scope</code> to add.
 	 */
 	public void addScope(Scope scope) {
-		if (scopes == null)
+		if (scopes == null) {
 			scopes = new ArrayList<>();
+		}
 		scopes.add(scope);
 	}
 
@@ -202,11 +202,7 @@ public abstract class Feature extends FreeColObject implements Named {
 		this.duration = newDuration;
 	}
 
-	/**
-	 * Is this a temporary feature?
-	 *
-	 * True if this is a temporary feature.
-	 */
+	/** Is this a temporary feature? True if this is a temporary feature. */
 	public final boolean isTemporary() {
 		return temporary;
 	}
@@ -230,7 +226,7 @@ public abstract class Feature extends FreeColObject implements Named {
 	 *         the object.
 	 */
 	public boolean appliesTo(final FreeColGameObjectType objectType) {
-		return (!hasScope()) ? true : any(scopes, s -> s.appliesTo(objectType));
+		return !hasScope() || any(scopes, s -> s.appliesTo(objectType));
 	}
 
 	/**
@@ -241,8 +237,7 @@ public abstract class Feature extends FreeColObject implements Named {
 	 * @return True if the turn is null or not outside a valid time limit.
 	 */
 	protected boolean appliesTo(final Turn turn) {
-		return !(turn != null && (firstTurn != null && turn.getNumber() < firstTurn.getNumber()
-				|| lastTurn != null && turn.getNumber() > lastTurn.getNumber()));
+		return turn == null || ((firstTurn == null || turn.getNumber() >= firstTurn.getNumber()) && (lastTurn == null || turn.getNumber() <= lastTurn.getNumber()));
 	}
 
 	/**
@@ -278,71 +273,56 @@ public abstract class Feature extends FreeColObject implements Named {
 	 * @return True if the feature is independent.
 	 */
 	public boolean isIndependent() {
-		if (source instanceof BuildingType || source instanceof FoundingFather || source instanceof NationType
-				|| source instanceof SettlementType)
-			return false;
-		return true;
+		return !(source instanceof BuildingType) && !(source instanceof FoundingFather) && !(source instanceof NationType)
+				&& !(source instanceof SettlementType);
 	}
 
-	// Interface Named
+	/** Interface Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getNameKey() {
 		return Messages.nameKey(getId());
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
-		if (o == this)
+		if (o == this) {
 			return true;
+		}
 		if (o instanceof Feature) {
 			Feature feature = (Feature) o;
 			if (!super.equals(o) || this.source != feature.source || this.duration != feature.duration
-					|| this.temporary != feature.temporary)
+					|| this.temporary != feature.temporary) {
 				return false;
+			}
 			if (firstTurn == null) {
-				if (feature.firstTurn != null)
+				if (feature.firstTurn != null) {
 					return false;
-			} else if (feature.firstTurn == null) {
-				return false;
-			} else if (firstTurn.getNumber() != feature.firstTurn.getNumber()) {
+				}
+			} else if (feature.firstTurn == null || firstTurn.getNumber() != feature.firstTurn.getNumber()) {
 				return false;
 			}
 			if (lastTurn == null) {
-				if (feature.lastTurn != null)
+				if (feature.lastTurn != null) {
 					return false;
-			} else if (feature.lastTurn == null) {
-				return false;
-			} else if (lastTurn.getNumber() != feature.lastTurn.getNumber()) {
+				}
+			} else if (feature.lastTurn == null || lastTurn.getNumber() != feature.lastTurn.getNumber()) {
 				return false;
 			}
 			if (scopes == null) {
 				if (feature.scopes != null) {
 					return false;
 				}
-			} else if (feature.scopes == null) {
+			} else if (feature.scopes == null || !all(scopes, s -> feature.scopes.contains(s)) || !all(feature.scopes, s -> scopes.contains(s))) {
 				return false;
-			} else {
-				// Not very efficient, but we do not expect many scopes
-				if (!all(scopes, s -> feature.scopes.contains(s)) || !all(feature.scopes, s -> scopes.contains(s)))
-					return false;
 			}
 			return true;
 		}
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -350,7 +330,7 @@ public abstract class Feature extends FreeColObject implements Named {
 		hash += 31 * hash + ((firstTurn == null) ? 0 : firstTurn.getNumber());
 		hash += 31 * hash + ((lastTurn == null) ? 0 : lastTurn.getNumber());
 		hash += 31 * hash + duration;
-		hash += 31 * ((temporary) ? 1 : 0);
+		hash += 31 * (temporary ? 1 : 0);
 		if (scopes != null) {
 			for (Scope scope : scopes) {
 				// FIXME: is this safe? It is an easy way to ignore
@@ -361,7 +341,7 @@ public abstract class Feature extends FreeColObject implements Named {
 		return hash;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String DURATION_TAG = "duration";
 	private static final String FIRST_TURN_TAG = "firstTurn";
@@ -369,9 +349,6 @@ public abstract class Feature extends FreeColObject implements Named {
 	private static final String SOURCE_TAG = "source";
 	private static final String TEMPORARY_TAG = "temporary";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -397,20 +374,15 @@ public abstract class Feature extends FreeColObject implements Named {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
-		for (Scope scope : getScopes())
+		for (Scope scope : getScopes()) {
 			scope.toXML(xw);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -425,21 +397,20 @@ public abstract class Feature extends FreeColObject implements Named {
 		}
 
 		int firstTurn = xr.getAttribute(FIRST_TURN_TAG, UNDEFINED);
-		if (firstTurn != UNDEFINED)
+		if (firstTurn != UNDEFINED) {
 			setFirstTurn(new Turn(firstTurn));
+		}
 
 		int lastTurn = xr.getAttribute(LAST_TURN_TAG, UNDEFINED);
-		if (lastTurn != UNDEFINED)
+		if (lastTurn != UNDEFINED) {
 			setLastTurn(new Turn(lastTurn));
+		}
 
 		duration = xr.getAttribute(DURATION_TAG, 0);
 
 		temporary = xr.getAttribute(TEMPORARY_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -448,16 +419,12 @@ public abstract class Feature extends FreeColObject implements Named {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
 
 		if (Scope.getXMLElementTagName().equals(tag)) {
 			addScope(new Scope(xr));
-
 		} else {
 			super.readChild(xr);
 		}

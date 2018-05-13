@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when renaming a FreeColGameObject.
- */
+/** The message sent when renaming a FreeColGameObject. */
 public class RenameMessage extends DOMMessage {
-
 	/** The identifier of the object to be renamed. */
 	private final String id;
 

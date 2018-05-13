@@ -32,11 +32,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when speaking to a chief.
- */
+/** The message sent when speaking to a chief. */
 public class ScoutSpeakToChiefMessage extends DOMMessage {
-
 	/** The identifier of the unit that is speaking. */
 	private final String unitId;
 

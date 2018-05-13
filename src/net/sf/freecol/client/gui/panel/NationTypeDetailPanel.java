@@ -49,11 +49,8 @@ import net.sf.freecol.common.util.RandomChoice;
 
 import static net.sf.freecol.common.util.StringUtils.*;
 
-/**
- * This panel displays details of nations in the Colopedia.
- */
+/** This panel displays details of nations in the Colopedia. */
 public class NationTypeDetailPanel extends ColopediaGameObjectTypePanel<NationType> {
-
 	/**
 	 * Creates a new instance of this ColopediaDetailPanel.
 	 *
@@ -66,11 +63,8 @@ public class NationTypeDetailPanel extends ColopediaGameObjectTypePanel<NationTy
 		super(freeColClient, colopediaPanel, PanelType.NATION_TYPES.getKey());
 	}
 
-	// Implement ColopediaDetailPanel
+	/** Implement ColopediaDetailPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addSubTrees(DefaultMutableTreeNode root) {
 		DefaultMutableTreeNode parent = new DefaultMutableTreeNode(
@@ -87,13 +81,11 @@ public class NationTypeDetailPanel extends ColopediaGameObjectTypePanel<NationTy
 		root.add(parent);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void buildDetail(String id, JPanel panel) {
-		if (getId().equals(id))
+		if (getId().equals(id)) {
 			return;
+		}
 
 		NationType nationType = getSpecification().getNationType(id);
 		if (nationType instanceof EuropeanNationType) {

@@ -41,7 +41,6 @@ import net.sf.freecol.common.model.FoundingFather;
  * @see FoundingFather
  */
 public final class ChooseFoundingFatherDialog extends FreeColDialog<FoundingFather> {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(ChooseFoundingFatherDialog.class.getName());
 
@@ -92,9 +91,6 @@ public final class ChooseFoundingFatherDialog extends FreeColDialog<FoundingFath
 		initializeDialog(frame, DialogType.QUESTION, false, panel, null, c);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public FoundingFather getResponse() {
 		Object value = getValue();

@@ -27,7 +27,6 @@ import java.net.URI;
  * @see Resource
  */
 public class StringResource extends Resource {
-
 	private String data;
 
 	/**

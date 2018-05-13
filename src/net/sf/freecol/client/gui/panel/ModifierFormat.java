@@ -37,7 +37,6 @@ import net.sf.freecol.common.model.Scope;
 import net.sf.freecol.common.model.Turn;
 
 public class ModifierFormat {
-
 	/** The decimal format to use for Modifiers. */
 	private static final DecimalFormat modifierFormat = new DecimalFormat("0.00");
 
@@ -75,22 +74,26 @@ public class ModifierFormat {
 	}
 
 	private static String getSourceName(FreeColObject source) {
-		if (source == null)
+		if (source == null) {
 			return getUnknownValue();
+		}
 
 		String result = null;
 		if (result == null && source instanceof Nameable) {
 			result = ((Nameable) source).getName();
-			if (result != null && result.isEmpty())
+			if (result != null && result.isEmpty()) {
 				result = null;
+			}
 		}
 		if (result == null && source instanceof Named) {
 			result = Messages.getName((Named) source);
-			if (result != null && result.isEmpty())
+			if (result != null && result.isEmpty()) {
 				result = null;
+			}
 		}
-		if (result == null)
+		if (result == null) {
 			result = Messages.getName(source.getId());
+		}
 		return result;
 	}
 
@@ -110,7 +113,7 @@ public class ModifierFormat {
 
 	public static String getFeatureAsString(Feature feature) {
 		return Messages.getName(feature) + ":"
-				+ ((!feature.hasScope()) ? "" : feature.getScopes().stream().map(scope -> {
+				+ (!feature.hasScope() ? "" : feature.getScopes().stream().map(scope -> {
 					String k = scope.getKey();
 					if (k == null) {
 						k = "";

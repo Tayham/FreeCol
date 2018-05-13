@@ -31,7 +31,6 @@ import net.sf.freecol.FreeCol;
  * worker.
  */
 public final class Worker extends Thread {
-
 	private final LinkedBlockingQueue<Runnable> jobList;
 
 	private volatile boolean stopRunning;
@@ -55,7 +54,7 @@ public final class Worker extends Thread {
 		}
 	}
 
-	// run the next waiting job
+	/** Run the next waiting job. */
 	private void runNextWaitingJob() throws InterruptedException {
 		Runnable job = jobList.take();
 		try {

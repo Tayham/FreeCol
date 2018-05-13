@@ -58,13 +58,12 @@ import net.sf.freecol.common.option.OptionGroup;
  * join a running game, and to fetch a list of games from the meta-server.
  */
 public final class NewPanel extends FreeColPanel implements ActionListener, ItemListener {
-
 	private static final Logger logger = Logger.getLogger(NewPanel.class.getName());
 
 	/** The actions for this panel. */
-	private static enum NewPanelAction {
+	private enum NewPanelAction {
 		OK, CANCEL, SINGLE, JOIN, START, META_SERVER, SHOW_DIFFICULTY
-	};
+	}
 
 	/**
 	 * A particular specification to use for the new game. If not null, the
@@ -73,9 +72,7 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 	 */
 	private final Specification fixedSpecification;
 
-	/**
-	 * The current specification, driven by the contents of the TC box.
-	 */
+	/** The current specification, driven by the contents of the TC box. */
 	private Specification specification = null;
 
 	/**
@@ -187,8 +184,9 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 		single.setSelected(true);
 
 		String name = getClientOptions().getText(ClientOptions.NAME);
-		if (name == null || name.isEmpty())
+		if (name == null || name.isEmpty()) {
 			name = FreeCol.getName();
+		}
 		this.nameBox = new JTextField(name, 20);
 
 		this.advantagesLabel = Utility.localizedLabel("newPanel.nationalAdvantages");
@@ -287,12 +285,11 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 		setSize(getPreferredSize());
 	}
 
-	/**
-	 * If the TC box changed, update the specification.
-	 */
+	/** If the TC box changed, update the specification. */
 	private void updateSpecification() {
-		if (this.specification.getId().equals(getSelectedTC().getId()))
+		if (this.specification.getId().equals(getSelectedTC().getId())) {
 			return;
+		}
 		this.specification = getSpecification();
 		// Spec changed. If using a custom difficulty, preserve it.
 		// Otherwise reset the difficulty wrt the new spec.
@@ -327,15 +324,13 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 		this.difficultyBox.addItemListener(this);
 	}
 
-	/**
-	 * Update the show button.
-	 */
+	/** Update the show button. */
 	private void updateShowButton() {
 		if (this.difficulty == null) {
 			this.difficultyButton.setEnabled(false);
 		} else {
 			this.difficultyButton.setEnabled(true);
-			String text = (this.difficulty.isEditable()) ? "newPanel.editDifficulty" : "newPanel.showDifficulty";
+			String text = this.difficulty.isEditable() ? "newPanel.editDifficulty" : "newPanel.showDifficulty";
 			this.difficultyButton.setText(Messages.message(text));
 		}
 	}
@@ -390,15 +385,14 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 		} catch (NumberFormatException e) {
 			port = -1;
 		}
-		if (0 < port && port < 0x10000)
+		if (0 < port && port < 0x10000) {
 			return port;
+		}
 		field.setForeground(Color.red);
 		return -1;
 	}
 
-	/**
-	 * Enable components according to the selected button.
-	 */
+	/** Enable components according to the selected button. */
 	private void enableComponents() {
 		NewPanelAction action = Enum.valueOf(NewPanelAction.class, this.buttonGroup.getSelection().getActionCommand());
 		switch (action) {
@@ -455,16 +449,14 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 	 */
 	@Override
 	public Specification getSpecification() {
-		if (this.fixedSpecification != null)
+		if (this.fixedSpecification != null) {
 			return this.fixedSpecification;
+		}
 		return FreeCol.loadSpecification(getSelectedTC(), null, null);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final ConnectController cc = getFreeColClient().getConnectController();
@@ -481,28 +473,34 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 			switch (action) {
 			case SINGLE:
 				this.specification.prepare(getSelectedAdvantages(), this.difficulty);
-				if (cc.startSinglePlayerGame(this.specification, false))
+				if (cc.startSinglePlayerGame(this.specification, false)) {
 					return;
+				}
 				break;
 			case JOIN:
 				int joinPort = getSelectedPort(this.joinPortField);
-				if (joinPort < 0)
+				if (joinPort < 0) {
 					break;
-				if (cc.joinMultiplayerGame(this.joinNameField.getText(), joinPort))
+				}
+				if (cc.joinMultiplayerGame(this.joinNameField.getText(), joinPort)) {
 					return;
+				}
 				break;
 			case START:
 				int serverPort = getSelectedPort(this.serverPortField);
-				if (serverPort < 0)
+				if (serverPort < 0) {
 					break;
+				}
 				this.specification.prepare(getSelectedAdvantages(), this.difficulty);
-				if (cc.startMultiplayerGame(this.specification, this.publicServer.isSelected(), serverPort))
+				if (cc.startMultiplayerGame(this.specification, this.publicServer.isSelected(), serverPort)) {
 					return;
+				}
 				break;
 			case META_SERVER:
 				List<ServerInfo> servers = cc.getServerList();
-				if (servers != null)
+				if (servers != null) {
 					gui.showServerListPanel(servers);
+				}
 				break;
 			default:
 				break;
@@ -528,11 +526,8 @@ public final class NewPanel extends FreeColPanel implements ActionListener, Item
 		}
 	}
 
-	// Interface ItemListener
+	/** Interface ItemListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == this.rulesBox) {

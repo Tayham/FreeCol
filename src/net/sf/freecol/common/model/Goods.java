@@ -37,7 +37,6 @@ import org.w3c.dom.Element;
  * @see AbstractGoods
  */
 public class Goods extends AbstractGoods implements Locatable, Ownable {
-
 	private static final Logger logger = Logger.getLogger(Goods.class.getName());
 
 	/** The game containing these goods. */
@@ -134,82 +133,60 @@ public class Goods extends AbstractGoods implements Locatable, Ownable {
 	 * method adjusts the amount to the maximum amount possible.
 	 */
 	public void adjustAmount() {
-		if (location == null)
+		if (location == null) {
 			return;
+		}
 		GoodsContainer gc = location.getGoodsContainer();
 		if (gc != null) {
 			int maxAmount = gc.getGoodsCount(getType());
-			if (getAmount() > maxAmount)
+			if (getAmount() > maxAmount) {
 				setAmount(maxAmount);
+			}
 		}
 	}
 
-	// Interface Locatable
+	/** Interface Locatable. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getLocation() {
 		return location;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean setLocation(Location location) {
 		this.location = location;
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isInEurope() {
-		return (location instanceof Europe) || (location instanceof Unit && ((Unit) location).isInEurope());
+		return location instanceof Europe || (location instanceof Unit && ((Unit) location).isInEurope());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Tile getTile() {
 		return (location == null) ? null : location.getTile();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getSpaceTaken() {
 		return 1;
 	}
 
-	// Interface Ownable
+	/** Interface Ownable. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Player getOwner() {
 		return (location instanceof Ownable) ? ((Ownable) location).getOwner() : null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setOwner(Player p) {
 		throw new UnsupportedOperationException();
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Goods) {
@@ -219,22 +196,16 @@ public class Goods extends AbstractGoods implements Locatable, Ownable {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
 		return 31 * hash + Utils.hashCode(this.location);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String LOCATION_TAG = "location";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -244,9 +215,6 @@ public class Goods extends AbstractGoods implements Locatable, Ownable {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -254,9 +222,6 @@ public class Goods extends AbstractGoods implements Locatable, Ownable {
 		location = xr.getLocationAttribute(game, LOCATION_TAG, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

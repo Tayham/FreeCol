@@ -36,11 +36,8 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * Dialog to display on first contact with a native player.
- */
+/** Dialog to display on first contact with a native player. */
 public class FirstContactDialog extends FreeColConfirmDialog {
-
 	private static final String BASE_KEY = "firstContactDialog.meeting.";
 	private static final String IMAGE_BASE_KEY = "image.flavor.event.meeting.";
 	private static final String NATIVES_KEY = "natives";
@@ -103,8 +100,9 @@ public class FirstContactDialog extends FreeColConfirmDialog {
 
 		panel.add(header);
 		panel.add(image);
-		if (tutorial != null)
+		if (tutorial != null) {
 			panel.add(tutorial);
+		}
 		panel.add(text);
 		panel.setSize(panel.getPreferredSize());
 

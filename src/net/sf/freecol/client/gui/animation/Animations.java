@@ -23,11 +23,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * A facade for animations.
- */
+/** A facade for animations. */
 public class Animations {
-
 	/**
 	 * Animates a unit move.
 	 *
@@ -64,5 +61,4 @@ public class Animations {
 			Tile defenderTile, boolean success) {
 		new UnitAttackAnimation(freeColClient, attacker, defender, attackerTile, defenderTile, success).animate();
 	}
-
 }

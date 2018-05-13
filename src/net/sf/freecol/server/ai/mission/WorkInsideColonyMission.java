@@ -34,11 +34,8 @@ import net.sf.freecol.server.ai.AIColony;
 import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIUnit;
 
-/**
- * Mission for working inside an AI colony.
- */
+/** Mission for working inside an AI colony. */
 public class WorkInsideColonyMission extends Mission {
-
 	private static final Logger logger = Logger.getLogger(WorkInsideColonyMission.class.getName());
 
 	/** The tag for this mission. */
@@ -102,32 +99,22 @@ public class WorkInsideColonyMission extends Mission {
 	public static String invalidReason(AIUnit aiUnit, Location loc) {
 		String reason;
 		return ((reason = invalidAIUnitReason(aiUnit)) != null) ? reason
-				: (!aiUnit.getUnit().isPerson()) ? Mission.UNITNOTAPERSON
+				: !aiUnit.getUnit().isPerson() ? Mission.UNITNOTAPERSON
 						: ((reason = invalidTargetReason(loc, aiUnit.getUnit().getOwner())) != null) ? reason : null;
 	}
 
-	// Implement Mission
-	// Inherit dispose, getTransportDestination, isOneTime
+	/** Implement Mission Inherit dispose, getTransportDestination, isOneTime. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getBaseTransportPriority() {
 		return NORMAL_TRANSPORT_PRIORITY;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTarget() {
 		return colony;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setTarget(Location target) {
 		if (target instanceof Colony) {
@@ -135,31 +122,23 @@ public class WorkInsideColonyMission extends Mission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location findTarget() {
 		return getTarget();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String invalidReason() {
 		return invalidReason(getAIUnit(), getTarget());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Mission doMission(LogBuilder lb) {
 		lb.add(tag);
 		String reason = invalidReason();
-		if (reason != null)
+		if (reason != null) {
 			return lbFail(lb, false, reason);
+		}
 
 		final Unit unit = getUnit();
 		Unit.MoveType mt = travelToTarget(getTarget(), CostDeciders.avoidSettlementsAndBlockingUnits(), lb);
@@ -182,18 +161,16 @@ public class WorkInsideColonyMission extends Mission {
 		}
 
 		lbAt(lb);
-		if (unit.isInColony())
+		if (unit.isInColony()) {
 			lb.add(", working");
+		}
 		return lbWait(lb);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String COLONY_TAG = "colony";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -201,9 +178,6 @@ public class WorkInsideColonyMission extends Mission {
 		xw.writeAttribute(COLONY_TAG, colony);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -211,9 +185,6 @@ public class WorkInsideColonyMission extends Mission {
 		colony = xr.getAttribute(getGame(), COLONY_TAG, Colony.class, (Colony) null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

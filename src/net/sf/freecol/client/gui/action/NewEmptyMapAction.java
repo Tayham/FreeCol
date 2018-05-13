@@ -27,11 +27,8 @@ import net.sf.freecol.common.model.Game;
 import net.sf.freecol.common.model.Map;
 import net.sf.freecol.common.model.Tile;
 
-/**
- * Creates a new empty map.
- */
+/** Creates a new empty map. */
 public class NewEmptyMapAction extends MapboardAction {
-
 	public static final String id = "newEmptyMapAction";
 
 	/**
@@ -44,26 +41,21 @@ public class NewEmptyMapAction extends MapboardAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return freeColClient.isMapEditor();
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		Dimension size = getGUI().showMapSizeDialog();
-		if (size == null)
+		if (size == null) {
 			return;
+		}
 		final Game game = getGame();
 		Map map = getFreeColClient().getFreeColServer().createEmptyMap(game, size.width, size.height);
 		game.setMap(map);

@@ -29,11 +29,8 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-/**
- * A stop along a trade route.
- */
+/** A stop along a trade route. */
 public class TradeRouteStop extends FreeColObject implements TradeLocation {
-
 	private static final Logger logger = Logger.getLogger(TradeRouteStop.class.getName());
 
 	/** The game in play. */
@@ -68,7 +65,7 @@ public class TradeRouteStop extends FreeColObject implements TradeLocation {
 	 */
 	public TradeRouteStop(TradeRouteStop other) {
 		this(other.game, other.location);
-		this.setCargo(other.cargo);
+		setCargo(other.cargo);
 	}
 
 	/**
@@ -111,8 +108,8 @@ public class TradeRouteStop extends FreeColObject implements TradeLocation {
 	 * @return True if the stop is valid.
 	 */
 	public boolean isValid(Player player) {
-		return (location instanceof TradeLocation) && !((FreeColGameObject) location).isDisposed()
-				&& ((location instanceof Ownable) && player.owns((Ownable) location));
+		return location instanceof TradeLocation && !((FreeColGameObject) location).isDisposed()
+				&& location instanceof Ownable && player.owns((Ownable) location);
 	}
 
 	/**
@@ -176,7 +173,7 @@ public class TradeRouteStop extends FreeColObject implements TradeLocation {
 	 */
 	public StringTemplate getLabelFor(String key, Player player) {
 		return StringTemplate.template(key).addStringTemplate("%location%",
-				this.getLocation().getLocationLabelFor(player));
+				getLocation().getLocationLabelFor(player));
 	}
 
 	/**
@@ -204,64 +201,43 @@ public class TradeRouteStop extends FreeColObject implements TradeLocation {
 		List<AbstractGoods> stopGoods = getCompactCargo();
 		// There is space on the unit to load some more of this goods
 		// type, so return true if there is some available at the stop.
-		if (any(stopGoods.stream().filter(ag -> unit.getGoodsCount(ag.getType()) < ag.getAmount()),
-				ag -> getExportAmount(ag.getType(), turns) > 0))
-			return true;
+		return any(stopGoods.stream().filter(ag -> unit.getGoodsCount(ag.getType()) < ag.getAmount()),
+				ag -> getExportAmount(ag.getType(), turns) > 0) || any(unit.getCompactGoodsList().stream().filter(ag -> !AbstractGoods.containsType(ag.getType(), stopGoods)),
+				ag -> getImportAmount(ag.getType(), turns) > 0);
 
 		// Look for goods to unload.
-		if (any(unit.getCompactGoodsList().stream().filter(ag -> !AbstractGoods.containsType(ag.getType(), stopGoods)),
-				ag -> getImportAmount(ag.getType(), turns) > 0))
-			return true;
-
-		return false;
 	}
 
-	// Interface TradeLocation
+	/** Interface TradeLocation. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getGoodsCount(GoodsType goodsType) {
 		return (location instanceof TradeLocation) ? ((TradeLocation) location).getGoodsCount(goodsType) : 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getExportAmount(GoodsType goodsType, int turns) {
 		return (location instanceof TradeLocation) ? ((TradeLocation) location).getExportAmount(goodsType, turns) : 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getImportAmount(GoodsType goodsType, int turns) {
 		return (location instanceof TradeLocation) ? ((TradeLocation) location).getImportAmount(goodsType, turns) : 0;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String CARGO_TAG = "cargo";
 	private static final String LOCATION_TAG = "location";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		xw.writeLocationAttribute(LOCATION_TAG, location);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		for (GoodsType cargoType : cargo) {
-
 			xw.writeStartElement(CARGO_TAG);
 
 			xw.writeAttribute(FreeColObject.ID_ATTRIBUTE_TAG, cargoType);
@@ -270,17 +246,11 @@ public class TradeRouteStop extends FreeColObject implements TradeLocation {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		location = xr.getLocationAttribute(game, LOCATION_TAG, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -289,9 +259,6 @@ public class TradeRouteStop extends FreeColObject implements TradeLocation {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -301,15 +268,11 @@ public class TradeRouteStop extends FreeColObject implements TradeLocation {
 			cargo.add(xr.getType(spec, ID_ATTRIBUTE_TAG, GoodsType.class, (GoodsType) null));
 
 			xr.closeTag(CARGO_TAG);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);

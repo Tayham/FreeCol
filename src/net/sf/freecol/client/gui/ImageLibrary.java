@@ -74,7 +74,6 @@ import static net.sf.freecol.common.util.StringUtils.*;
  * certain things.
  */
 public final class ImageLibrary {
-
 	private static final Logger logger = Logger.getLogger(ImageLibrary.class.getName());
 
 	/**
@@ -98,7 +97,7 @@ public final class ImageLibrary {
 			DARKNESS = "image.halo.dark", ICON_LOCK = "image.icon.lock", ICON_COIN = "image.icon.coin",
 			BELLS = "image.icon.model.goods.bells";
 
-	public static enum PathType {
+	public enum PathType {
 		NAVAL, WAGON, HORSE, FOOT;
 
 		/**
@@ -127,10 +126,10 @@ public final class ImageLibrary {
 		 */
 		public static PathType getPathType(Unit u) {
 			return (u == null) ? PathType.FOOT
-					: (u.isNaval()) ? PathType.NAVAL
-							: (u.isMounted()) ? PathType.HORSE : (u.isPerson()) ? PathType.FOOT : PathType.WAGON;
+					: u.isNaval() ? PathType.NAVAL
+							: u.isMounted() ? PathType.HORSE : u.isPerson() ? PathType.FOOT : PathType.WAGON;
 		}
-	};
+	}
 
 	/**
 	 * The scale factor used when creating this <code>ImageLibrary</code>. The value
@@ -202,7 +201,7 @@ public final class ImageLibrary {
 	 */
 	public static Color getForegroundColor(Color background) {
 		return (background == null
-				|| (background.getRed() * 0.3 + background.getGreen() * 0.59 + background.getBlue() * 0.11 >= 126))
+				|| background.getRed() * 0.3 + background.getGreen() * 0.59 + background.getBlue() * 0.11 >= 126)
 						? Color.BLACK
 						: Color.WHITE;
 	}
@@ -234,7 +233,7 @@ public final class ImageLibrary {
 	 * @return a <code>boolean</code> value
 	 */
 	private static boolean isEven(int x, int y) {
-		return ((y % 8 <= 2) || ((x + y) % 2 == 0));
+		return y % 8 <= 2 || (x + y) % 2 == 0;
 	}
 
 	/**
@@ -250,7 +249,7 @@ public final class ImageLibrary {
 	 */
 	public BufferedImage getBeachCornerImage(int index, int x, int y) {
 		return ResourceManager
-				.getImage("image.tile.model.tile.beach.corner" + index + ".r" + ((isEven(x, y)) ? "0" : "1"), tileSize);
+				.getImage("image.tile.model.tile.beach.corner" + index + ".r" + (isEven(x, y) ? "0" : "1"), tileSize);
 	}
 
 	/**
@@ -266,7 +265,7 @@ public final class ImageLibrary {
 	 */
 	public BufferedImage getBeachEdgeImage(int index, int x, int y) {
 		return ResourceManager
-				.getImage("image.tile.model.tile.beach.edge" + index + ".r" + ((isEven(x, y)) ? "0" : "1"), tileSize);
+				.getImage("image.tile.model.tile.beach.edge" + index + ".r" + (isEven(x, y) ? "0" : "1"), tileSize);
 	}
 
 	/**
@@ -285,7 +284,7 @@ public final class ImageLibrary {
 	public BufferedImage getBorderImage(TileType type, Direction direction, int x, int y) {
 		String key = (type == null) ? "model.tile.unexplored" : type.getId();
 		return ResourceManager
-				.getImage("image.tile." + key + ".border." + direction + ".r" + ((isEven(x, y)) ? "0" : "1"), tileSize);
+				.getImage("image.tile." + key + ".border." + direction + ".r" + (isEven(x, y) ? "0" : "1"), tileSize);
 	}
 
 	/**
@@ -319,9 +318,9 @@ public final class ImageLibrary {
 			// river style. The map is now fixed, this is just for the
 			// the saved games.
 			// Consider keeping the fallback, as its safer to have one.
-			if (ResourceManager.hasImageResource(key))
-				// end @compat
+			if (ResourceManager.hasImageResource(key)) {
 				return ResourceManager.getImage(key, size);
+			}
 		}
 		return ResourceManager.getImage("image.tileforest." + type.getId(), size);
 	}
@@ -343,17 +342,15 @@ public final class ImageLibrary {
 	public BufferedImage getSmallBuildableImage(BuildableType buildable, Player player) {
 		// FIXME: distinguish national unit types
 		float scale = scaleFactor * 0.75f;
-		BufferedImage image = (buildable instanceof BuildingType)
-				? ImageLibrary.getBuildingImage((BuildingType) buildable, player, scale)
-				: ImageLibrary.getUnitImage((UnitType) buildable, scale);
-		return image;
+		return (buildable instanceof BuildingType)
+				? getBuildingImage((BuildingType) buildable, player, scale)
+				: getUnitImage((UnitType) buildable, scale);
 	}
 
 	public static BufferedImage getBuildableImage(BuildableType buildable, Dimension size) {
-		BufferedImage image = (buildable instanceof BuildingType)
-				? ImageLibrary.getBuildingImage((BuildingType) buildable, size)
-				: ImageLibrary.getUnitImage((UnitType) buildable, size);
-		return image;
+		return (buildable instanceof BuildingType)
+				? getBuildingImage((BuildingType) buildable, size)
+				: getUnitImage((UnitType) buildable, size);
 	}
 
 	public BufferedImage getSmallBuildingImage(Building building) {
@@ -372,12 +369,14 @@ public final class ImageLibrary {
 		return ResourceManager.getImage(key, scale);
 	}
 
-	// TODO Remove unused code found by UCDetector
-	// public static BufferedImage getBuildingImage(BuildingType buildingType,
-	// float scale) {
-	// return ResourceManager.getImage("image.buildingicon."
-	// + buildingType.getId(), scale);
-	// }
+	/**
+	 * TODO Remove unused code found by UCDetector
+	 * public static BufferedImage getBuildingImage(BuildingType buildingType,
+	 * float scale) {
+	 * return ResourceManager.getImage("image.buildingicon."
+	 * + buildingType.getId(), scale);
+	 * }
+	 */
 
 	public static BufferedImage getBuildingImage(BuildingType buildingType, Dimension size) {
 		return ResourceManager.getImage("image.buildingicon." + buildingType.getId(), size);
@@ -465,7 +464,7 @@ public final class ImageLibrary {
 				Settlement settlement = (Settlement) display;
 				image = getSettlementImage(settlement, size);
 			} else if (display instanceof LostCityRumour) {
-				image = getMiscImage(ImageLibrary.LOST_CITY_RUMOUR, size);
+				image = getMiscImage(LOST_CITY_RUMOUR, size);
 			} else if (display instanceof GoodsType) {
 				FreeColGameObjectType type = (FreeColGameObjectType) display;
 				image = getIconImage(type);
@@ -736,11 +735,13 @@ public final class ImageLibrary {
 		return getUnitImage(unit.getType(), unit.getRole().getId(), unit.hasNativeEthnicity(), grayscale, scaleFactor);
 	}
 
-	// TODO Remove unused code found by UCDetector
-	// public static BufferedImage getUnitImage(Unit unit, float scale) {
-	// return getUnitImage(unit.getType(), unit.getRole().getId(),
-	// unit.hasNativeEthnicity(), false, scale);
-	// }
+	/**
+	 * TODO Remove unused code found by UCDetector
+	 * public static BufferedImage getUnitImage(Unit unit, float scale) {
+	 * return getUnitImage(unit.getType(), unit.getRole().getId(),
+	 * unit.hasNativeEthnicity(), false, scale);
+	 * }
+	 */
 
 	public BufferedImage getTinyUnitImage(UnitType unitType) {
 		return getUnitImage(unitType, unitType.getDisplayRoleId(), false, false, scaleFactor * 0.25f);
@@ -797,14 +798,13 @@ public final class ImageLibrary {
 		}
 
 		// try to get an image matching the key
-		String roleQual = (Role.isDefaultRoleId(roleId)) ? "" : "." + Role.getRoleSuffix(roleId);
-		String key = "image.unit." + unitType.getId() + roleQual + ((nativeEthnicity) ? ".native" : "");
+		String roleQual = Role.isDefaultRoleId(roleId) ? "" : "." + Role.getRoleSuffix(roleId);
+		String key = "image.unit." + unitType.getId() + roleQual + (nativeEthnicity ? ".native" : "");
 		if (!ResourceManager.hasImageResource(key) && nativeEthnicity) {
 			key = "image.unit." + unitType.getId() + roleQual;
 		}
-		BufferedImage image = (grayscale) ? ResourceManager.getGrayscaleImage(key, scale)
+		return grayscale ? ResourceManager.getGrayscaleImage(key, scale)
 				: ResourceManager.getImage(key, scale);
-		return image;
 	}
 
 	public static BufferedImage getUnitImage(Unit unit, Dimension size) {
@@ -813,7 +813,7 @@ public final class ImageLibrary {
 
 	public static BufferedImage getUnitImage(UnitType unitType, Dimension size) {
 		String roleId = unitType.getDisplayRoleId();
-		String roleQual = (Role.isDefaultRoleId(roleId)) ? "" : "." + Role.getRoleSuffix(roleId);
+		String roleQual = Role.isDefaultRoleId(roleId) ? "" : "." + Role.getRoleSuffix(roleId);
 		String key = "image.unit." + unitType.getId() + roleQual;
 		return ResourceManager.getImage(key, size);
 	}
@@ -826,13 +826,12 @@ public final class ImageLibrary {
 		}
 
 		// try to get an image matching the key
-		String roleQual = (Role.isDefaultRoleId(roleId)) ? "" : "." + Role.getRoleSuffix(roleId);
-		String key = "image.unit." + unitType.getId() + roleQual + ((nativeEthnicity) ? ".native" : "");
+		String roleQual = Role.isDefaultRoleId(roleId) ? "" : "." + Role.getRoleSuffix(roleId);
+		String key = "image.unit." + unitType.getId() + roleQual + (nativeEthnicity ? ".native" : "");
 		if (!ResourceManager.hasImageResource(key) && nativeEthnicity) {
 			key = "image.unit." + unitType.getId() + roleQual;
 		}
-		BufferedImage image = ResourceManager.getImage(key, size);
-		return image;
+		return ResourceManager.getImage(key, size);
 	}
 
 	// Methods for dynamically drawing images
@@ -925,8 +924,9 @@ public final class ImageLibrary {
 	// }
 
 	public static BufferedImage createMirroredImage(Image image) {
-		if (image == null)
+		if (image == null) {
 			return null;
+		}
 		final int width = image.getWidth(null);
 		final int height = image.getHeight(null);
 		BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -963,14 +963,11 @@ public final class ImageLibrary {
 	// BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 	// Graphics2D g = bi.createGraphics();
 	// g.drawImage(img, 0, 0, null);
-	//
 	// float offset = target * (1.0f - fade);
 	// float[] scales = { fade, fade, fade, 1.0f };
 	// float[] offsets = { offset, offset, offset, 0.0f };
 	// RescaleOp rop = new RescaleOp(scales, offsets, null);
-	//
 	// g.drawImage(bi, rop, 0, 0);
-	//
 	// g.dispose();
 	// return bi;
 	// }
@@ -1071,8 +1068,9 @@ public final class ImageLibrary {
 	 * @return An alarm chip, or null if none suitable.
 	 */
 	public BufferedImage getAlarmChip(Graphics2D g, IndianSettlement is, Player player) {
-		if (player == null || !is.hasContacted(player))
+		if (player == null || !is.hasContacted(player)) {
 			return null;
+		}
 		Color ownerColor = is.getOwner().getNationColor();
 		Player enemy = is.getMostHated();
 		Color enemyColor = (enemy == null) ? Nation.UNKNOWN_NATION_COLOR : enemy.getNationColor();
@@ -1086,12 +1084,13 @@ public final class ImageLibrary {
 		} else if (player == enemy) {
 			Tension alarm = is.getAlarm(enemy);
 			amount = (alarm == null) ? 4 : alarm.getLevel().ordinal();
-			if (amount == 0)
-				amount = 1; // Show *something*!
+			if (amount == 0) {
+				amount = 1;
+			} // Show *something*!
 		}
 		Color foreground = getForegroundColor(enemyColor);
 		String text = ResourceManager
-				.getString((is.worthScouting(player)) ? "indianAlarmChip.contacted" : "indianAlarmChip.scouted");
+				.getString(is.worthScouting(player) ? "indianAlarmChip.contacted" : "indianAlarmChip.scouted");
 		return createFilledChip(g, text, Color.BLACK, ownerColor, amount / 4.0, enemyColor, foreground);
 	}
 
@@ -1106,7 +1105,7 @@ public final class ImageLibrary {
 	 */
 	public BufferedImage getIndianSettlementChip(Graphics2D g, IndianSettlement is) {
 		String text = ResourceManager
-				.getString("indianSettlementChip." + ((is.getType().isCapital()) ? "capital" : "normal"));
+				.getString("indianSettlementChip." + (is.getType().isCapital() ? "capital" : "normal"));
 		Color background = is.getOwner().getNationColor();
 		return createChip(g, text, Color.BLACK, background, getForegroundColor(background));
 	}
@@ -1124,12 +1123,12 @@ public final class ImageLibrary {
 	 */
 	public BufferedImage getMissionChip(Graphics2D g, Player owner, boolean expert) {
 		Color background = owner.getNationColor();
-		String key = "color.foreground.mission." + ((expert) ? "expert" : "normal");
+		String key = "color.foreground.mission." + (expert ? "expert" : "normal");
 		Color foreground;
 		if (ResourceManager.hasColorResource(key)) {
 			foreground = ResourceManager.getColor(key);
 		} else {
-			foreground = (expert) ? Color.BLACK : Color.GRAY;
+			foreground = expert ? Color.BLACK : Color.GRAY;
 		}
 		return createChip(g, ResourceManager.getString("cross"), Color.BLACK, background, foreground);
 	}
@@ -1174,7 +1173,7 @@ public final class ImageLibrary {
 		}
 
 		// Lookup in the cache if the image has been generated already
-		String key = text + "." + font.getFontName().replace(' ', '-') + "." + Integer.toString(font.getSize()) + "."
+		String key = text + "." + font.getFontName().replace(' ', '-') + "." + font.getSize() + "."
 				+ Integer.toHexString(color.getRGB());
 		BufferedImage img = stringImageCache.get(key);
 		if (img != null) {
@@ -1203,21 +1202,17 @@ public final class ImageLibrary {
 					srcRGB = bi.getRGB(biX, biY);
 					srcA = (srcRGB >> 24) & 0xFF;
 					dstRGB = bi.getRGB(biX - d, biY);
-					if (dstRGB != borderColor) {
-						if (srcA > 0) {
-							bi.setRGB(biX, biY, borderColor);
-							bi.setRGB(biX - d, biY, srcRGB);
-						}
+					if (dstRGB != borderColor && srcA > 0) {
+						bi.setRGB(biX, biY, borderColor);
+						bi.setRGB(biX - d, biY, srcRGB);
 					}
 					// right to left
 					srcRGB = bi.getRGB(biXI, biY);
 					srcA = (srcRGB >> 24) & 0xFF;
 					dstRGB = bi.getRGB(biXI + d, biY);
-					if (dstRGB != borderColor) {
-						if (srcA > 0) {
-							bi.setRGB(biXI, biY, borderColor);
-							bi.setRGB(biXI + d, biY, srcRGB);
-						}
+					if (dstRGB != borderColor && srcA > 0) {
+						bi.setRGB(biXI, biY, borderColor);
+						bi.setRGB(biXI + d, biY, srcRGB);
 					}
 				}
 			}
@@ -1230,21 +1225,17 @@ public final class ImageLibrary {
 					srcRGB = bi.getRGB(biX, biY);
 					srcA = (srcRGB >> 24) & 0xFF;
 					dstRGB = bi.getRGB(biX, biY - d);
-					if (dstRGB != borderColor) {
-						if (srcA > 0) {
-							bi.setRGB(biX, biY, borderColor);
-							bi.setRGB(biX, biY - d, srcRGB);
-						}
+					if (dstRGB != borderColor && srcA > 0) {
+						bi.setRGB(biX, biY, borderColor);
+						bi.setRGB(biX, biY - d, srcRGB);
 					}
 					// bottom to top
 					srcRGB = bi.getRGB(biX, biYI);
 					srcA = (srcRGB >> 24) & 0xFF;
 					dstRGB = bi.getRGB(biX, biYI + d);
-					if (dstRGB != borderColor) {
-						if (srcA > 0) {
-							bi.setRGB(biX, biYI, borderColor);
-							bi.setRGB(biX, biYI + d, srcRGB);
-						}
+					if (dstRGB != borderColor && srcA > 0) {
+						bi.setRGB(biX, biYI, borderColor);
+						bi.setRGB(biX, biYI + d, srcRGB);
 					}
 				}
 			}
@@ -1257,5 +1248,4 @@ public final class ImageLibrary {
 		stringImageCache.put(key, bi);
 		return bi;
 	}
-
 }

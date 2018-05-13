@@ -33,11 +33,8 @@ import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 
-/**
- * This panel displays the Military Report.
- */
+/** This panel displays the Military Report. */
 public final class ReportMilitaryPanel extends ReportUnitPanel {
-
 	/**
 	 * The constructor that will add the items to this panel.
 	 *
@@ -65,11 +62,8 @@ public final class ReportMilitaryPanel extends ReportUnitPanel {
 		}
 	}
 
-	// Implement ReportUnitPanel
+	/** Implement ReportUnitPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void gatherData() {
 		for (Unit unit : getMyPlayer().getUnits()) {
@@ -79,9 +73,6 @@ public final class ReportMilitaryPanel extends ReportUnitPanel {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void addREFUnits() {
 		final Specification spec = getSpecification();
@@ -100,9 +91,6 @@ public final class ReportMilitaryPanel extends ReportUnitPanel {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void addOwnUnits() {
 		final Specification spec = getSpecification();

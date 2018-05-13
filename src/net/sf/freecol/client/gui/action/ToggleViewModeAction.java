@@ -28,7 +28,6 @@ import net.sf.freecol.client.FreeColClient;
  * mode.
  */
 public class ToggleViewModeAction extends MapboardAction {
-
 	public static final String id = "toggleViewModeAction";
 
 	/**
@@ -41,11 +40,8 @@ public class ToggleViewModeAction extends MapboardAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().toggleViewMode();

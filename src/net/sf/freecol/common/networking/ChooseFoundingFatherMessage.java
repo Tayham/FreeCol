@@ -32,11 +32,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent to choose a founding father.
- */
+/** The message sent to choose a founding father. */
 public class ChooseFoundingFatherMessage extends DOMMessage {
-
 	/** The fathers to offer. */
 	private final List<FoundingFather> fathers;
 
@@ -76,8 +73,9 @@ public class ChooseFoundingFatherMessage extends DOMMessage {
 		this.fathers = new ArrayList<>();
 		for (FoundingFatherType type : FoundingFatherType.values()) {
 			String id = element.getAttribute(type.toString());
-			if (id == null || id.isEmpty())
+			if (id == null || id.isEmpty()) {
 				continue;
+			}
 			FoundingFather ff = spec.getFoundingFather(id);
 			this.fathers.add(ff);
 		}

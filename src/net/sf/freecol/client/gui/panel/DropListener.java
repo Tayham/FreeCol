@@ -35,7 +35,6 @@ import javax.swing.TransferHandler;
  * component to which it is attached can accept draggable data.
  */
 public final class DropListener extends MouseAdapter {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(DropListener.class.getName());
 
@@ -50,12 +49,10 @@ public final class DropListener extends MouseAdapter {
 	public void mouseReleased(MouseEvent e) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable clipData = clipboard.getContents(clipboard);
-		if (clipData != null) {
-			if (clipData.isDataFlavorSupported(DefaultTransferHandler.flavor)) {
-				JComponent comp = (JComponent) e.getSource();
-				TransferHandler handler = comp.getTransferHandler();
-				handler.importData(comp, clipData);
-			}
+		if (clipData != null && clipData.isDataFlavorSupported(DefaultTransferHandler.flavor)) {
+			JComponent comp = (JComponent) e.getSource();
+			TransferHandler handler = comp.getTransferHandler();
+			handler.importData(comp, clipData);
 		}
 	}
 }

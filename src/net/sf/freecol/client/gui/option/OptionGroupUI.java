@@ -44,11 +44,8 @@ import net.sf.freecol.common.i18n.Messages;
 import net.sf.freecol.common.option.Option;
 import net.sf.freecol.common.option.OptionGroup;
 
-/**
- * This panel displays an OptionGroup using a JTree.
- */
+/** This panel displays an OptionGroup using a JTree. */
 public final class OptionGroupUI extends MigPanel implements OptionUpdater, TreeSelectionListener {
-
 	private static final Logger logger = Logger.getLogger(OptionGroupUI.class.getName());
 
 	private final List<OptionUpdater> optionUpdaters = new ArrayList<>();
@@ -117,7 +114,7 @@ public final class OptionGroupUI extends MigPanel implements OptionUpdater, Tree
 	}
 
 	/**
-	 * Builds the JTree which represents the navigation menu and then returns it
+	 * Builds the JTree which represents the navigation menu and then returns it.
 	 */
 	private void buildTree(OptionGroup group, DefaultMutableTreeNode parent) {
 		for (Option option : group.getOptions()) {
@@ -200,11 +197,8 @@ public final class OptionGroupUI extends MigPanel implements OptionUpdater, Tree
 		}
 	}
 
-	// Implement OptionUpdater
+	/** Implement OptionUpdater. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		for (OptionUpdater optionUpdater : optionUpdaters) {
@@ -212,9 +206,6 @@ public final class OptionGroupUI extends MigPanel implements OptionUpdater, Tree
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		for (OptionUpdater optionUpdater : optionUpdaters) {

@@ -26,7 +26,6 @@ import javax.swing.JLabel;
  * {@link MapViewer#executeWithUnitOutForAnimation(net.sf.freecol.common.model.Unit, net.sf.freecol.common.model.Tile, OutForAnimationCallback)}.
  */
 public interface OutForAnimationCallback {
-
 	/**
 	 * The code to be executed when a unit is out for animation.
 	 *

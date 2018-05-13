@@ -43,26 +43,19 @@ import org.w3c.dom.Element;
  * @see Locatable
  */
 public abstract class UnitLocation extends FreeColGameObject implements Location {
-
 	private static final Logger logger = Logger.getLogger(UnitLocation.class.getName());
 
-	public static enum NoAddReason {
-		/**
-		 * No reason why Locatable can not be added.
-		 */
+	public enum NoAddReason {
+		/** No reason why Locatable can not be added. */
 		NONE,
-		/**
-		 * Unit is already in the location.
-		 */
+		/** Unit is already in the location. */
 		ALREADY_PRESENT,
 		/**
 		 * Locatable can not be added because it has the wrong type. E.g. a
 		 * {@link Building} can not be added to a {@link Unit}.
 		 */
 		WRONG_TYPE,
-		/**
-		 * Locatable can not be added because the Location is already full.
-		 */
+		/** Locatable can not be added because the Location is already full. */
 		CAPACITY_EXCEEDED,
 		/**
 		 * Locatable can not be added because the Location is occupied by objects
@@ -76,34 +69,22 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		OWNED_BY_ENEMY,
 		// Enums can not be extended, so ColonyTile-specific failure reasons
 		// have to be here.
-		/**
-		 * Claimed and in use by another of our colonies.
-		 */
+		/** Claimed and in use by another of our colonies. */
 		ANOTHER_COLONY,
-		/**
-		 * Can not add to settlement center tile.
-		 */
+		/** Can not add to settlement center tile. */
 		COLONY_CENTER,
 		/**
 		 * Missing ability to work colony tile or building. Currently only
 		 * produceInWater, which is assumed by the error message
 		 */
 		MISSING_ABILITY,
-		/**
-		 * The unit has no skill.
-		 */
+		/** The unit has no skill. */
 		MISSING_SKILL,
-		/**
-		 * The unit does not have the minimum skill required.
-		 */
+		/** The unit does not have the minimum skill required. */
 		MINIMUM_SKILL,
-		/**
-		 * The unit exceeds the maximum skill of this type.
-		 */
+		/** The unit exceeds the maximum skill of this type. */
 		MAXIMUM_SKILL,
-		/**
-		 * Either unclaimed or claimed but could be acquired.
-		 */
+		/** Either unclaimed or claimed but could be acquired. */
 		CLAIM_REQUIRED;
 
 		/**
@@ -192,8 +173,9 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 	 * @return The first <code>Unit</code>.
 	 */
 	public final Unit getFirstUnit() {
-		if (isEmpty())
+		if (isEmpty()) {
 			return null;
+		}
 		List<Unit> units = getUnitList();
 		return units.get(0);
 	}
@@ -204,8 +186,9 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 	 * @return The last <code>Unit</code>.
 	 */
 	public final Unit getLastUnit() {
-		if (isEmpty())
+		if (isEmpty()) {
 			return null;
+		}
 		List<Unit> units = getUnitList();
 		return units.get(units.size() - 1);
 	}
@@ -251,31 +234,27 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 	 */
 	public Unit getCarrierForUnit(Unit unit) {
 		for (Unit u : getUnitList()) {
-			if (u.couldCarry(unit))
+			if (u.couldCarry(unit)) {
 				return u;
+			}
 		}
 		return null;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<FreeColGameObject> getDisposeList() {
 		List<FreeColGameObject> objects = new ArrayList<>();
 		synchronized (units) {
-			for (Unit u : units)
+			for (Unit u : units) {
 				objects.addAll(u.getDisposeList());
+			}
 		}
 		objects.addAll(super.getDisposeList());
 		return objects;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void disposeResources() {
 		synchronized (units) {
@@ -284,38 +263,28 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		super.disposeResources();
 	}
 
-	// Interface Location
-	// Inheriting
-	// FreeColObject.getId()
-	// Does not implement getRank()
-
 	/**
-	 * {@inheritDoc}
+	 * Interface Location
+	 * Inheriting
+	 * FreeColObject.getId()
+	 * Does not implement getRank()
 	 */
+
 	@Override
 	public Tile getTile() {
 		return null; // Override this where it becomes meaningful.
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public StringTemplate getLocationLabel() {
 		return StringTemplate.key(getId());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public StringTemplate getLocationLabelFor(Player player) {
 		return getLocationLabel();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean add(Locatable locatable) {
 		if (locatable instanceof Unit) {
@@ -324,8 +293,9 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 				return true;
 			} else if (canAdd(unit)) {
 				synchronized (units) {
-					if (!units.add(unit))
+					if (!units.add(unit)) {
 						return false;
+					}
 					unit.setLocationNoUpdate(this);
 					return true;
 				}
@@ -341,16 +311,14 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean remove(Locatable locatable) {
 		if (locatable instanceof Unit) {
 			Unit unit = (Unit) locatable;
 			synchronized (units) {
-				if (!units.remove(unit))
+				if (!units.remove(unit)) {
 					return false;
+				}
 				unit.setLocationNoUpdate(null);
 				return true;
 			}
@@ -360,29 +328,21 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean contains(Locatable locatable) {
-		if (!(locatable instanceof Unit))
+		if (!(locatable instanceof Unit)) {
 			return false;
+		}
 		synchronized (units) {
 			return units.contains(locatable);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canAdd(Locatable locatable) {
 		return getNoAddReason(locatable) == NoAddReason.NONE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getUnitCount() {
 		synchronized (units) {
@@ -390,9 +350,6 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Unit> getUnitList() {
 		synchronized (units) {
@@ -400,34 +357,22 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final Iterator<Unit> getUnitIterator() {
 		// Marked final as this will always work if getUnitList() does.
 		return getUnitList().iterator();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public GoodsContainer getGoodsContainer() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Settlement getSettlement() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final Colony getColony() {
 		// Final as this will always work if getSettlement() does.
@@ -435,9 +380,6 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		return (settlement instanceof Colony) ? (Colony) settlement : null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final IndianSettlement getIndianSettlement() {
 		// Final as this will always work if getSettlement() does.
@@ -467,14 +409,13 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 	 */
 	public void moveToFront(Unit u) {
 		synchronized (units) {
-			if (units.remove(u))
+			if (units.remove(u)) {
 				units.add(0, u);
+			}
 		}
 	}
 
-	/**
-	 * Clear the units from this container.
-	 */
+	/** Clear the units from this container. */
 	protected void clearUnitList() {
 		synchronized (units) {
 			units.clear();
@@ -500,7 +441,7 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		Unit unit = (locatable instanceof Unit) ? (Unit) locatable : null;
 		return (unit == null) ? NoAddReason.WRONG_TYPE
 				: (!isEmpty() && getFirstUnit().getOwner() != unit.getOwner()) ? NoAddReason.OCCUPIED_BY_ENEMY
-						: (contains(unit)) ? NoAddReason.ALREADY_PRESENT
+						: contains(unit) ? NoAddReason.ALREADY_PRESENT
 								: (unit.getSpaceTaken() + getSpaceTaken() > getUnitCapacity())
 										? NoAddReason.CAPACITY_EXCEEDED
 										: NoAddReason.NONE;
@@ -543,11 +484,8 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		return false;
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -564,9 +502,6 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -575,9 +510,6 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -585,15 +517,15 @@ public abstract class UnitLocation extends FreeColGameObject implements Location
 		if (Unit.getXMLElementTagName().equals(tag)) {
 			Unit u = xr.readFreeColGameObject(getGame(), Unit.class);
 			if (u.getLocation() != this) {
-				logger.warning("Fixing bogus unit location for " + u.getId() + ", expected " + this.getId()
+				logger.warning("Fixing bogus unit location for " + u.getId() + ", expected " + getId()
 						+ " but found " + u.getLocation());
 				u.setLocationNoUpdate(this);
 			}
-			if (u != null)
+			if (u != null) {
 				synchronized (units) {
 					units.add(u);
 				}
-
+			}
 		} else {
 			super.readChild(xr);
 		}

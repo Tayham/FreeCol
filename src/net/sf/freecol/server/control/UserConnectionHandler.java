@@ -42,7 +42,6 @@ import org.w3c.dom.Element;
  * message handler when the client has successfully logged on.
  */
 public final class UserConnectionHandler extends FreeColServerHolder implements MessageHandler {
-
 	private static final Logger logger = Logger.getLogger(UserConnectionHandler.class.getName());
 
 	/**
@@ -69,10 +68,10 @@ public final class UserConnectionHandler extends FreeColServerHolder implements 
 	@Override
 	public synchronized Element handle(Connection conn, Element element) {
 		final String tag = element.getTagName();
-		return ("disconnect".equals(tag)) ? disconnect(conn, element)
-				: ("gameState".equals(tag)) ? gameState(conn, element)
-						: ("getVacantPlayers".equals(tag)) ? getVacantPlayers(conn, element)
-								: ("login".equals(tag)) ? login(conn, element) : unknown(tag);
+		return "disconnect".equals(tag) ? disconnect(conn, element)
+				: "gameState".equals(tag) ? gameState(conn, element)
+						: "getVacantPlayers".equals(tag) ? getVacantPlayers(conn, element)
+								: "login".equals(tag) ? login(conn, element) : unknown(tag);
 	}
 
 	// Individual message handlers
@@ -180,7 +179,8 @@ public final class UserConnectionHandler extends FreeColServerHolder implements 
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 				}
-				if ((timeOut -= 1000) <= 0) {
+				timeOut -= 1000;
+				if (timeOut <= 0) {
 					return DOMMessage.createError("server.timeOut", null);
 				}
 			}
@@ -206,13 +206,12 @@ public final class UserConnectionHandler extends FreeColServerHolder implements 
 
 			// Ready now to handle pre-game messages.
 			mh = freeColServer.getPreGameInputHandler();
-
 		} else { // Restoring from existing game.
 			game = freeColServer.getGame();
 			player = (ServerPlayer) game.getPlayerByName(userName);
 			if (player == null) {
 				StringBuilder sb = new StringBuilder("Player \"");
-				sb.append(userName).append("\" is not present in the game.").append("\n  Known players = ( ");
+				sb.append(userName).append("\" is not present in the game." + "\n  Known players = ( ");
 				for (Player p : game.getLiveEuropeanPlayers(null)) {
 					sb.append(p.getName()).append(" ");
 				}

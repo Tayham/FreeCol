@@ -49,9 +49,7 @@ import net.sf.freecol.common.option.UnitTypeOption;
  * values to be both seen and changed.
  */
 public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption> implements ItemListener {
-
 	private class AbstractUnitRenderer extends FreeColComboBoxRenderer<AbstractUnitOption> {
-
 		@Override
 		public void setLabelValues(JLabel label, AbstractUnitOption value) {
 			label.setText(Messages.message(value.getValue().getLabel()));
@@ -59,7 +57,6 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption> imp
 	}
 
 	private class RoleRenderer extends FreeColComboBoxRenderer<String> {
-
 		@Override
 		public void setLabelValues(JLabel label, String value) {
 			label.setText(Messages.getName(value));
@@ -91,7 +88,7 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption> imp
 		UnitTypeOption typeOption = option.getUnitType();
 		StringOption roleOption = option.getRole();
 
-		boolean numberEditable = editable && (numberOption.getMaximumValue() > numberOption.getMinimumValue());
+		boolean numberEditable = editable && numberOption.getMaximumValue() > numberOption.getMinimumValue();
 		numberUI = new IntegerOptionUI(numberOption, numberEditable);
 		Utility.localizeToolTip(numberUI.getComponent(), "report.numberOfUnits");
 		panel.add(numberUI.getComponent(), "width 30%");
@@ -128,27 +125,18 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption> imp
 		box.setEnabled(enable);
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ListCellRenderer getListCellRenderer() {
 		return new AbstractUnitRenderer();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JPanel getComponent() {
 		return panel;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		typeUI.updateOption();
@@ -160,9 +148,6 @@ public final class AbstractUnitOptionUI extends OptionUI<AbstractUnitOption> imp
 		getOption().setValue(new AbstractUnit(type, roleId, number));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		typeUI.reset();

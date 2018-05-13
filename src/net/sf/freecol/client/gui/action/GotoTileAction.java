@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action to make a unit go to a specific tile.
- */
+/** An action to make a unit go to a specific tile. */
 public class GotoTileAction extends UnitAction {
-
 	public static final String id = "gotoTileAction";
 
 	/**
@@ -40,21 +37,15 @@ public class GotoTileAction extends UnitAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return super.shouldBeEnabled() && getGUI().getActiveUnit().hasTile();
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().activateGotoPath();

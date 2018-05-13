@@ -42,11 +42,8 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
-/**
- * Mission for defending a <code>Settlement</code>.
- */
+/** Mission for defending a <code>Settlement</code>. */
 public class DefendSettlementMission extends Mission {
-
 	private static final Logger logger = Logger.getLogger(DefendSettlementMission.class.getName());
 
 	/** The tag for this mission. */
@@ -103,8 +100,9 @@ public class DefendSettlementMission extends Mission {
 	 *         found.
 	 */
 	public static Location extractTarget(AIUnit aiUnit, PathNode path) {
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		final Location loc = path.getLastNode().getLocation();
 		Settlement settlement = loc.getSettlement();
 		return (invalidReason(aiUnit, settlement) == null) ? settlement : null;
@@ -175,8 +173,9 @@ public class DefendSettlementMission extends Mission {
 	 * @return A path to the new target, or null if none found.
 	 */
 	public static PathNode findTargetPath(AIUnit aiUnit, int range, boolean deferOK) {
-		if (invalidAIUnitReason(aiUnit) != null)
+		if (invalidAIUnitReason(aiUnit) != null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		final Location start = unit.getPathStartLocation();
 
@@ -210,8 +209,9 @@ public class DefendSettlementMission extends Mission {
 	 */
 	private static String invalidMissionReason(AIUnit aiUnit) {
 		String reason = invalidAIUnitReason(aiUnit);
-		if (reason != null)
+		if (reason != null) {
 			return reason;
+		}
 		final Unit unit = aiUnit.getUnit();
 		final CombatModel cm = unit.getGame().getCombatModel();
 		return (cm.getDefencePower(null, unit) <= 0.0f) ? "unit-not-defender" : null;
@@ -259,28 +259,18 @@ public class DefendSettlementMission extends Mission {
 						: Mission.TARGETINVALID;
 	}
 
-	// Implement Mission
-	// Inherit dispose, getTransportDestination, isOneTime
+	/** Implement Mission Inherit dispose, getTransportDestination, isOneTime. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getBaseTransportPriority() {
 		return (getTransportDestination() == null) ? 0 : NORMAL_TRANSPORT_PRIORITY + 5;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTarget() {
 		return target;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setTarget(Location target) {
 		if (target == null || target instanceof Settlement) {
@@ -288,25 +278,16 @@ public class DefendSettlementMission extends Mission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location findTarget() {
 		return findTarget(getAIUnit(), 4, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String invalidReason() {
 		return invalidReason(getAIUnit(), getTarget());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Mission doMission(LogBuilder lb) {
 		lb.add(tag);
@@ -381,7 +362,7 @@ public class DefendSettlementMission extends Mission {
 			}
 		}
 		if (defenderCount <= 2 || fortifyCount <= 1) {
-			return (!unit.checkSetState(UnitState.FORTIFYING)) ? lbWait(lb, ", waiting to fortify at ", settlement)
+			return !unit.checkSetState(UnitState.FORTIFYING) ? lbWait(lb, ", waiting to fortify at ", settlement)
 					: (AIMessage.askChangeState(aiUnit, UnitState.FORTIFYING)
 							&& unit.getState() == UnitState.FORTIFYING) ? lbWait(lb, ", now fortifying at ", settlement)
 									: lbFail(lb, false, ", fortify failed at ", settlement);
@@ -401,8 +382,9 @@ public class DefendSettlementMission extends Mission {
 		Direction bestDirection = null;
 		for (Direction d : Direction.getRandomDirections("defendSettlements", logger, getAIRandom())) {
 			Tile t = unit.getTile().getNeighbourOrNull(d);
-			if (t == null)
+			if (t == null) {
 				continue;
+			}
 			Unit defender = t.getFirstUnit();
 			if (defender != null && defender.getOwner().atWarWith(unit.getOwner()) && unit.getMoveType(d).isAttack()) {
 				Unit enemyUnit = t.getDefendingUnit(unit);
@@ -411,12 +393,10 @@ public class DefendSettlementMission extends Mission {
 				double enemyDefend = cm.getDefencePower(unit, enemyUnit);
 				double weDefend = cm.getDefencePower(enemyUnit, unit);
 				double difference = weAttack / (weAttack + enemyDefend) - enemyAttack / (enemyAttack + weDefend);
-				if (difference > bestDifference) {
-					if (difference > 0 || weAttack > enemyDefend) {
-						bestDifference = difference;
-						bestTarget = enemyUnit;
-						bestDirection = d;
-					}
+				if (difference > bestDifference && (difference > 0 || weAttack > enemyDefend)) {
+					bestDifference = difference;
+					bestTarget = enemyUnit;
+					bestDirection = d;
 				}
 			}
 		}
@@ -430,13 +410,10 @@ public class DefendSettlementMission extends Mission {
 		return lbWait(lb, ", alert at ", getTarget());
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String SETTLEMENT_TAG = "settlement";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -446,9 +423,6 @@ public class DefendSettlementMission extends Mission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -456,9 +430,6 @@ public class DefendSettlementMission extends Mission {
 		target = xr.getAttribute(getGame(), SETTLEMENT_TAG, Settlement.class, (Settlement) null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

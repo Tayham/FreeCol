@@ -24,19 +24,15 @@ package net.sf.freecol.common.i18n;
  * other.
  */
 public class DualNumberRule extends Number {
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Category getCategory(double input) {
-		if (input == 1) {
+		switch ((int)input) {
+		case 1:
 			return Category.one;
-		} else if (input == 2) {
+		case 2:
 			return Category.two;
-		} else {
+		default:
 			return Category.other;
 		}
 	}
-
 }

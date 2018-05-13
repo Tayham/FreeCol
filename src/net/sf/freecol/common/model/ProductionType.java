@@ -30,11 +30,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.Utils;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-/**
- * This class describes a possible production type of a tile or building.
- */
+/** This class describes a possible production type of a tile or building. */
 public class ProductionType extends FreeColObject {
-
 	/** Whether this production type applies only to colony center tiles. */
 	private boolean unattended;
 
@@ -168,8 +165,9 @@ public class ProductionType extends FreeColObject {
 	 *            The amount of goods.
 	 */
 	private void addInput(GoodsType type, int amount) {
-		if (inputs == null)
+		if (inputs == null) {
 			inputs = new ArrayList<>(1);
+		}
 		inputs.add(new AbstractGoods(type, amount));
 	}
 
@@ -201,8 +199,9 @@ public class ProductionType extends FreeColObject {
 	 *            The amount of goods.
 	 */
 	private void addOutput(GoodsType type, int amount) {
-		if (outputs == null)
+		if (outputs == null) {
 			outputs = new ArrayList<>(1);
+		}
 		outputs.add(new AbstractGoods(type, amount));
 	}
 
@@ -216,8 +215,9 @@ public class ProductionType extends FreeColObject {
 	public AbstractGoods getOutput(GoodsType goodsType) {
 		if (outputs != null) {
 			AbstractGoods output = AbstractGoods.findByType(goodsType, outputs);
-			if (output != null)
+			if (output != null) {
 				return output;
+			}
 		}
 		return null;
 	}
@@ -355,15 +355,13 @@ public class ProductionType extends FreeColObject {
 		return best;
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof ProductionType) {
 			ProductionType pt = (ProductionType) o;
 			return super.equals(o) && this.unattended == pt.unattended
@@ -373,13 +371,10 @@ public class ProductionType extends FreeColObject {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
-		hash = 31 * hash + ((this.unattended) ? 1 : 0);
+		hash = 31 * hash + (this.unattended ? 1 : 0);
 		hash = 31 * hash + Utils.hashCode(this.productionLevel);
 		if (this.outputs != null) {
 			for (AbstractGoods ag : this.outputs) {
@@ -394,20 +389,17 @@ public class ProductionType extends FreeColObject {
 		return hash;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String UNATTENDED_TAG = "unattended";
 	private static final String GOODS_TYPE_TAG = "goods-type";
 	private static final String INPUT_TAG = "input";
 	private static final String OUTPUT_TAG = "output";
 	private static final String PRODUCTION_LEVEL_TAG = "production-level";
-	// @compat 0.11.3
+	/** @compat 0.11.3 */
 	private static final String OLD_PRODUCTION_LEVEL_TAG = "productionLevel";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		// ProductionType does not need an id.
@@ -422,9 +414,6 @@ public class ProductionType extends FreeColObject {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -454,9 +443,6 @@ public class ProductionType extends FreeColObject {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		// ProductionType does not need an id.
@@ -474,23 +460,19 @@ public class ProductionType extends FreeColObject {
 		// end @compat 0.11.3
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
-		if (inputs != null)
+		if (inputs != null) {
 			inputs.clear();
-		if (outputs != null)
+		}
+		if (outputs != null) {
 			outputs.clear();
+		}
 
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -500,20 +482,15 @@ public class ProductionType extends FreeColObject {
 			GoodsType type = xr.getType(spec, GOODS_TYPE_TAG, GoodsType.class, (GoodsType) null);
 			addInput(type, xr.getAttribute(VALUE_TAG, -1));
 			xr.closeTag(INPUT_TAG);
-
 		} else if (OUTPUT_TAG.equals(tag)) {
 			GoodsType type = xr.getType(spec, GOODS_TYPE_TAG, GoodsType.class, (GoodsType) null);
 			addOutput(type, xr.getAttribute(VALUE_TAG, -1));
 			xr.closeTag(OUTPUT_TAG);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder(64);
@@ -524,7 +501,7 @@ public class ProductionType extends FreeColObject {
 		if (unattended) {
 			result.append(" unattended");
 		}
-		if (!(inputs == null || inputs.isEmpty())) {
+		if (inputs != null && !inputs.isEmpty()) {
 			result.append(" [inputs: ");
 			for (AbstractGoods input : inputs) {
 				result.append(input).append(", ");
@@ -532,7 +509,7 @@ public class ProductionType extends FreeColObject {
 			int length = result.length();
 			result.replace(length - 2, length, "]");
 		}
-		if (!(outputs == null || outputs.isEmpty())) {
+		if (outputs != null && !outputs.isEmpty()) {
 			result.append(" [outputs: ");
 			for (AbstractGoods output : outputs) {
 				result.append(output).append(", ");
@@ -544,9 +521,6 @@ public class ProductionType extends FreeColObject {
 		return result.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

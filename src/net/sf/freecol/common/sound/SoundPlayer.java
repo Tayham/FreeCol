@@ -226,10 +226,6 @@ public class SoundPlayer {
 				logger.warning("No volume or master gain controls.");
 				return;
 			}
-			try {
-			} catch (IllegalArgumentException e) {
-				return; // Should not happen
-			}
 			// The units of MASTER_GAIN seem to consistently be dB, but
 			// in the case of VOLUME this is unclear (there is even a query
 			// to that effect in the source). getUnits() says "pulseaudio
@@ -269,8 +265,7 @@ public class SoundPlayer {
 			FloatControl.Type type = line.isControlSupported(FloatControl.Type.VOLUME) ? FloatControl.Type.VOLUME
 					: line.isControlSupported(FloatControl.Type.MASTER_GAIN) ? FloatControl.Type.MASTER_GAIN : null;
 			FloatControl control;
-			control = (FloatControl) line.getControl(type);
-			return control;
+			return (FloatControl) line.getControl(type);
 		}
 
 		private SourceDataLine openLine(AudioFormat audioFormat) {

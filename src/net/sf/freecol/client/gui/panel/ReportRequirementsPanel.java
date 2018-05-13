@@ -52,26 +52,17 @@ import net.sf.freecol.common.model.TypeCountMap;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 
-/**
- * This panel displays the Advanced Colony Report.
- */
+/** This panel displays the Advanced Colony Report. */
 public final class ReportRequirementsPanel extends ReportPanel {
-
 	private static final Logger logger = Logger.getLogger(ReportRequirementsPanel.class.getName());
 
-	/**
-	 * A list of all the player's colonies.
-	 */
+	/** A list of all the player's colonies. */
 	private final List<Colony> colonies;
 
-	/**
-	 * Records the number of units indexed by colony and unit type.
-	 */
+	/** Records the number of units indexed by colony and unit type. */
 	private final Map<Colony, TypeCountMap<UnitType>> unitCount = new HashMap<>();
 
-	/**
-	 * Records whether a colony can train a type of unit.
-	 */
+	/** Records whether a colony can train a type of unit. */
 	private final Map<Colony, Set<UnitType>> canTrain = new HashMap<>();
 
 	/**
@@ -134,8 +125,9 @@ public final class ReportRequirementsPanel extends ReportPanel {
 
 		// Check if all unit requirements are met.
 		for (Unit expert : colony.getUnitList()) {
-			if (expert.getSkillLevel() <= 0)
+			if (expert.getSkillLevel() <= 0) {
 				continue;
+			}
 			Unit better = colony.getBetterExpert(expert);
 			if (better != null && !badAssignmentWarning.contains(expert.getType())) {
 				addBadAssignmentWarning(doc, colony, expert, better);
@@ -163,8 +155,9 @@ public final class ReportRequirementsPanel extends ReportPanel {
 				if (goodsType != null && expert != null && !building.getUnitList().isEmpty()
 						&& !missingExpertWarning.contains(expert) && unitCount.get(colony).getCount(expert) == 0) {
 					// Post-independence, special goods requirements diminish.
-					if (!colony.goodsUseful(goodsType))
+					if (!colony.goodsUseful(goodsType)) {
 						continue;
+					}
 					addExpertWarning(doc, colony, goodsType, expert);
 					missingExpertWarning.add(expert);
 				}
@@ -204,8 +197,9 @@ public final class ReportRequirementsPanel extends ReportPanel {
 	}
 
 	private void addTileWarning(StyledDocument doc, Colony colony, String messageId, Tile tile) {
-		if (messageId == null || !Messages.containsKey(messageId))
+		if (messageId == null || !Messages.containsKey(messageId)) {
 			return;
+		}
 		StringTemplate t = StringTemplate.template(messageId).addStringTemplate("%location%",
 				tile.getColonyTileLocationLabel(colony));
 		try {
@@ -245,7 +239,7 @@ public final class ReportRequirementsPanel extends ReportPanel {
 			for (Colony colony : colonies) {
 				for (Unit unit : colony.getUnitList()) {
 					GoodsType expertise = unit.getType().getExpertProduction();
-					if ((unit.getSkillLevel() > 0) && (expertise == goodsType)) {
+					if (unit.getSkillLevel() > 0 && expertise == goodsType) {
 						if (unit.getLocation() instanceof Building) {
 							if (!((Building) unit.getLocation()).canProduce(goodsType, unit.getType())) {
 								misusedExperts.add(colony);
@@ -286,11 +280,9 @@ public final class ReportRequirementsPanel extends ReportPanel {
 						doc.getStyle("regular"));
 				insertColonyButtons(doc, canTrainExperts);
 			}
-
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Assign experts fail", e);
 		}
-
 	}
 
 	private void insertColonyButtons(StyledDocument doc, List<Colony> colonies) throws Exception {
@@ -338,11 +330,9 @@ public final class ReportRequirementsPanel extends ReportPanel {
 				StyleConstants.setComponent(doc.getStyle("button"), createColonyButton(lastColony, amount, false));
 				doc.insertString(doc.getLength(), " ", doc.getStyle("button"));
 			}
-
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Production warning fail", e);
 		}
-
 	}
 
 	private JButton createColonyButton(Colony colony, boolean headline) {

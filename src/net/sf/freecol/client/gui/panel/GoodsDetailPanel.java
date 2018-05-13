@@ -44,11 +44,8 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.TileImprovementType;
 import net.sf.freecol.common.model.UnitType;
 
-/**
- * This panel displays details of goods types in the Colopedia.
- */
+/** This panel displays details of goods types in the Colopedia. */
 public class GoodsDetailPanel extends ColopediaGameObjectTypePanel<GoodsType> {
-
 	/**
 	 * Creates a new instance of this ColopediaDetailPanel.
 	 *
@@ -61,23 +58,18 @@ public class GoodsDetailPanel extends ColopediaGameObjectTypePanel<GoodsType> {
 		super(freeColClient, colopediaPanel, PanelType.GOODS.getKey());
 	}
 
-	// Implement ColopediaDetailPanel
+	/** Implement ColopediaDetailPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addSubTrees(DefaultMutableTreeNode root) {
 		super.addSubTrees(root, getSpecification().getGoodsTypeList());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void buildDetail(String id, JPanel panel) {
-		if (getId().equals(id))
+		if (getId().equals(id)) {
 			return;
+		}
 
 		GoodsType type = getSpecification().getGoodsType(id);
 		panel.setLayout(new MigLayout("wrap 4", "[]20[]"));

@@ -43,7 +43,6 @@ import org.w3c.dom.Element;
  * @see Controller
  */
 public abstract class InputHandler extends FreeColServerHolder implements MessageHandler {
-
 	private static final Logger logger = Logger.getLogger(InputHandler.class.getName());
 
 	/**
@@ -105,8 +104,9 @@ public abstract class InputHandler extends FreeColServerHolder implements Messag
 	 */
 	@Override
 	public final Element handle(Connection connection, Element element) {
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		String tagName = element.getTagName();
 		NetworkRequestHandler handler = _handlerMap.get(tagName);
 		if (handler != null) {
@@ -165,7 +165,6 @@ public abstract class InputHandler extends FreeColServerHolder implements Messag
 	protected abstract Element logout(Connection connection, Element element);
 
 	private class DisconnectHandler implements NetworkRequestHandler {
-
 		@Override
 		public Element handle(Connection connection, Element disconnectElement) {
 			// The player should be logged out by now, but just in case:

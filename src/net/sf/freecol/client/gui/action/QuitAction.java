@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for quitting the game.
- */
+/** An action for quitting the game. */
 public class QuitAction extends FreeColAction {
-
 	public static final String id = "quitAction";
 
 	/**
@@ -40,11 +37,8 @@ public class QuitAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		freeColClient.askToQuit();

@@ -27,7 +27,6 @@ import net.sf.freecol.server.model.ServerGame;
  * {@link net.sf.freecol.server.FreeColServer} for several subclasses.
  */
 public class FreeColServerHolder {
-
 	/** The main server object. */
 	private final FreeColServer freeColServer;
 

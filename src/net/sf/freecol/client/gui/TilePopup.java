@@ -59,7 +59,6 @@ import net.sf.freecol.common.util.LogBuilder;
  * specific unit on the tile, or perform various debug mode actions.
  */
 public final class TilePopup extends JPopupMenu {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(TilePopup.class.getName());
 
@@ -69,7 +68,7 @@ public final class TilePopup extends JPopupMenu {
 	private final FreeColClient freeColClient;
 	private final SwingGUI gui;
 	private final Canvas canvas;
-	private boolean hasAnItem = false;
+	private boolean hasAnItem;
 
 	/**
 	 * The constructor that will insert the MenuItems.
@@ -175,23 +174,26 @@ public final class TilePopup extends JPopupMenu {
 					hasAnItem = true;
 				}
 			}
-			if (hasAnItem)
+			if (hasAnItem) {
 				addSeparator();
+			}
 		}
 
 		Settlement settlement = tile.getSettlement();
 		if (settlement != null) {
 			if (settlement.getOwner() == player) {
-				addColony(((Colony) settlement));
+				addColony((Colony) settlement);
 			} else if (settlement instanceof IndianSettlement) {
 				addIndianSettlement((IndianSettlement) settlement);
 			}
-			if (hasAnItem)
+			if (hasAnItem) {
 				addSeparator();
+			}
 		}
 
-		if (tile.isExplored())
+		if (tile.isExplored()) {
 			addTile(tile);
+		}
 		addSeparator();
 
 		int lineCount = 0;
@@ -214,8 +216,9 @@ public final class TilePopup extends JPopupMenu {
 		}
 
 		if (tile.getUnitCount() > 1 && player.owns(firstUnit)) {
-			if (moreUnits)
+			if (moreUnits) {
 				addSeparator();
+			}
 			JMenuItem activateAllItem = Utility.localizedMenuItem(StringTemplate.template("activateAllUnits"));
 			activateAllItem.addActionListener((ActionEvent ae) -> {
 				Unit lastUnit = null;
@@ -280,8 +283,9 @@ public final class TilePopup extends JPopupMenu {
 				changeRole.add(roleMenuItem);
 			}
 		}
-		if (transportLists.getItemCount() > 0)
+		if (transportLists.getItemCount() > 0) {
 			add(transportLists);
+		}
 
 		if (tile.getColony() != null) {
 			if (changeOwnership.getItemCount() > 0) {
@@ -314,10 +318,12 @@ public final class TilePopup extends JPopupMenu {
 			});
 			add(displayGoods);
 		}
-		if (changeOwnership.getItemCount() > 0)
+		if (changeOwnership.getItemCount() > 0) {
 			add(changeOwnership);
-		if (changeRole.getItemCount() > 0)
+		}
+		if (changeRole.getItemCount() > 0) {
 			add(changeRole);
+		}
 
 		if (tile.hasLostCityRumour()) {
 			JMenuItem rumourItem = new JMenuItem("Set Lost City Rumour type");
@@ -495,7 +501,7 @@ public final class TilePopup extends JPopupMenu {
 		});
 
 		add(menuItem);
-		/**
+		/*
 		 * Don't set hasAnItem to true, we want the tile panel to open automatically
 		 * whenever there is no other item on the list.
 		 */

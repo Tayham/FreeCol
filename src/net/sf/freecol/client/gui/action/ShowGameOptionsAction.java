@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying the Game Options.
- */
+/** An action for displaying the Game Options. */
 public class ShowGameOptionsAction extends FreeColAction {
-
 	public static final String id = "gameOptionsAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ShowGameOptionsAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showGameOptionsDialog(false, false);

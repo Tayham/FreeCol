@@ -30,7 +30,6 @@ import net.sf.freecol.client.gui.ImageLibrary;
  * image.
  */
 public class FreeColPanelUI extends BasicPanelUI {
-
 	private static final FreeColPanelUI sharedInstance = new FreeColPanelUI();
 
 	private FreeColPanelUI() {
@@ -41,7 +40,7 @@ public class FreeColPanelUI extends BasicPanelUI {
 	}
 
 	@Override
-	public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+	public void paint(java.awt.Graphics g, JComponent c) {
 		if (c.isOpaque()) {
 			ImageLibrary.drawTiledImage("image.background.FreeColPanel", g, c, null);
 		}

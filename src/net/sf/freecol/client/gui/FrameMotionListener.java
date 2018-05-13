@@ -28,11 +28,8 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
 
-/**
- * The mouse adapter to handle frame movement.
- */
+/** The mouse adapter to handle frame movement. */
 public class FrameMotionListener extends MouseAdapter implements MouseMotionListener {
-
 	private final JInternalFrame f;
 
 	private Point loc = null;
@@ -54,9 +51,11 @@ public class FrameMotionListener extends MouseAdapter implements MouseMotionList
 		loc = p;
 	}
 
-	// @Override
-	// public void mouseMoved(MouseEvent arg0) {
-	// }
+	/**
+	 * @Override
+	 * public void mouseMoved(MouseEvent arg0) {
+	 * }
+	 */
 
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -74,5 +73,4 @@ public class FrameMotionListener extends MouseAdapter implements MouseMotionList
 		}
 		f.getDesktopPane().getDesktopManager().endDraggingFrame(f);
 	}
-
 }

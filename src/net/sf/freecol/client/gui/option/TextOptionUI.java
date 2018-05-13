@@ -29,7 +29,6 @@ import net.sf.freecol.common.option.TextOption;
  * be both seen and changed.
  */
 public final class TextOptionUI extends OptionUI<TextOption> {
-
 	private final JTextField box = new JTextField(16);
 
 	/**
@@ -48,27 +47,18 @@ public final class TextOptionUI extends OptionUI<TextOption> {
 		initialize();
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JTextField getComponent() {
 		return box;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValue(box.getText());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		box.setText(getOption().getValue());

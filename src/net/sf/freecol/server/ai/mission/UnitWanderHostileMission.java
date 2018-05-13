@@ -37,7 +37,6 @@ import net.sf.freecol.server.ai.AIUnit;
  * like.
  */
 public class UnitWanderHostileMission extends Mission {
-
 	private static final Logger logger = Logger.getLogger(UnitWanderHostileMission.class.getName());
 
 	/** The tag for this mission. */
@@ -85,7 +84,7 @@ public class UnitWanderHostileMission extends Mission {
 	 */
 	private static String invalidMissionReason(AIUnit aiUnit) {
 		final Unit unit = aiUnit.getUnit();
-		return (!unit.isOffensiveUnit()) ? Mission.UNITNOTOFFENSIVE : (!unit.hasTile()) ? Mission.UNITNOTONMAP : null;
+		return !unit.isOffensiveUnit() ? Mission.UNITNOTOFFENSIVE : !unit.hasTile() ? Mission.UNITNOTONMAP : null;
 	}
 
 	/**
@@ -116,57 +115,42 @@ public class UnitWanderHostileMission extends Mission {
 				: ((reason = invalidMissionReason(aiUnit)) != null) ? reason : null;
 	}
 
-	// Implement Mission
-	// Inherit dispose, getBaseTransportPriority, getTransportDestination
-
 	/**
-	 * {@inheritDoc}
+	 * Implement Mission
+	 * Inherit dispose, getBaseTransportPriority, getTransportDestination.
 	 */
+
 	@Override
 	public Location getTarget() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setTarget(Location target) {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location findTarget() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isOneTime() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String invalidReason() {
 		return invalidReason(getAIUnit(), null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Mission doMission(LogBuilder lb) {
 		lb.add(tag);
 		String reason = invalidReason();
-		if (reason != null)
+		if (reason != null) {
 			return lbFail(lb, false, reason);
+		}
 
 		// Make random moves in a reasonably consistent direction,
 		// checking for a target along the way.
@@ -182,20 +166,20 @@ public class UnitWanderHostileMission extends Mission {
 					return lbDone(lb, true, "found target ", m.getTarget());
 				}
 				check = checkTurns;
-			} else
+			} else {
 				check--;
+			}
 
-			if ((d = moveRandomly(tag, d)) == null)
+			d = moveRandomly(tag, d);
+			if (d == null) {
 				break;
+			}
 		}
 		return lbAt(lb);
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

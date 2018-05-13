@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying a High Score Report.
- */
+/** An action for displaying a High Score Report. */
 public class ReportHighScoresAction extends FreeColAction {
-
 	public static final String id = "reportHighScoresAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ReportHighScoresAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().displayHighScores(null);

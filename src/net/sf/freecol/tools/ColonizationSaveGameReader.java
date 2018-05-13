@@ -23,13 +23,11 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 public class ColonizationSaveGameReader {
-
-	private final static int PLAYER_DATA = 0x9e;
-	private final static int COLONY_DATA = 0x186;
-	private final static String[] NATIONS = { "English", "French", "Spanish", "Dutch" };
+	private static final int PLAYER_DATA = 0x9e;
+	private static final int COLONY_DATA = 0x186;
+	private static final String[] NATIONS = { "English", "French", "Spanish", "Dutch" };
 
 	private class GameData {
-
 		private final int mapWidth;
 		private final int mapHeight;
 		private final int numberOfColonies;
@@ -54,7 +52,6 @@ public class ColonizationSaveGameReader {
 	}
 
 	private class PlayerData {
-
 		public static final int LENGTH = 52;
 
 		private final String newLandName;
@@ -64,18 +61,16 @@ public class ColonizationSaveGameReader {
 		public PlayerData(byte[] data, int offset) {
 			playerName = getString(data, offset, 23);
 			newLandName = getString(data, offset + 24, 23);
-			humanPlayer = (data[offset + 49] == 0);
+			humanPlayer = data[offset + 49] == 0;
 		}
 
 		public void print() {
 			System.out.println("Player name is " + playerName + (humanPlayer ? " [human]" : " [AI]"));
 			System.out.println("New land name is " + newLandName);
 		}
-
 	}
 
 	private class ColonyData {
-
 		public static final int LENGTH = 202;
 		public static final int COLONIST_OCCUPATION = 0x20;
 		public static final int COLONIST_SPECIALITY = 0x40;
@@ -104,7 +99,6 @@ public class ColonizationSaveGameReader {
 				colonists[index] = new Colonist(data[offset + COLONIST_OCCUPATION + index],
 						data[offset + COLONIST_SPECIALITY + index], tile);
 			}
-
 		}
 
 		public void print() {
@@ -116,7 +110,6 @@ public class ColonizationSaveGameReader {
 	}
 
 	public class Colonist {
-
 		public final String[] OCCUPATION = { "Farmer", "Sugar planter", "Tobacco planter", "Cotton planter",
 				"Fur trapper", "Lumberjack", "Ore miner", "Silver miner", "Fisherman", "Distiller", "Tobacconist",
 				"Weaver", "Fur Trader", "Carpenter", "Blacksmith", "Gunsmith", "Preacher", "Statesman", "Teacher", "",
@@ -139,7 +132,6 @@ public class ColonizationSaveGameReader {
 			String tileString = (tile >= 0) ? " [tile " + TILES[tile] + "]" : "";
 			System.out.println(OCCUPATION[speciality] + " working as " + OCCUPATION[occupation] + tileString);
 		}
-
 	}
 
 	private final byte[] data;
@@ -149,7 +141,6 @@ public class ColonizationSaveGameReader {
 	}
 
 	public static void main(String[] args) throws Exception {
-
 		byte[] data;
 		try (RandomAccessFile reader = new RandomAccessFile(args[0], "r")) {
 			data = new byte[(int) reader.length()];
@@ -159,7 +150,6 @@ public class ColonizationSaveGameReader {
 	}
 
 	private void run() {
-
 		GameData gameData = new GameData(data);
 		gameData.print();
 		for (int index = 0; index < 4; index++) {
@@ -172,7 +162,6 @@ public class ColonizationSaveGameReader {
 			ColonyData colonyData = new ColonyData(data, COLONY_DATA + index * ColonyData.LENGTH);
 			colonyData.print();
 		}
-
 	}
 
 	public static String getString(byte[] data, int start, int length) {

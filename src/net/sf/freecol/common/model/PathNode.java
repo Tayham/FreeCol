@@ -1,5 +1,5 @@
 // $codepro.audit.disable emptyStatement
-/**
+/*
  *  Copyright (C) 2002-2015   The FreeCol Team
  *
  *  This file is part of FreeCol.
@@ -17,7 +17,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeCol.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.sf.freecol.common.model;
 
 import net.sf.freecol.common.util.LogBuilder;
@@ -30,16 +29,13 @@ import net.sf.freecol.common.util.LogBuilder;
  * path.
  */
 public class PathNode {
-
 	/** Weight turns >> moves. */
 	private static final int TURN_FACTOR = 100;
 
 	/** The location this node refers to. Usually a Tile. */
 	private final Location location;
 
-	/**
-	 * The number of moves left at this node for the unit traversing this path.
-	 */
+	/** The number of moves left at this node for the unit traversing this path. */
 	private int movesLeft;
 
 	/**
@@ -48,7 +44,7 @@ public class PathNode {
 	private int turns;
 
 	/** Whether the unit traversing this path is on a carrier at this node. */
-	private boolean onCarrier = false;
+	private boolean onCarrier;
 
 	/** The next node in the path. */
 	public PathNode next = null;
@@ -187,8 +183,9 @@ public class PathNode {
 	 */
 	public int getLength() {
 		int n = 0;
-		for (PathNode temp = this; temp != null; temp = temp.next)
+		for (PathNode temp = this; temp != null; temp = temp.next) {
 			n++;
+		}
 		return n;
 	}
 
@@ -201,8 +198,9 @@ public class PathNode {
 	 *         or the previous node location is not on the map.
 	 */
 	public Direction getDirection() {
-		if (previous == null || previous.getTile() == null || getTile() == null)
+		if (previous == null || previous.getTile() == null || getTile() == null) {
 			return null;
+		}
 		Tile prev = previous.getTile();
 		return prev.getMap().getDirection(prev, getTile());
 	}
@@ -214,8 +212,9 @@ public class PathNode {
 	 */
 	public PathNode getTransportDropNode() {
 		PathNode p = this;
-		while (p.next != null && p.isOnCarrier())
+		while (p.next != null && p.isOnCarrier()) {
 			p = p.next;
+		}
 		return p;
 	}
 
@@ -226,8 +225,8 @@ public class PathNode {
 	 */
 	public PathNode getFirstNode() {
 		PathNode path;
-		for (path = this; path.previous != null; path = path.previous) // $codepro.audit.disable
-			;
+		for (path = this; path.previous != null; path = path.previous) {
+		}
 		return path;
 	}
 
@@ -238,8 +237,8 @@ public class PathNode {
 	 */
 	public PathNode getLastNode() {
 		PathNode path;
-		for (path = this; path.next != null; path = path.next) // $codepro.audit.disable
-			;
+		for (path = this; path.next != null; path = path.next) {
+		}
 		return path;
 	}
 
@@ -252,8 +251,9 @@ public class PathNode {
 	public int getTotalTurns() {
 		PathNode path = getLastNode();
 		int n = path.getTurns();
-		if (path.getMovesLeft() == 0)
+		if (path.getMovesLeft() == 0) {
 			n++;
+		}
 		return n;
 	}
 
@@ -303,8 +303,9 @@ public class PathNode {
 	 */
 	public PathNode getCarrierMove() {
 		for (PathNode p = this; p != null; p = p.next) {
-			if (p.isOnCarrier())
+			if (p.isOnCarrier()) {
 				return p;
+			}
 		}
 		return null;
 	}
@@ -327,10 +328,12 @@ public class PathNode {
 	 */
 	public boolean embarkedThisTurn(int turns) {
 		for (PathNode p = this; p != null; p = p.previous) {
-			if (p.getTurns() < turns)
+			if (p.getTurns() < turns) {
 				return false;
-			if (!p.isOnCarrier())
+			}
+			if (!p.isOnCarrier()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -348,19 +351,14 @@ public class PathNode {
 		ensureDisembark();
 	}
 
-	/**
-	 * Ensure the last node of this path is no longer on the carrier.
-	 */
+	/** Ensure the last node of this path is no longer on the carrier. */
 	public void ensureDisembark() {
-		PathNode p = this.getLastNode();
+		PathNode p = getLastNode();
 		if (p.isOnCarrier()) {
 			p.next = new PathNode(p.location, p.movesLeft, p.turns, false, p, null);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		LogBuilder lb = new LogBuilder(256);
@@ -377,8 +375,9 @@ public class PathNode {
 	public String fullPathToString() {
 		LogBuilder lb = new LogBuilder(500);
 		PathNode p;
-		for (p = this; p != null; p = p.next)
+		for (p = this; p != null; p = p.next) {
 			lb.add(p, "\n");
+		}
 		return lb.toString();
 	}
 }

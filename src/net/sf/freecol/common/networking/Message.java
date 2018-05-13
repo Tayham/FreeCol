@@ -43,7 +43,6 @@ import org.xml.sax.SAXException;
  * XML-trees.
  */
 public class Message {
-
 	protected static final Logger logger = Logger.getLogger(Message.class.getName());
 
 	private static final String FREECOL_PROTOCOL_VERSION = "0.1.6";
@@ -123,13 +122,13 @@ public class Message {
 			if (dumpMsgOnError) {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				inputSource.getByteStream().reset();
-				while (true) {
+				do {
 					int i = inputSource.getByteStream().read();
 					if (-1 == i) {
 						break;
 					}
 					baos.write(i);
-				}
+				} while (true);
 				logger.severe(baos.toString("UTF-8"));
 			}
 			throw e;
@@ -232,9 +231,6 @@ public class Message {
 		return null; // do nothing
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return document.getDocumentElement().toString();

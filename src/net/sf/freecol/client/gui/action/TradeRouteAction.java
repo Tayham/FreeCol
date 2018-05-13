@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for editing trade routes.
- */
+/** An action for editing trade routes. */
 public class TradeRouteAction extends MapboardAction {
-
 	public static final String id = "tradeRouteAction";
 
 	/**
@@ -40,11 +37,8 @@ public class TradeRouteAction extends MapboardAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showTradeRoutePanel(null);

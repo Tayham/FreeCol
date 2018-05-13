@@ -46,11 +46,8 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Turn;
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * This panel displays details of founding fathers in the Colopedia.
- */
+/** This panel displays details of founding fathers in the Colopedia. */
 public class FatherDetailPanel extends ColopediaGameObjectTypePanel<FoundingFather> {
-
 	/**
 	 * Creates a new instance of this ColopediaDetailPanel.
 	 *
@@ -63,11 +60,8 @@ public class FatherDetailPanel extends ColopediaGameObjectTypePanel<FoundingFath
 		super(freeColClient, colopediaPanel, PanelType.FATHERS.getKey());
 	}
 
-	// Implelement ColopediaDetailPanel
+	/** Implelement ColopediaDetailPanel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addSubTrees(DefaultMutableTreeNode root) {
 		final Specification spec = getSpecification();
@@ -94,9 +88,6 @@ public class FatherDetailPanel extends ColopediaGameObjectTypePanel<FoundingFath
 		root.add(parent);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void buildDetail(String id, JPanel panel) {
 		try {

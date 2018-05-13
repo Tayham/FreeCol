@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
  * unknown the same error is returned.
  */
 public abstract class CurrentPlayerNetworkRequestHandler extends FreeColServerHolder implements NetworkRequestHandler {
-
 	/**
 	 * Create a new current player request handler.
 	 *
@@ -54,12 +53,9 @@ public abstract class CurrentPlayerNetworkRequestHandler extends FreeColServerHo
 	 */
 	private boolean isCurrentPlayer(Player player) {
 		Game game = getGame();
-		return (player == null || game == null) ? false : player.equals(game.getCurrentPlayer());
+		return player != null && game != null && player.equals(game.getCurrentPlayer());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final Element handle(Connection conn, Element element) {
 		ServerPlayer player = getFreeColServer().getPlayer(conn);

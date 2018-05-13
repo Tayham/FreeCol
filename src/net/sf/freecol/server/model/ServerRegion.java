@@ -39,16 +39,13 @@ import net.sf.freecol.server.control.ChangeSet;
 import net.sf.freecol.server.control.ChangeSet.See;
 import net.sf.freecol.common.util.LogBuilder;
 
-/**
- * The server version of a region.
- */
+/** The server version of a region. */
 public class ServerRegion extends Region {
-
 	/** Score for being first to discover the pacific. */
 	public static final int PACIFIC_SCORE_VALUE = 100;
 
 	/** The size of this Region (number of Tiles). */
-	private int size = 0;
+	private int size;
 
 	/** A Rectangle that contains all points of the Region. */
 	private Rectangle bounds = new Rectangle();
@@ -63,9 +60,7 @@ public class ServerRegion extends Region {
 		super(game, id);
 	}
 
-	/**
-	 * Constructor for copying in a new region from an imported game.
-	 */
+	/** Constructor for copying in a new region from an imported game. */
 	public ServerRegion(Game game, Region region) {
 		super(game);
 
@@ -91,8 +86,8 @@ public class ServerRegion extends Region {
 	public ServerRegion(Game game, RegionType type) {
 		this(game, null, type, null);
 
-		this.setClaimable(type.getClaimable());
-		this.setDiscoverable(true);
+		setClaimable(type.getClaimable());
+		setDiscoverable(true);
 	}
 
 	/**
@@ -132,8 +127,9 @@ public class ServerRegion extends Region {
 		this.name = null;
 		this.type = type;
 		this.parent = parent;
-		if (this.parent != null)
+		if (this.parent != null) {
 			this.parent.addChild(this);
+		}
 		this.claimable = false;
 		this.discoverable = false;
 		this.discoveredIn = null;
@@ -208,7 +204,7 @@ public class ServerRegion extends Region {
 	public void addTile(Tile tile) {
 		tile.setRegion(this);
 		size++;
-		if (bounds.x == 0 && bounds.width == 0 || bounds.y == 0 && bounds.height == 0) {
+		if ((bounds.x == 0 && bounds.width == 0) || (bounds.y == 0 && bounds.height == 0)) {
 			bounds.setBounds(tile.getX(), tile.getY(), 0, 0);
 		} else {
 			bounds.add(tile.getX(), tile.getY());
@@ -228,13 +224,16 @@ public class ServerRegion extends Region {
 	 *            A <code>ChangeSet</code> to update.
 	 */
 	public void csDiscover(Player player, Turn turn, String newName, ChangeSet cs) {
-		if (!getDiscoverable())
+		if (!getDiscoverable()) {
 			return;
-		final int score = (getSpecification().getBoolean(GameOptions.EXPLORATION_POINTS)) ? this.scoreValue : 0;
-		if (!hasName())
+		}
+		final int score = getSpecification().getBoolean(GameOptions.EXPLORATION_POINTS) ? this.scoreValue : 0;
+		if (!hasName()) {
 			this.name = newName;
-		for (Region r : discover(player, turn))
+		}
+		for (Region r : discover(player, turn)) {
 			cs.add(See.all(), r);
+		}
 		HistoryEvent h = new HistoryEvent(turn, HistoryEvent.HistoryEventType.DISCOVER_REGION, player)
 				.addStringTemplate("%nation%", player.getNationLabel()).addName("%region%", newName);
 		h.setScore(score);
@@ -270,8 +269,9 @@ public class ServerRegion extends Region {
 				for (int y = 0; y < arcticHeight; y++) {
 					if (map.isValid(x, y)) {
 						Tile tile = map.getTile(x, y);
-						if (tile.isLand())
+						if (tile.isLand()) {
 							arctic.addTile(tile);
+						}
 					}
 				}
 			}
@@ -286,8 +286,9 @@ public class ServerRegion extends Region {
 				for (int y = antarcticHeight; y < map.getHeight(); y++) {
 					if (map.isValid(x, y)) {
 						Tile tile = map.getTile(x, y);
-						if (tile.isLand())
+						if (tile.isLand()) {
 							antarctic.addTile(tile);
+						}
 					}
 				}
 			}
@@ -431,16 +432,13 @@ public class ServerRegion extends Region {
 		// then allow the quadrants to overflow into their horizontally
 		// opposite quadrant, then finally into the whole map.
 		// This correctly handles cases like:
-		//
 		// NP NP NP NA NA NA NP NP NP NA NA NA
 		// NP L L L L NA NP L L NA L NA
 		// NP L NA NA NA NA or NP L NA NA L NA
 		// SP L SA SA SA SA SP L NA L L SA
 		// SP L L L L SA SP L L L L SA
 		// SP SP SP SA SA SA SP SP SP SA SA SA
-		//
 		// or multiple such incursions across the nominal quadrant divisions.
-		//
 		if (!allOceans) {
 			final int maxx = map.getWidth();
 			final int midx = maxx / 2;
@@ -448,20 +446,26 @@ public class ServerRegion extends Region {
 			final int midy = maxy / 2;
 			Tile tNP = null, tSP = null, tNA = null, tSA = null, t;
 			for (int y = midy - 1; y >= 0; y--) {
-				if (tNP == null && !(t = map.getTile(0, y)).isLand())
+				if (tNP == null && !(t = map.getTile(0, y)).isLand()) {
 					tNP = t;
-				if (tNA == null && !(t = map.getTile(maxx - 1, y)).isLand())
+				}
+				if (tNA == null && !(t = map.getTile(maxx - 1, y)).isLand()) {
 					tNA = t;
-				if (tNP != null && tNA != null)
+				}
+				if (tNP != null && tNA != null) {
 					break;
+				}
 			}
 			for (int y = midy; y < maxy; y++) {
-				if (tSP == null && !(t = map.getTile(0, y)).isLand())
+				if (tSP == null && !(t = map.getTile(0, y)).isLand()) {
 					tSP = t;
-				if (tSA == null && !(t = map.getTile(maxx - 1, y)).isLand())
+				}
+				if (tSA == null && !(t = map.getTile(maxx - 1, y)).isLand()) {
 					tSA = t;
-				if (tSP != null && tSA != null)
+				}
+				if (tSP != null && tSA != null) {
 					break;
+				}
 			}
 			int nNP = 0, nSP = 0, nNA = 0, nSA = 0;
 
@@ -469,35 +473,47 @@ public class ServerRegion extends Region {
 			Rectangle rSP = new Rectangle(0, midy, midx, maxy - midy);
 			Rectangle rNA = new Rectangle(midx, 0, maxx - midx, midy);
 			Rectangle rSA = new Rectangle(midx, midy, maxx - midx, maxy - midy);
-			if (tNP != null)
+			if (tNP != null) {
 				nNP += fillOcean(map, tNP, northPacific, rNP);
-			if (tSP != null)
+			}
+			if (tSP != null) {
 				nSP += fillOcean(map, tSP, southPacific, rSP);
-			if (tNA != null)
+			}
+			if (tNA != null) {
 				nNA += fillOcean(map, tNA, northAtlantic, rNA);
-			if (tSA != null)
+			}
+			if (tSA != null) {
 				nSA += fillOcean(map, tSA, southAtlantic, rSA);
+			}
 
 			Rectangle rN = new Rectangle(0, 0, maxx, midy);
 			Rectangle rS = new Rectangle(0, midy, maxx, maxy - midy);
-			if (tNP != null)
+			if (tNP != null) {
 				nNP += fillOcean(map, tNP, northPacific, rN);
-			if (tSP != null)
+			}
+			if (tSP != null) {
 				nSP += fillOcean(map, tSP, southPacific, rS);
-			if (tNA != null)
+			}
+			if (tNA != null) {
 				nNA += fillOcean(map, tNA, northAtlantic, rN);
-			if (tSA != null)
+			}
+			if (tSA != null) {
 				nSA += fillOcean(map, tSA, southAtlantic, rS);
+			}
 
 			Rectangle rAll = new Rectangle(0, 0, maxx, maxy);
-			if (tNP != null)
+			if (tNP != null) {
 				nNP += fillOcean(map, tNP, northPacific, rAll);
-			if (tSP != null)
+			}
+			if (tSP != null) {
 				nSP += fillOcean(map, tSP, southPacific, rAll);
-			if (tNA != null)
+			}
+			if (tNA != null) {
 				nNA += fillOcean(map, tNA, northAtlantic, rAll);
-			if (tSA != null)
+			}
+			if (tSA != null) {
 				nSA += fillOcean(map, tSA, southAtlantic, rAll);
+			}
 			lb.add(" filled ocean regions ", nNP, " North Pacific, ", nSP, " South Pacific, ", nNA, " North Atlantic, ",
 					nSP, " South Atlantic.\n");
 		}
@@ -541,11 +557,8 @@ public class ServerRegion extends Region {
 		return n;
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);

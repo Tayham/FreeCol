@@ -101,7 +101,6 @@ import org.w3c.dom.Element;
  * class.
  */
 public final class FreeColServer {
-
 	private static final Logger logger = Logger.getLogger(FreeColServer.class.getName());
 
 	public static final String ACTIVE_UNIT_TAG = "activeUnit";
@@ -142,7 +141,7 @@ public final class FreeColServer {
 	public static final String DEFAULT_SPEC = "freecol";
 
 	/** Games are either starting, ending or being played. */
-	public static enum GameState {
+	public enum GameState {
 		STARTING_GAME, IN_GAME, ENDING_GAME
 	}
 
@@ -152,7 +151,7 @@ public final class FreeColServer {
 	private boolean singlePlayer;
 
 	/** Should this game be listed on the meta-server? */
-	private boolean publicServer = false;
+	private boolean publicServer;
 
 	/** The name of this server. */
 	private String name;
@@ -160,10 +159,10 @@ public final class FreeColServer {
 	/** The current state of the game. */
 	private GameState gameState = GameState.STARTING_GAME;
 
-	// Networking:
+	/** Networking: */
 	private Server server;
 
-	// Controllers
+	/** Controllers. */
 	private final UserConnectionHandler userConnectionHandler;
 
 	private final PreGameController preGameController;
@@ -370,7 +369,7 @@ public final class FreeColServer {
 	 *                on failure to open the port.
 	 */
 	private Server serverStart(int firstPort) throws IOException {
-		String host = (this.publicServer) ? "0.0.0.0" : InetAddress.getLoopbackAddress().getHostAddress();
+		String host = this.publicServer ? "0.0.0.0" : InetAddress.getLoopbackAddress().getHostAddress();
 		int port, tries;
 		if (firstPort < 0) {
 			port = FreeCol.getServerPort();
@@ -390,8 +389,9 @@ public final class FreeColServer {
 					throw new IOException("Bind exception starting server at: " + host + ":" + port, be);
 				}
 			} catch (IOException ie) {
-				if (i == 1)
+				if (i == 1) {
 					throw ie;
+				}
 			}
 			port++;
 		}
@@ -616,8 +616,9 @@ public final class FreeColServer {
 	 * @return True if the MetaServer was updated.
 	 */
 	private boolean updateMetaServer(boolean firstTime) {
-		if (!this.publicServer)
+		if (!this.publicServer) {
 			return false;
+		}
 
 		Connection mc;
 		try {
@@ -629,7 +630,7 @@ public final class FreeColServer {
 			return false;
 		}
 
-		String tag = (firstTime) ? "register" : "update";
+		String tag = firstTime ? "register" : "update";
 		int port = mc.getSocket().getPort();
 		String addr = (name != null) ? name : (mc.getSocket().getLocalAddress().getHostAddress() + ":" + port);
 		int nPlayers = getNumberOfLivingHumanPlayers();
@@ -652,7 +653,6 @@ public final class FreeColServer {
 		}
 		if (firstTime) {
 			// Starts the metaserver update thread.
-			//
 			// This update is really a "Hi! I am still here!"-message,
 			// since an additional update should be sent when a new
 			// player is added to/removed from this server etc.
@@ -660,8 +660,9 @@ public final class FreeColServer {
 			t.scheduleAtFixedRate(new TimerTask() {
 				@Override
 				public void run() {
-					if (!updateMetaServer())
+					if (!updateMetaServer()) {
 						cancel();
+					}
 				}
 			}, META_SERVER_UPDATE_INTERVAL, META_SERVER_UPDATE_INTERVAL);
 		}
@@ -675,11 +676,12 @@ public final class FreeColServer {
 	 * @return True if the MetaServer was updated.
 	 */
 	public boolean removeFromMetaServer() {
-		if (!this.publicServer)
+		if (!this.publicServer) {
 			return false;
+		}
 
 		try (Connection mc = new Connection(FreeCol.META_SERVER_ADDRESS, FreeCol.META_SERVER_PORT, null,
-				FreeCol.SERVER_THREAD);) {
+				FreeCol.SERVER_THREAD)) {
 			mc.send(DOMMessage.createMessage("remove", "port", Integer.toString(mc.getSocket().getPort())));
 		} catch (IOException ioe) {
 			logger.log(Level.WARNING, "Network error leaving meta-server: " + FreeCol.META_SERVER_ADDRESS + ":"
@@ -700,8 +702,9 @@ public final class FreeColServer {
 		int n = 0;
 		for (Player player : game.getLiveEuropeanPlayers(null)) {
 			ServerPlayer sp = (ServerPlayer) player;
-			if (!sp.isREF() && sp.isAI() && !sp.isConnected())
+			if (!sp.isREF() && sp.isAI() && !sp.isConnected()) {
 				n++;
+			}
 		}
 		return n;
 	}
@@ -715,8 +718,9 @@ public final class FreeColServer {
 		int n = 0;
 		for (Player player : game.getLivePlayers(null)) {
 			ServerPlayer sp = (ServerPlayer) player;
-			if (!sp.isAI() && sp.isConnected())
+			if (!sp.isAI() && sp.isConnected()) {
 				n++;
+			}
 		}
 		return n;
 	}
@@ -746,7 +750,7 @@ public final class FreeColServer {
 	 *                close the file.
 	 */
 	public void saveMapEditorGame(File file, BufferedImage image) throws IOException {
-		this.setAIMain(null);
+		setAIMain(null);
 		saveGame(file, null, image);
 	}
 
@@ -765,7 +769,7 @@ public final class FreeColServer {
 	 */
 	public void saveGame(File file, OptionGroup options, BufferedImage image) throws IOException {
 		final ServerGame game = getGame();
-		try (JarOutputStream fos = new JarOutputStream(new FileOutputStream(file));) {
+		try (JarOutputStream fos = new JarOutputStream(new FileOutputStream(file))) {
 			if (image != null) {
 				fos.putNextEntry(new JarEntry(FreeColSavegameFile.THUMBNAIL_FILE));
 				ImageIO.write(image, "png", fos);
@@ -787,7 +791,7 @@ public final class FreeColServer {
 
 			// save the actual game data
 			fos.putNextEntry(new JarEntry(FreeColSavegameFile.SAVEGAME_FILE));
-			try (FreeColXMLWriter xw = new FreeColXMLWriter(fos, FreeColXMLWriter.WriteScope.toSave(), false);) {
+			try (FreeColXMLWriter xw = new FreeColXMLWriter(fos, FreeColXMLWriter.WriteScope.toSave(), false)) {
 				xw.writeStartDocument("UTF-8", "1.0");
 
 				xw.writeComment(FreeCol.getConfiguration().toString());
@@ -826,8 +830,9 @@ public final class FreeColServer {
 
 				game.toXML(xw); // Add the game
 
-				if (aiMain != null)
-					aiMain.toXML(xw); // Add the AIObjects
+				if (aiMain != null) {
+					aiMain.toXML(xw);
+				} // Add the AIObjects
 
 				xw.writeEndElement();
 				xw.writeEndDocument();
@@ -875,7 +880,7 @@ public final class FreeColServer {
 	public static ServerGame readGame(File file, Specification spec, FreeColServer server) {
 		ServerGame g = null;
 		try {
-			g = FreeColServer.readGame(new FreeColSavegameFile(file), spec, server);
+			g = readGame(new FreeColSavegameFile(file), spec, server);
 			logger.info("Imported file " + file.getPath());
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Import failed for " + file.getPath(), e);
@@ -919,7 +924,7 @@ public final class FreeColServer {
 		logger.info("Found savegame version " + savegameVersion);
 
 		ServerGame game = null;
-		try (FreeColXMLReader xr = fis.getFreeColXMLReader();) {
+		try (FreeColXMLReader xr = fis.getFreeColXMLReader()) {
 			// Switch to the read scope that creates server objects.
 			xr.setReadScope(FreeColXMLReader.ReadScope.SERVER);
 
@@ -945,19 +950,18 @@ public final class FreeColServer {
 					while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
 						xr.nextTag();
 					}
-
 				} else if (Game.getXMLElementTagName().equals(tag)) {
 					// Read the game
 					game = new ServerGame(null, xr, specification);
 					game.setCurrentPlayer(null);
-					if (server != null)
+					if (server != null) {
 						server.setGame(game);
-
+					}
 				} else if (AIMain.getXMLElementTagName().equals(tag)) {
-					if (server == null)
+					if (server == null) {
 						break;
+					}
 					server.setAIMain(new AIMain(server, xr));
-
 				} else {
 					throw new XMLStreamException("Unknown tag" + " reading server game: " + tag);
 				}
@@ -991,7 +995,6 @@ public final class FreeColServer {
 	 */
 	private ServerGame loadGame(final FreeColSavegameFile fis, Specification specification, Server server)
 			throws FreeColException, IOException, XMLStreamException {
-
 		ServerGame game = readGame(fis, specification, this);
 		gameState = GameState.IN_GAME;
 		integrity = game.checkIntegrity(true);
@@ -1047,10 +1050,10 @@ public final class FreeColServer {
 
 		// @compat 0.10.x
 		Player unknown = game.getUnknownEnemy();
-		if (unknown == null) {
-			establishUnknownEnemy(game);
-		} else {
+		if (unknown != null) {
 			unknown.setName(Nation.UNKNOWN_NATION_ID);
+		} else {
+			establishUnknownEnemy(game);
 		}
 		// end @compat
 
@@ -1143,8 +1146,9 @@ public final class FreeColServer {
 		List<ServerPlayer> newAI = new ArrayList<>();
 		game.setFreeColGameObjectListener(aiMain);
 		for (Entry<Nation, NationState> entry : game.getNationOptions().getNations().entrySet()) {
-			if (entry.getKey().isUnknownEnemy())
+			if (entry.getKey().isUnknownEnemy()) {
 				continue;
+			}
 			if (entry.getValue() != NationState.NOT_AVAILABLE && game.getPlayerByNation(entry.getKey()) == null) {
 				newAI.add(makeAIPlayer(entry.getKey()));
 			}
@@ -1281,9 +1285,7 @@ public final class FreeColServer {
 		return getAIMain().getAIPlayer(player);
 	}
 
-	/**
-	 * Shut down this FreeColServer.
-	 */
+	/** Shut down this FreeColServer. */
 	public void shutdown() {
 		server.shutdown();
 	}

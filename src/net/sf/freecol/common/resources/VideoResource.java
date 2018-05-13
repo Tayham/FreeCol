@@ -28,7 +28,6 @@ import java.net.URI;
  * @see Video
  */
 public class VideoResource extends Resource {
-
 	private final Video video;
 
 	/**

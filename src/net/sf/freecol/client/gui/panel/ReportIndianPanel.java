@@ -47,11 +47,8 @@ import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.model.UnitType;
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * This panel displays the Native Affairs Advisor.
- */
+/** This panel displays the Native Affairs Advisor. */
 public final class ReportIndianPanel extends ReportPanel {
-
 	private static final String[] headlines = { "settlement", "mission", "report.indian.tension", "skillTaught",
 			"report.indian.mostHated", "report.indian.tradeInterests" };
 
@@ -84,8 +81,8 @@ public final class ReportIndianPanel extends ReportPanel {
 	private void buildIndianAdvisorPanel(Player player, Player opponent) {
 		final NationSummary ns = igc().getNationSummary(opponent);
 		List<IndianSettlement> nativeSettlements = opponent.getIndianSettlements();
-		String numSettlements = String.valueOf(nativeSettlements.size()) + " / "
-				+ String.valueOf(ns.getNumberOfSettlements());
+		String numSettlements = nativeSettlements.size() + " / "
+				+ ns.getNumberOfSettlements();
 
 		ImageLibrary lib = getImageLibrary();
 		JLabel villageLabel = new JLabel();
@@ -181,8 +178,8 @@ public final class ReportIndianPanel extends ReportPanel {
 				reportPanel.add(Utility.localizedLabel(settlement.getMostHatedLabel(contacted)));
 
 				GoodsType[] wantedGoods = settlement.getWantedGoods();
-				final int n = (visited) ? settlement.getWantedGoodsAmount() : 1;
-				String x = (n > 1) ? "split " + Integer.toString(n) : null;
+				final int n = visited ? settlement.getWantedGoodsAmount() : 1;
+				String x = (n > 1) ? "split " + n : null;
 				for (int i = 0; i < n; i++) {
 					JLabel goodsLabel;
 					if (visited && wantedGoods[i] != null) {

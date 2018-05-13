@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when changing a unit state.
- */
+/** The message sent when changing a unit state. */
 public class ChangeStateMessage extends DOMMessage {
-
 	/** The identifier of the unit to change. */
 	private final String unitId;
 
@@ -101,7 +98,7 @@ public class ChangeStateMessage extends DOMMessage {
 		}
 		if (!unit.checkSetState(state)) {
 			return DOMMessage.clientError(
-					"Unit " + unitId + " can not change state: " + unit.getState().toString() + " -> " + stateString);
+					"Unit " + unitId + " can not change state: " + unit.getState() + " -> " + stateString);
 		}
 
 		// Proceed to change.

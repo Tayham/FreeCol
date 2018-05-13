@@ -41,18 +41,17 @@ import net.sf.freecol.common.model.StringTemplate;
  * progress.
  */
 public class FreeColProgressBar extends JPanel {
+	/** The minimum value of the progress bar. */
+	private int min;
 
-	// The minimum value of the progress bar
-	private int min = 0;
-
-	// The maximum value of the progress bar
+	/** The maximum value of the progress bar. */
 	private int max = 100;
 
-	// The current value of the progress bar
-	private int value = 0;
+	/** The current value of the progress bar. */
+	private int value;
 
-	// The expected increase next turn
-	private int step = 0;
+	/** The expected increase next turn. */
+	private int step;
 
 	private int iconWidth;
 
@@ -153,7 +152,6 @@ public class FreeColProgressBar extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics g) {
-
 		Graphics2D g2d = (Graphics2D) g.create();
 		g2d.setFont(FontLibrary.createFont(FontLibrary.FontType.SIMPLE, FontLibrary.FontSize.TINY));
 		int width = getWidth() - getInsets().left - getInsets().right;
@@ -194,7 +192,7 @@ public class FreeColProgressBar extends JPanel {
 		}
 
 		String stepSignal = (step < 0) ? "-" : "+";
-		String progressString = String.valueOf(value) + stepSignal + Math.abs(step) + "/" + max;
+		String progressString = value + stepSignal + Math.abs(step) + "/" + max;
 		String turnsString = Messages.message("notApplicable");
 		if (max <= value) {
 			turnsString = "0";

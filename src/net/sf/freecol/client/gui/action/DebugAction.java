@@ -27,11 +27,8 @@ import javax.swing.KeyStroke;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.debug.FreeColDebugger;
 
-/**
- * Switch debug mode on.
- */
+/** Switch debug mode on. */
 public class DebugAction extends FreeColAction {
-
 	public static final String id = "debugAction";
 
 	/**
@@ -46,21 +43,15 @@ public class DebugAction extends FreeColAction {
 		setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.SHIFT_MASK | KeyEvent.CTRL_MASK));
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean shouldBeEnabled() {
 		return !FreeColDebugger.isInDebugMode(FreeColDebugger.DebugMode.MENUS);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (shouldBeEnabled()) {

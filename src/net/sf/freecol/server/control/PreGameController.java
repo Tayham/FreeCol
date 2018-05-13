@@ -45,7 +45,6 @@ import org.w3c.dom.Element;
  * @see InGameInputHandler
  */
 public final class PreGameController extends Controller {
-
 	private static final Logger logger = Logger.getLogger(PreGameController.class.getName());
 
 	/**
@@ -81,8 +80,9 @@ public final class PreGameController extends Controller {
 
 		// Inform the clients.
 		for (Player player : game.getLivePlayers(null)) {
-			if (player.isAI())
+			if (player.isAI()) {
 				continue;
+			}
 
 			player.invalidateCanSeeTiles();// Send clean copy of the game
 			Connection conn = ((ServerPlayer) player).getConnection();

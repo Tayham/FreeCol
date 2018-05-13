@@ -32,11 +32,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when a missionary establishes/denounces a mission.
- */
+/** The message sent when a missionary establishes/denounces a mission. */
 public class MissionaryMessage extends DOMMessage {
-
 	/** The identifier of the missionary. */
 	private final String unitId;
 
@@ -123,12 +120,10 @@ public class MissionaryMessage extends DOMMessage {
 			} else if (!unit.hasAbility(Ability.DENOUNCE_HERESY)) {
 				return DOMMessage.clientError("Unit lacks denouncement ability: " + unitId);
 			}
-		} else {
-			if (missionary != null) {
-				return DOMMessage.clientError("Establishing extra mission at: " + is.getId());
-			} else if (!unit.hasAbility(Ability.ESTABLISH_MISSION)) {
-				return DOMMessage.clientError("Unit lacks establish mission ability: " + unitId);
-			}
+		} else if (missionary != null) {
+			return DOMMessage.clientError("Establishing extra mission at: " + is.getId());
+		} else if (!unit.hasAbility(Ability.ESTABLISH_MISSION)) {
+			return DOMMessage.clientError("Unit lacks establish mission ability: " + unitId);
 		}
 
 		MoveType type = unit.getMoveType(is.getTile());
@@ -137,7 +132,7 @@ public class MissionaryMessage extends DOMMessage {
 		}
 
 		// Valid, proceed to denounce/establish.
-		return (denounce) ? server.getInGameController().denounceMission(serverPlayer, unit, is)
+		return denounce ? server.getInGameController().denounceMission(serverPlayer, unit, is)
 				: server.getInGameController().establishMission(serverPlayer, unit, is);
 	}
 

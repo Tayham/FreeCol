@@ -46,14 +46,12 @@ import net.sf.freecol.common.util.Utils;
  * by the owner of the Colony.
  */
 public abstract class WorkLocation extends UnitLocation implements Ownable {
-
 	private static final Logger logger = Logger.getLogger(WorkLocation.class.getName());
 
 	public static final List<AbstractGoods> EMPTY_LIST = Collections.<AbstractGoods>emptyList();
 
 	/** Container class to suggest a better use of a unit. */
 	public static class Suggestion {
-
 		public static final Comparator<Suggestion> descendingAmountComparator = new Comparator<Suggestion>() {
 			@Override
 			public int compare(Suggestion s1, Suggestion s2) {
@@ -98,7 +96,7 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 			this.goodsType = goodsType;
 			this.amount = amount;
 		}
-	};
+	}
 
 	/** The colony that contains this work location. */
 	protected Colony colony;
@@ -199,8 +197,9 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 		int amount = -1;
 		for (ProductionType pt : getAvailableProductionTypes(unattended)) {
 			for (AbstractGoods output : pt.getOutputs()) {
-				if (workType != null && workType != output.getType())
+				if (workType != null && workType != output.getType()) {
 					continue;
+				}
 				if (amount < output.getAmount()) {
 					amount = output.getAmount();
 					best = pt;
@@ -221,7 +220,7 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 	 * @return An <code>Occupation</code> for the given unit, or null if none found.
 	 */
 	public Occupation getOccupation(Unit unit, boolean userMode) {
-		LogBuilder lb = new LogBuilder((colony.getOccupationTrace()) ? 64 : 0);
+		LogBuilder lb = new LogBuilder(colony.getOccupationTrace() ? 64 : 0);
 		lb.add(colony.getName(), "/", this, ".getOccupation(", unit, ")");
 
 		Occupation best = new Occupation(null, null, null);
@@ -235,8 +234,9 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 				break;
 			}
 		}
-		if (best.workType == null)
+		if (best.workType == null) {
 			lb.add("\n  FAILED");
+		}
 		lb.log(logger, Level.WARNING);
 		return (best.workType == null) ? null : best;
 	}
@@ -255,7 +255,7 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 			unitType = spec.getDefaultUnitType(getOwner().getNationType());
 		}
 
-		LogBuilder lb = new LogBuilder((colony.getOccupationTrace()) ? 64 : 0);
+		LogBuilder lb = new LogBuilder(colony.getOccupationTrace() ? 64 : 0);
 		lb.add(colony.getName(), "/", this, ".getOccupation(", unitType.getSuffix(), ")");
 
 		Collection<GoodsType> types = spec.getGoodsTypeList();
@@ -314,8 +314,9 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 	 */
 	private Suggestion getSuggestion(Unit unit, ProductionType productionType, GoodsType goodsType) {
 		// Check first if there is space.
-		if (((unit == null || !contains(unit)) && isFull()) || productionType == null || goodsType == null)
+		if (((unit == null || !contains(unit)) && isFull()) || productionType == null || goodsType == null) {
 			return null;
+		}
 
 		final Specification spec = getSpecification();
 		final Player owner = getOwner();
@@ -324,8 +325,9 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 		// Require there be a better unit to do this work, and that it
 		// would actually improve production.
 		final UnitType better = (expert != null) ? expert : spec.getDefaultUnitType(owner);
-		if (unit != null && better == unit.getType())
+		if (unit != null && better == unit.getType()) {
 			return null;
+		}
 		int delta = getPotentialProduction(goodsType, better);
 		if (unit != null) {
 			delta -= getPotentialProduction(goodsType, unit.getType());
@@ -335,14 +337,10 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 			// TODO: should really consider in.getAmount
 			delta = Math.min(delta, colony.getNetProductionOf(in.getType()));
 		}
-		if (delta <= 0)
+		if (delta <= 0 || (owner.getPlayerType() == Player.PlayerType.INDEPENDENT
+				&& ((goodsType.isLibertyType() && colony.getSoL() >= 100) || goodsType.isImmigrationType()))) {
 			return null;
-
-		// Is the production actually a good idea? Not if we are independent
-		// and have maximized liberty, or for immigration.
-		if (owner.getPlayerType() == Player.PlayerType.INDEPENDENT
-				&& ((goodsType.isLibertyType() && colony.getSoL() >= 100) || goodsType.isImmigrationType()))
-			return null;
+		}
 
 		// FIXME: OO
 		boolean ok = false;
@@ -360,15 +358,13 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 				// Assume work is worth doing if a unit is already
 				// there, or if the building has been upgraded, or if
 				// the goods are required for the current building job.
-				if (bu.getLevel() > 1 || unit != null) {
-					ok = true;
-				} else if (colony.getTotalProductionOf(goodsType) == 0 && (bt = colony.getCurrentlyBuilding()) != null
-						&& AbstractGoods.containsType(goodsType, bt.getRequiredGoods())) {
+				if (bu.getLevel() > 1 || unit != null || (colony.getTotalProductionOf(goodsType) == 0 && (bt = colony.getCurrentlyBuilding()) != null
+						&& AbstractGoods.containsType(goodsType, bt.getRequiredGoods()))) {
 					ok = true;
 				}
 			}
 		}
-		return (!ok) ? null : new Suggestion(this, (unit == null) ? null : unit.getType(), better, goodsType, delta);
+		return !ok ? null : new Suggestion(this, (unit == null) ? null : unit.getType(), better, goodsType, delta);
 	}
 
 	/**
@@ -379,21 +375,24 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 	 */
 	public java.util.Map<Unit, Suggestion> getSuggestions() {
 		java.util.Map<Unit, Suggestion> result = new HashMap<>();
-		if (!canBeWorked() || canTeach())
+		if (!canBeWorked() || canTeach()) {
 			return result;
+		}
 
 		Occupation occ = getOccupation(null);
 		GoodsType work;
 		Suggestion sug;
 		// Check if the existing units can be improved.
 		for (Unit u : getUnitList()) {
-			if (u.getTeacher() != null)
-				continue; // Students assumed temporary
-			if ((work = u.getWorkType()) == null) {
-				if (occ != null)
-					work = occ.workType;
+			if (u.getTeacher() != null) {
+				continue;
+			} // Students assumed temporary
+			work = u.getWorkType();
+			if (work == null && occ != null) {
+				work = occ.workType;
 			}
-			if ((sug = getSuggestion(u, getProductionType(), work)) != null) {
+			sug = getSuggestion(u, getProductionType(), work);
+			if (sug != null) {
 				result.put(u, sug);
 			}
 		}
@@ -515,13 +514,15 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 	 */
 	public int getMaximumProductionOf(GoodsType goodsType) {
 		ProductionInfo info = getProductionInfo();
-		if (info == null)
+		if (info == null) {
 			return 0;
+		}
 		List<AbstractGoods> production = info.getMaximumProduction();
 		if (production != null) {
 			AbstractGoods ag = AbstractGoods.findByType(goodsType, production);
-			if (ag != null)
+			if (ag != null) {
 				return ag.getAmount();
+			}
 		}
 		return getTotalProductionOf(goodsType);
 	}
@@ -562,18 +563,21 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 	 * @return The maximum return from this unit.
 	 */
 	public int getUnitProduction(Unit unit, GoodsType goodsType) {
-		if (unit == null || unit.getWorkType() != goodsType)
+		if (unit == null || unit.getWorkType() != goodsType) {
 			return 0;
+		}
 		final UnitType unitType = unit.getType();
 		final Turn turn = getGame().getTurn();
 		int bestAmount = 0;
 		for (AbstractGoods output : getOutputs()) {
-			if (output.getType() != goodsType)
+			if (output.getType() != goodsType) {
 				continue;
+			}
 			int amount = (int) applyModifiers(getBaseProduction(getProductionType(), goodsType, unitType), turn,
 					getProductionModifiers(goodsType, unitType));
-			if (bestAmount < amount)
+			if (bestAmount < amount) {
 				bestAmount = amount;
+			}
 		}
 		return bestAmount;
 	}
@@ -588,9 +592,10 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 	 * @return The production of the given type of goods.
 	 */
 	public int getProductionOf(Unit unit, GoodsType goodsType) {
-		if (unit == null)
+		if (unit == null) {
 			throw new IllegalArgumentException("Null unit.");
-		return (!produces(goodsType)) ? 0 : Math.max(0, getPotentialProduction(goodsType, unit.getType()));
+		}
+		return !produces(goodsType) ? 0 : Math.max(0, getPotentialProduction(goodsType, unit.getType()));
 	}
 
 	/**
@@ -615,8 +620,9 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 	 * @return The potential production with the given goods type and unit type.
 	 */
 	public int getPotentialProduction(GoodsType goodsType, UnitType unitType) {
-		if (!canProduce(goodsType, unitType))
+		if (!canProduce(goodsType, unitType)) {
 			return 0;
+		}
 
 		if (unitType != null) {
 			switch (getNoWorkReason()) {
@@ -625,8 +631,9 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 			case CLAIM_REQUIRED:
 				break;
 			case CAPACITY_EXCEEDED:
-				if (getUnitCapacity() > 0)
-					break; // Could work after reorg!
+				if (getUnitCapacity() > 0) {
+					break;
+				} // Could work after reorg!
 				// Fall through
 			case WRONG_TYPE:
 			case OWNED_BY_ENEMY:
@@ -649,35 +656,28 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 		return (amount < 0) ? 0 : amount;
 	}
 
-	// Interface Location
-	// Inherits:
-	// FreeColObject.getId
-	// UnitLocation.getLocationLabel
-	// UnitLocation.contains
-	// UnitLocation.canAdd
-	// UnitLocation.getUnitCount
-	// final UnitLocation.getUnitIterator
-	// UnitLocation.getGoodsContainer
-
 	/**
-	 * {@inheritDoc}
+	 * Interface Location
+	 * Inherits:
+	 * FreeColObject.getId
+	 * UnitLocation.getLocationLabel
+	 * UnitLocation.contains
+	 * UnitLocation.canAdd
+	 * UnitLocation.getUnitCount
+	 * final UnitLocation.getUnitIterator
+	 * UnitLocation.getGoodsContainer
 	 */
+
 	@Override
 	public StringTemplate getLocationLabelFor(Player player) {
 		return (getOwner() == player) ? getLocationLabel() : getColony().getLocationLabelFor(player);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final Tile getTile() {
 		return colony.getTile();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean add(final Locatable locatable) {
 		NoAddReason reason = getNoAddReason(locatable);
@@ -690,8 +690,9 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 			throw new IllegalStateException("Can not add " + locatable + " to " + this + " because " + reason);
 		}
 		Unit unit = (Unit) locatable;
-		if (!super.add(unit))
+		if (!super.add(unit)) {
 			return false;
+		}
 
 		unit.setState(Unit.UnitState.IN_COLONY);
 		unit.setMovesLeft(0);
@@ -703,58 +704,51 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean remove(final Locatable locatable) {
 		if (!(locatable instanceof Unit)) {
 			throw new IllegalStateException("Not a unit: " + locatable);
 		}
 		Unit unit = (Unit) locatable;
-		if (!contains(unit))
+		if (!contains(unit)) {
 			return true;
-		if (!super.remove(unit))
+		}
+		if (!super.remove(unit)) {
 			return false;
+		}
 
 		unit.setState(Unit.UnitState.ACTIVE);
 		unit.setMovesLeft(0);
 
 		// Switch to unattended production if possible.
-		if (isEmpty())
+		if (isEmpty()) {
 			updateProductionType();
+		}
 
 		getColony().invalidateCache();
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final Settlement getSettlement() {
 		return colony;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final int getRank() {
 		return Location.getRank(getTile());
 	}
 
-	// Interface UnitLocation
-	// Inherits:
-	// UnitLocation.getSpaceTaken
-	// UnitLocation.moveToFront
-	// UnitLocation.clearUnitList
-	// UnitLocation.getUnitCapacity
-	// UnitLocation.equipForRole
-
 	/**
-	 * {@inheritDoc}
+	 * Interface UnitLocation
+	 * Inherits:
+	 * UnitLocation.getSpaceTaken
+	 * UnitLocation.moveToFront
+	 * UnitLocation.clearUnitList
+	 * UnitLocation.getUnitCapacity
+	 * UnitLocation.equipForRole
 	 */
+
 	@Override
 	public NoAddReason getNoAddReason(Locatable locatable) {
 		return (locatable instanceof Unit && ((Unit) locatable).isPerson()) ? super.getNoAddReason(locatable)
@@ -901,13 +895,10 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 		throw new UnsupportedOperationException();
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String COLONY_TAG = "colony";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -915,20 +906,15 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 		xw.writeAttribute(COLONY_TAG, colony);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
-		if (productionType != null)
+		if (productionType != null) {
 			productionType.toXML(xw);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -936,20 +922,13 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 		colony = xr.findFreeColGameObject(getGame(), COLONY_TAG, Colony.class, (Colony) null, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readChildren(FreeColXMLReader xr) throws XMLStreamException {
-
 		super.readChildren(xr);
 
 		updateProductionType();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -957,7 +936,6 @@ public abstract class WorkLocation extends UnitLocation implements Ownable {
 
 		if (ProductionType.getXMLElementTagName().equals(tag)) {
 			productionType = new ProductionType(xr, spec);
-
 		} else {
 			super.readChild(xr);
 		}

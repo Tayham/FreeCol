@@ -32,11 +32,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when scouting a native settlement.
- */
+/** The message sent when scouting a native settlement. */
 public class ScoutIndianSettlementMessage extends DOMMessage {
-
 	/** The identifier of the unit that is scouting. */
 	private final String unitId;
 

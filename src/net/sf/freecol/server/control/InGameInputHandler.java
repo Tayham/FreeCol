@@ -101,7 +101,6 @@ import org.w3c.dom.NodeList;
  * {@link net.sf.freecol.server.FreeColServer.GameState#IN_GAME in game}.
  */
 public final class InGameInputHandler extends InputHandler implements NetworkConstants {
-
 	private static final Logger logger = Logger.getLogger(InGameInputHandler.class.getName());
 
 	/**
@@ -467,8 +466,9 @@ public final class InGameInputHandler extends InputHandler implements NetworkCon
 					final String tag = node.getTagName();
 					try {
 						Element reply = InGameInputHandler.this.handle(connection, node);
-						if (reply != null)
+						if (reply != null) {
 							results.add(reply);
+						}
 						logger.log(Level.FINEST, "multiple(" + i + "): " + tag + " -> "
 								+ ((reply == null) ? "null" : reply.getTagName()));
 					} catch (Exception e) {

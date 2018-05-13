@@ -36,12 +36,9 @@ import net.sf.freecol.common.io.FreeColXMLReader;
  * Common Locale Data Repository</a>.
  */
 public class NumberRules {
-
 	private static final Logger logger = Logger.getLogger(NumberRules.class.getName());
 
-	/**
-	 * A rule that always returns category "other".
-	 */
+	/** A rule that always returns category "other". */
 	public static final Number OTHER_NUMBER_RULE = new OtherNumberRule();
 
 	/**
@@ -93,7 +90,7 @@ public class NumberRules {
 	}
 
 	public static void load(InputStream in) {
-		try (FreeColXMLReader xr = new FreeColXMLReader(in);) {
+		try (FreeColXMLReader xr = new FreeColXMLReader(in)) {
 			readFromXML(xr);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Load parse", e);
@@ -101,7 +98,7 @@ public class NumberRules {
 		}
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String COUNT_TAG = "count";
 	private static final String GENERATION_TAG = "generation";
@@ -114,11 +111,9 @@ public class NumberRules {
 	private static void readFromXML(FreeColXMLReader xr) throws XMLStreamException {
 		while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
 			String tag = xr.getLocalName();
-			if (null != tag)
+			if (null != tag) {
 				switch (tag) {
 				case VERSION_TAG:
-					xr.nextTag();
-					break;
 				case GENERATION_TAG:
 					xr.nextTag();
 					break;
@@ -131,6 +126,7 @@ public class NumberRules {
 					}
 					break;
 				}
+			}
 		}
 	}
 
@@ -154,16 +150,15 @@ public class NumberRules {
 				break;
 			case 1:
 				Rule rule = numberRule.getRule(Category.one);
-				if (rule != null) {
-					if (null != rule.toString())
-						switch (rule.toString()) {
-						case "n is 1":
-							number = PLURAL_NUMBER_RULE;
-							break;
-						case "n in 0..1":
-							number = ZERO_ONE_NUMBER_RULE;
-							break;
-						}
+				if (rule != null && null != rule.toString()) {
+					switch (rule.toString()) {
+					case "n is 1":
+						number = PLURAL_NUMBER_RULE;
+						break;
+					case "n in 0..1":
+						number = ZERO_ONE_NUMBER_RULE;
+						break;
+					}
 				}
 				break;
 			case 2:

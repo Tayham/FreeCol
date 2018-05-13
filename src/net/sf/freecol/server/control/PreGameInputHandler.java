@@ -44,11 +44,10 @@ import org.w3c.dom.Element;
  * @see PreGameController
  */
 public final class PreGameInputHandler extends InputHandler {
-
 	private static final Logger logger = Logger.getLogger(PreGameInputHandler.class.getName());
 
 	/** Is the game launching yet. */
-	private boolean launching = false;
+	private boolean launching;
 
 	/**
 	 * The constructor to use.
@@ -140,12 +139,13 @@ public final class PreGameInputHandler extends InputHandler {
 			return DOMMessage.createError("server.onlyAdminCanLaunch", "Only the server admin can launch the game.");
 		}
 
-		if (launching)
+		if (launching) {
 			return null;
+		}
 		launching = true;
 
 		// Check that no two players have the same nation
-		ArrayList<Nation> nations = new ArrayList<>();
+		java.util.HashSet<Nation> nations = new java.util.HashSet<>();
 		for (Player player : getGame().getLivePlayers(null)) {
 			final Nation nation = getGame().getSpecification().getNation(player.getNationId());
 			if (nations.contains(nation)) {

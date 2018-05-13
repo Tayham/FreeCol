@@ -28,11 +28,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.ChoiceItem;
 import net.sf.freecol.common.i18n.Messages;
 
-/**
- * A simple modal choice dialog.
- */
+/** A simple modal choice dialog. */
 public class FreeColChoiceDialog<T> extends FreeColDialog<T> {
-
 	/**
 	 * Internal constructor.
 	 *

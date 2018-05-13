@@ -32,11 +32,8 @@ import net.sf.freecol.common.model.TileImprovementType;
 import net.sf.freecol.common.option.Option;
 import net.sf.freecol.common.option.OptionGroup;
 
-/**
- * Stores all <code>FreeColActions</code> and retrieves them by identifier.
- */
+/** Stores all <code>FreeColActions</code> and retrieves them by identifier. */
 public class ActionManager extends OptionGroup {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(ActionManager.class.getName());
 
@@ -65,7 +62,7 @@ public class ActionManager extends OptionGroup {
 	 *            The client <code>ConnectController</code>.
 	 */
 	public void initializeActions(InGameController inGameController, ConnectController connectController) {
-		/**
+		/*
 		 * Possible FIXME: should we put some of these, especially the move and tile
 		 * improvement actions, into OptionGroups of their own? This would simplify the
 		 * MapControls slightly.
@@ -193,7 +190,8 @@ public class ActionManager extends OptionGroup {
 	 * @see FreeColAction
 	 */
 	public void update() {
-		for (Option o : getOptions())
+		for (Option o : getOptions()) {
 			((FreeColAction) o).update();
+		}
 	}
 }

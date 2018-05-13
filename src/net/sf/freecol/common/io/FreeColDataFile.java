@@ -51,7 +51,6 @@ import static net.sf.freecol.common.util.StringUtils.*;
  * or a directory containing certain files.
  */
 public class FreeColDataFile {
-
 	private static final Logger logger = Logger.getLogger(FreeColDataFile.class.getName());
 
 	protected static final String ZIP_FILE_EXTENSION = "zip";
@@ -82,7 +81,7 @@ public class FreeColDataFile {
 			throw new IOException("File " + file.getName() + " does not exist");
 		}
 		this.file = file;
-		this.jarDirectory = (file.isDirectory()) ? null : findJarDirectory(file);
+		this.jarDirectory = file.isDirectory() ? null : findJarDirectory(file);
 	}
 
 	/**
@@ -95,7 +94,7 @@ public class FreeColDataFile {
 	 */
 	private static String findJarDirectory(File file) {
 		String expected = file.getName().substring(0, file.getName().lastIndexOf('.'));
-		try (JarFile jf = new JarFile(file);) {
+		try (JarFile jf = new JarFile(file)) {
 			final JarEntry entry = jf.entries().nextElement();
 			final String en = entry.getName();
 			final int index = en.lastIndexOf('/');
@@ -128,23 +127,29 @@ public class FreeColDataFile {
 
 		List<String> result = new ArrayList<>(4);
 
-		if (!language.isEmpty())
+		if (!language.isEmpty()) {
 			language = "_" + language;
-		if (!country.isEmpty())
+		}
+		if (!country.isEmpty()) {
 			country = "_" + country;
-		if (!variant.isEmpty())
+		}
+		if (!variant.isEmpty()) {
 			variant = "_" + variant;
+		}
 
 		result.add(prefix + suffix);
 		String filename = prefix + language + suffix;
-		if (!result.contains(filename))
+		if (!result.contains(filename)) {
 			result.add(filename);
+		}
 		filename = prefix + language + country + suffix;
-		if (!result.contains(filename))
+		if (!result.contains(filename)) {
 			result.add(filename);
+		}
 		filename = prefix + language + country + variant + suffix;
-		if (!result.contains(filename))
+		if (!result.contains(filename)) {
 			result.add(filename);
+		}
 		return result;
 	}
 
@@ -214,7 +219,7 @@ public class FreeColDataFile {
 		lb.add("Resource mapping");
 		lb.mark();
 		for (String fileName : getResourceFileNames()) {
-			try (final InputStream is = getInputStream(fileName);) {
+			try (InputStream is = getInputStream(fileName)) {
 				properties.load(is);
 				lb.add(", ", file, "/", fileName, " loaded");
 			} catch (FileNotFoundException e) { // Expected failure
@@ -261,8 +266,9 @@ public class FreeColDataFile {
 		if (!todo.isEmpty()) {
 			lb.add(", could not resolve virtual resource/s: ", join(" ", todo));
 		}
-		if (lb.grew())
+		if (lb.grew()) {
 			lb.log(logger, Level.INFO);
+		}
 		return rc;
 	}
 

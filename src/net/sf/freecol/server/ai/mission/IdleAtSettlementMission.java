@@ -31,11 +31,8 @@ import net.sf.freecol.common.util.LogBuilder;
 import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIUnit;
 
-/**
- * Mission for idling in a settlement.
- */
+/** Mission for idling in a settlement. */
 public class IdleAtSettlementMission extends Mission {
-
 	private static final Logger logger = Logger.getLogger(IdleAtSettlementMission.class.getName());
 
 	/** The tag for this mission. */
@@ -83,70 +80,50 @@ public class IdleAtSettlementMission extends Mission {
 		return unit.isInEurope() || !unit.hasTile() || unit.getTile().hasSettlement();
 	}
 
-	// Implement Mission
-	// Inherit dispose, getTransportDestination
+	/** Implement Mission Inherit dispose, getTransportDestination. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getBaseTransportPriority() {
 		return MINIMUM_TRANSPORT_PRIORITY;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTarget() {
-		return (isSafe()) ? null : findTarget();
+		return isSafe() ? null : findTarget();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setTarget(Location target) {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location findTarget() {
-		if (isSafe())
+		if (isSafe()) {
 			return null;
+		}
 
 		final Unit unit = getAIUnit().getUnit();
 		PathNode path = unit.findOurNearestOtherSettlement();
 		return (path == null) ? null : Location.upLoc(path.getLastNode().getLocation());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isOneTime() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String invalidReason() {
 		return invalidAIUnitReason(getAIUnit());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Mission doMission(LogBuilder lb) {
 		lb.add(tag);
 		String reason = invalidReason();
-		if (reason != null)
+		if (reason != null) {
 			return lbFail(lb, false, reason);
+		}
 
 		// If safe, do nothing but do not use lbWait in case a useful
 		// mission is found.
@@ -184,11 +161,8 @@ public class IdleAtSettlementMission extends Mission {
 		return lbAt(lb);
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

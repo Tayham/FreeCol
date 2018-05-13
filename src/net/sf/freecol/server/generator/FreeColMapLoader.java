@@ -39,11 +39,8 @@ import net.sf.freecol.server.model.ServerIndianSettlement;
 import net.sf.freecol.server.model.ServerPlayer;
 import net.sf.freecol.server.model.ServerRegion;
 
-/**
- * Load a map.
- */
+/** Load a map. */
 public class FreeColMapLoader implements MapLoader {
-
 	private final ServerGame importGame;
 
 	public FreeColMapLoader(File file) throws Exception {
@@ -65,7 +62,7 @@ public class FreeColMapLoader implements MapLoader {
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
 					Tile t = new Tile(game,
-							(importMap.getTile(x, y).getType().isWater()) ? TileType.WATER : TileType.LAND, x, y);
+							importMap.getTile(x, y).getType().isWater() ? TileType.WATER : TileType.LAND, x, y);
 					map.setTile(t, x, y);
 				}
 			}
@@ -95,22 +92,19 @@ public class FreeColMapLoader implements MapLoader {
 							// import tile improvements
 							tile.setTileItemContainer(
 									new TileItemContainer(game, tile, template.getTileItemContainer(), layer));
-							if (layer.compareTo(Layer.NATIVES) >= 0) {
-								// import native settlements
-								if (template.getOwner() != null) {
-									String nationId = template.getOwner().getNationId();
-									Player player = game.getPlayerByNationId(nationId);
-									if (player == null) {
-										Nation nation = game.getSpecification().getNation(nationId);
-										player = new ServerPlayer(game, false, nation, null, null);
-										game.addPlayer(player);
-									}
-									tile.setOwner(player);
-									if (template.getOwningSettlement() != null) {
-										IndianSettlement settlement = (IndianSettlement) template.getOwningSettlement();
-										tile.setOwningSettlement(
-												new ServerIndianSettlement(game, player, tile, settlement));
-									}
+							if (layer.compareTo(Layer.NATIVES) >= 0 && template.getOwner() != null) {
+								String nationId = template.getOwner().getNationId();
+								Player player = game.getPlayerByNationId(nationId);
+								if (player == null) {
+									Nation nation = game.getSpecification().getNation(nationId);
+									player = new ServerPlayer(game, false, nation, null, null);
+									game.addPlayer(player);
+								}
+								tile.setOwner(player);
+								if (template.getOwningSettlement() != null) {
+									IndianSettlement settlement = (IndianSettlement) template.getOwningSettlement();
+									tile.setOwningSettlement(
+											new ServerIndianSettlement(game, player, tile, settlement));
 								}
 							}
 						}

@@ -40,7 +40,6 @@ import static net.sf.freecol.common.util.CollectionUtils.*;
  * @see Disaster
  */
 public class Effect extends FreeColGameObjectType {
-
 	public static final String DAMAGED_UNIT = "model.disaster.effect.damagedUnit";
 	public static final String LOSS_OF_UNIT = "model.disaster.effect.lossOfUnit";
 	public static final String LOSS_OF_MONEY = "model.disaster.effect.lossOfMoney";
@@ -55,9 +54,7 @@ public class Effect extends FreeColGameObjectType {
 	/** Scopes that might limit this Effect to certain types of objects. */
 	private List<Scope> scopes = null;
 
-	/**
-	 * Deliberately empty constructor.
-	 */
+	/** Deliberately empty constructor. */
 	protected Effect() {
 	}
 
@@ -115,8 +112,9 @@ public class Effect extends FreeColGameObjectType {
 	 *            The <code>Scope</code> to add.
 	 */
 	private void addScope(Scope scope) {
-		if (scopes == null)
+		if (scopes == null) {
 			scopes = new ArrayList<>();
+		}
 		scopes.add(scope);
 	}
 
@@ -128,16 +126,13 @@ public class Effect extends FreeColGameObjectType {
 	 * @return True if this effect applies.
 	 */
 	public boolean appliesTo(final FreeColGameObjectType objectType) {
-		return (scopes == null || scopes.isEmpty()) ? true : any(scopes, s -> s.appliesTo(objectType));
+		return scopes == null || scopes.isEmpty() || any(scopes, s -> s.appliesTo(objectType));
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String PROBABILITY_TAG = "probability";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -145,20 +140,15 @@ public class Effect extends FreeColGameObjectType {
 		xw.writeAttribute(PROBABILITY_TAG, probability);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
-		for (Scope scope : getScopes())
+		for (Scope scope : getScopes()) {
 			scope.toXML(xw);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -166,9 +156,6 @@ public class Effect extends FreeColGameObjectType {
 		probability = xr.getAttribute(PROBABILITY_TAG, 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -179,37 +166,28 @@ public class Effect extends FreeColGameObjectType {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
 
 		if (Scope.getXMLElementTagName().equals(tag)) {
 			addScope(new Scope(xr));
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
 		sb.append('[').append(getId()).append(" probability=").append(probability).append('%');
-		for (Scope scope : getScopes())
+		for (Scope scope : getScopes()) {
 			sb.append(' ').append(scope);
+		}
 		sb.append(']');
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

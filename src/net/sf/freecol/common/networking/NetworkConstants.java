@@ -24,10 +24,9 @@ package net.sf.freecol.common.networking;
  * and input handlers when they are communicating.
  */
 public interface NetworkConstants {
-
 	/** Claiming land by stealing it. */
-	public static final int STEAL_LAND = -1;
+	int STEAL_LAND = -1;
 
 	/** Trading type. */
-	public static final int NO_TRADE_GOODS = 0, NO_TRADE = -1, NO_TRADE_HAGGLE = -2, NO_TRADE_HOSTILE = -3;
+	int NO_TRADE_GOODS = 0, NO_TRADE = -1, NO_TRADE_HAGGLE = -2, NO_TRADE_HOSTILE = -3;
 }

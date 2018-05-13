@@ -43,11 +43,8 @@ import net.sf.freecol.server.ai.AIMain;
 import net.sf.freecol.server.ai.AIMessage;
 import net.sf.freecol.server.ai.AIUnit;
 
-/**
- * A mission for a Privateer unit.
- */
+/** A mission for a Privateer unit. */
 public class PrivateerMission extends Mission {
-
 	private static final Logger logger = Logger.getLogger(PrivateerMission.class.getName());
 
 	/** The tag for this mission. */
@@ -116,8 +113,9 @@ public class PrivateerMission extends Mission {
 	 * @return A target for this mission, or null if none found.
 	 */
 	public static Location extractTarget(AIUnit aiUnit, PathNode path) {
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		final Player owner = unit.getOwner();
 		final Location loc = path.getLastNode().getLocation();
@@ -146,8 +144,9 @@ public class PrivateerMission extends Mission {
 		// But they are wary of danger
 		if (defender.isOffensiveUnit()) {
 			CombatModel.CombatOdds co = attacker.getGame().getCombatModel().calculateCombatOdds(attacker, defender);
-			if (co != null)
+			if (co != null) {
 				value += (co.win - 0.5) * 200;
+			}
 		}
 		return value;
 	}
@@ -223,8 +222,9 @@ public class PrivateerMission extends Mission {
 	 * @return A path to the new target.
 	 */
 	public static PathNode findTargetPath(AIUnit aiUnit, int range, boolean deferOK) {
-		if (invalidAIUnitReason(aiUnit) != null)
+		if (invalidAIUnitReason(aiUnit) != null) {
 			return null;
+		}
 		final Unit unit = aiUnit.getUnit();
 		final Location start = unit.getPathStartLocation();
 
@@ -259,11 +259,12 @@ public class PrivateerMission extends Mission {
 	 */
 	private static String invalidMissionReason(AIUnit aiUnit) {
 		String reason = invalidAIUnitReason(aiUnit);
-		if (reason != null)
+		if (reason != null) {
 			return reason;
+		}
 		final Unit unit = aiUnit.getUnit();
-		return (!unit.isCarrier()) ? "unit-not-a-carrier"
-				: (!unit.isOffensiveUnit()) ? Mission.UNITNOTOFFENSIVE
+		return !unit.isCarrier() ? "unit-not-a-carrier"
+				: !unit.isOffensiveUnit() ? Mission.UNITNOTOFFENSIVE
 						: (!unit.isEmpty() || !unit.getCompactGoods().isEmpty()) ? "unit-has-cargo" : null;
 	}
 
@@ -295,8 +296,8 @@ public class PrivateerMission extends Mission {
 		final boolean pirate = aiUnit.getUnit().hasAbility(Ability.PIRACY);
 		String reason;
 		return (unit == null) ? Mission.TARGETINVALID
-				: (!unit.isNaval()) ? "privateer-ignores-land-unit"
-						: (player.owns(unit)) ? Mission.TARGETOWNERSHIP
+				: !unit.isNaval() ? "privateer-ignores-land-unit"
+						: player.owns(unit) ? Mission.TARGETOWNERSHIP
 								: ((reason = invalidAttackReason(aiUnit, unit.getOwner())) != null) ? reason
 										: (scoreUnit(aiUnit, unit) <= 0) ? "privateer-avoids-trouble" : null;
 	}
@@ -325,39 +326,29 @@ public class PrivateerMission extends Mission {
 		final Player owner = aiUnit.getUnit().getOwner();
 		String reason = invalidMissionReason(aiUnit);
 		return (reason != null) ? reason
-				: (aiUnit.getUnit().isInEurope()) ? null
+				: aiUnit.getUnit().isInEurope() ? null
 						: (loc == null) ? null
 								: (loc instanceof Europe) ? invalidTargetReason(loc, owner)
 										: (loc instanceof Settlement)
 												? invalidSettlementReason(aiUnit, (Settlement) loc)
 												: (loc instanceof Unit) ? invalidUnitReason(aiUnit, (Unit) loc)
-														: (loc instanceof Tile) ? ((((Tile) loc).isExploredBy(owner))
+														: (loc instanceof Tile) ? (((Tile) loc).isExploredBy(owner)
 																? "tile-is-explored"
 																: null) : Mission.TARGETINVALID;
 	}
 
-	// Implement Mission
-	// Inherit dispose, getBaseTransportPriority, isOneTime
+	/** Implement Mission Inherit dispose, getBaseTransportPriority, isOneTime. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTransportDestination() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getTarget() {
 		return target;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setTarget(Location target) {
 		if (target == null || target instanceof Colony || target instanceof Europe || target instanceof Unit) {
@@ -365,25 +356,16 @@ public class PrivateerMission extends Mission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location findTarget() {
 		return findTarget(getAIUnit(), 8, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String invalidReason() {
 		return invalidReason(getAIUnit(), getTarget());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Mission doMission(LogBuilder lb) {
 		lb.add(tag);
@@ -407,8 +389,9 @@ public class PrivateerMission extends Mission {
 			unit.setDestination(tile);
 			aiUnit.moveToAmerica();
 		}
-		if (unit.isAtSea())
+		if (unit.isAtSea()) {
 			return lbAt(lb);
+		}
 
 		Location newTarget = findTarget(aiUnit, 1, true);
 		if (newTarget == null) {
@@ -457,13 +440,10 @@ public class PrivateerMission extends Mission {
 		return lbAt(lb);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String TARGET_TAG = "target";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -473,9 +453,6 @@ public class PrivateerMission extends Mission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -483,9 +460,6 @@ public class PrivateerMission extends Mission {
 		target = xr.getLocationAttribute(getGame(), TARGET_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

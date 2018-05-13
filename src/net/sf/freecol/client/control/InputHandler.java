@@ -29,11 +29,8 @@ import net.sf.freecol.common.networking.MessageHandler;
 
 import org.w3c.dom.Element;
 
-/**
- * Provides common methods for input handlers.
- */
+/** Provides common methods for input handlers. */
 public abstract class InputHandler implements MessageHandler {
-
 	private static final Logger logger = Logger.getLogger(InputHandler.class.getName());
 
 	/** The main FreeCol client object. */

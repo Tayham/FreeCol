@@ -28,8 +28,7 @@ import net.sf.freecol.common.model.Unit;
  * {@link net.sf.freecol.common.model.Map#search}.
  */
 public interface CostDecider {
-
-	public static final int ILLEGAL_MOVE = -1;
+	int ILLEGAL_MOVE = -1;
 
 	/**
 	 * Determines the cost of a single move.
@@ -47,7 +46,7 @@ public interface CostDecider {
 	 * @return The cost of moving the given unit from the <code>oldLocation</code>
 	 *         to the <code>newLocation</code>.
 	 */
-	public int getCost(Unit unit, Location oldLocation, Location newLocation, int movesLeftBefore);
+	int getCost(Unit unit, Location oldLocation, Location newLocation, int movesLeftBefore);
 
 	/**
 	 * Gets the number of moves left. This method should be called after invoking
@@ -55,7 +54,7 @@ public interface CostDecider {
 	 * 
 	 * @return The number of moves left.
 	 */
-	public int getMovesLeft();
+	int getMovesLeft();
 
 	/**
 	 * Gets the number of turns consumed. This method should be called after
@@ -63,5 +62,5 @@ public interface CostDecider {
 	 * 
 	 * @return The number of turns consumed.
 	 */
-	public int getNewTurns();
+	int getNewTurns();
 }

@@ -39,7 +39,6 @@ import org.w3c.dom.Element;
  * its availability in that market.
  */
 public final class Market extends FreeColGameObject implements Ownable {
-
 	private static final Logger logger = Logger.getLogger(Market.class.getName());
 
 	/**
@@ -52,7 +51,7 @@ public final class Market extends FreeColGameObject implements Ownable {
 	 * Constant for specifying the access to this <code>Market</code> when selling
 	 * goods.
 	 */
-	public static enum Access {
+	public enum Access {
 		EUROPE, CUSTOM_HOUSE,
 	}
 
@@ -65,9 +64,7 @@ public final class Market extends FreeColGameObject implements Ownable {
 	/** Watching listeners. Do not serialize. */
 	private final ArrayList<TransactionListener> transactionListeners = new ArrayList<>();
 
-	/**
-	 * Main constructor for creating a market for a new player.
-	 */
+	/** Main constructor for creating a market for a new player. */
 	public Market(Game game, Player player) {
 		super(game);
 
@@ -432,8 +429,9 @@ public final class Market extends FreeColGameObject implements Ownable {
 	 */
 	public void update(GoodsType goodsType) {
 		MarketData data = requireMarketData(goodsType);
-		if (data != null)
+		if (data != null) {
 			data.update();
+		}
 	}
 
 	/**
@@ -498,23 +496,17 @@ public final class Market extends FreeColGameObject implements Ownable {
 		this.owner = owner;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public FreeColGameObject getLinkTarget(Player player) {
 		return (player == getOwner()) ? getOwner().getEurope() : null;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String OWNER_TAG = "owner";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -522,24 +514,17 @@ public final class Market extends FreeColGameObject implements Ownable {
 		xw.writeAttribute(OWNER_TAG, owner);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
 		if (xw.validFor(owner)) {
-
 			for (MarketData data : getSortedCopy(marketData.values())) {
 				data.toXML(xw);
 			}
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -547,9 +532,6 @@ public final class Market extends FreeColGameObject implements Ownable {
 		owner = xr.findFreeColGameObject(getGame(), OWNER_TAG, Player.class, (Player) null, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -558,9 +540,6 @@ public final class Market extends FreeColGameObject implements Ownable {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
@@ -568,15 +547,11 @@ public final class Market extends FreeColGameObject implements Ownable {
 		if (MarketData.getXMLElementTagName().equals(tag)) {
 			MarketData data = xr.readFreeColGameObject(getGame(), MarketData.class);
 			putMarketData(data.getGoodsType(), data);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
@@ -588,9 +563,6 @@ public final class Market extends FreeColGameObject implements Ownable {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

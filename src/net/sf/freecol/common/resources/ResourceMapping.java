@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
  * @see Resource
  */
 public final class ResourceMapping {
-
 	private static final Logger logger = Logger.getLogger(ResourceMapping.class.getName());
 
 	/** Mappings between an object identifier and a resource. */
@@ -45,9 +44,7 @@ public final class ResourceMapping {
 	private final HashMap<String, VideoResource> videoResources;
 	private final HashMap<String, ImageResource> imageResources;
 
-	/**
-	 * Creates a new empty <code>ResourceMapping</code>.
-	 */
+	/** Creates a new empty <code>ResourceMapping</code>. */
 	public ResourceMapping() {
 		colorResources = new HashMap<>();
 		fontResources = new HashMap<>();
@@ -180,10 +177,7 @@ public final class ResourceMapping {
 			return add(keyNew, vr);
 		}
 		ImageResource ir = imageResources.get(key);
-		if (ir != null) {
-			return add(keyNew, ir);
-		}
-		return false;
+		return ir != null && add(keyNew, ir);
 	}
 
 	/**

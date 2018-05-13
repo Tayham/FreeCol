@@ -40,7 +40,6 @@ import net.sf.freecol.common.option.AudioMixerOption.MixerWrapper;
  * values to be both seen and changed.
  */
 public final class AudioMixerOptionUI extends OptionUI<AudioMixerOption> {
-
 	private final GUI gui;
 	private final JPanel panel = new JPanel();
 	private final JComboBox<MixerWrapper> cbox;
@@ -110,19 +109,13 @@ public final class AudioMixerOptionUI extends OptionUI<AudioMixerOption> {
 		currentMixerLabel.setText(gui.getSoundMixerLabelText());
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final JLabel getJLabel() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JPanel getComponent() {
 		return panel;
@@ -137,9 +130,7 @@ public final class AudioMixerOptionUI extends OptionUI<AudioMixerOption> {
 		getOption().setValue((MixerWrapper) cbox.getSelectedItem());
 	}
 
-	/**
-	 * Reset with the value from the option.
-	 */
+	/** Reset with the value from the option. */
 	@Override
 	public void reset() {
 		cbox.setSelectedItem(getOption().getValue());

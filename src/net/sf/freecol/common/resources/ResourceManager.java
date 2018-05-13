@@ -34,19 +34,18 @@ import net.sf.freecol.FreeCol;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.io.sza.SimpleZippedAnimation;
 
-/**
- * Class for getting resources (images, audio etc).
- */
+/** Class for getting resources (images, audio etc). */
 public class ResourceManager {
-
 	private static final Logger logger = Logger.getLogger(ResourceManager.class.getName());
 
-	// TODO: There are no obvious flaws currently, but this could still
-	// profit from deeper verification, including checking ResourceMapping and
-	// all Resource classes another time, by someone knowledgeable
-	// in thread safety issues in Java.
-	// It is currently assumed changing of mappings can happen on any thread,
-	// but Resources are only retrieved or cleaned from the AWT thread.
+	/**
+	 * TODO: There are no obvious flaws currently, but this could still
+	 * profit from deeper verification, including checking ResourceMapping and
+	 * all Resource classes another time, by someone knowledgeable
+	 * in thread safety issues in Java.
+	 * It is currently assumed changing of mappings can happen on any thread,
+	 * but Resources are only retrieved or cleaned from the AWT thread.
+	 */
 
 	public static final String REPLACEMENT_IMAGE = "image.miscicon.delete";
 	public static final String REPLACEMENT_STRING = "X";
@@ -124,9 +123,7 @@ public class ResourceManager {
 		update(mapping != null);
 	}
 
-	/**
-	 * Clean up easily replaced modified copies in caches.
-	 */
+	/** Clean up easily replaced modified copies in caches. */
 	public static synchronized void clean() {
 		if (baseMapping != null) {
 			for (Map.Entry<String, ImageResource> entry : baseMapping.getImageResources().entrySet()) {
@@ -173,9 +170,7 @@ public class ResourceManager {
 		}
 	}
 
-	/**
-	 * Creates a merged container containing all the resources.
-	 */
+	/** Creates a merged container containing all the resources. */
 	private static void createMergedContainer() {
 		ResourceMapping mc = addMappings();
 		mergedContainer = mc;
@@ -190,9 +185,7 @@ public class ResourceManager {
 		return mc;
 	}
 
-	/**
-	 * Create and start a new background preload thread.
-	 */
+	/** Create and start a new background preload thread. */
 	private static void startBackgroundPreloading() {
 		if ("true".equals(System.getProperty("java.awt.headless", "false"))) {
 			return; // Do not preload in headless mode
@@ -550,9 +543,10 @@ public class ResourceManager {
 	 */
 	public static Font getFont(final String key) {
 		final FontResource r = getFontResource(key);
-		if (r == null)
-			return FontResource.getEmergencyFont();
-		return r.getFont();
+		if (r != null) {
+			return r.getFont();
+		}
+		return FontResource.getEmergencyFont();
 	}
 
 	/**
@@ -610,5 +604,4 @@ public class ResourceManager {
 		final StringResource r = getStringResource(key);
 		return (r == null) ? REPLACEMENT_STRING : r.getString();
 	}
-
 }

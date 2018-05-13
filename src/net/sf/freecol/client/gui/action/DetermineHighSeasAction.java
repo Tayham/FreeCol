@@ -25,11 +25,8 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.gui.panel.Parameters;
 import net.sf.freecol.common.model.Map;
 
-/**
- * An action for determining the high seas tiles.
- */
+/** An action for determining the high seas tiles. */
 public class DetermineHighSeasAction extends FreeColAction {
-
 	public static final String id = "determineHighSeasAction";
 
 	/**
@@ -42,22 +39,16 @@ public class DetermineHighSeasAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return super.shouldBeEnabled() && freeColClient.isMapEditor() && getGame() != null
 				&& getGame().getMap() != null;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final Map map = getGame().getMap();

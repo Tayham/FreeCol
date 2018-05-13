@@ -31,15 +31,11 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-
-/**
- * Represents a tile improvement, such as a river or road.
- */
+/** Represents a tile improvement, such as a river or road. */
 public class TileImprovement extends TileItem implements Named {
-
 	private static final Logger logger = Logger.getLogger(TileImprovement.class.getName());
 
-	/** River magnitudes */
+	/** River magnitudes. */
 	public static final int NO_RIVER = 0;
 	public static final int SMALL_RIVER = 1;
 	public static final int LARGE_RIVER = 2;
@@ -68,7 +64,7 @@ public class TileImprovement extends TileItem implements Named {
 	private boolean virtual;
 
 	/** Cached bitmap of connections by direction, derived from style. */
-	private long connected = 0L;
+	private long connected;
 
 	/**
 	 * Creates a standard <code>TileImprovement</code>-instance.
@@ -170,7 +166,7 @@ public class TileImprovement extends TileItem implements Named {
 	 * @return An array of relevant directions, or null if none.
 	 */
 	public List<Direction> getConnectionDirections() {
-		return (isRoad()) ? Direction.allDirections : (isRiver()) ? Direction.longSides : null;
+		return isRoad() ? Direction.allDirections : isRiver() ? Direction.longSides : null;
 	}
 
 	/**
@@ -279,11 +275,12 @@ public class TileImprovement extends TileItem implements Named {
 	 */
 	private String encodeConnections() {
 		List<Direction> dirns = getConnectionDirections();
-		if (dirns == null)
+		if (dirns == null) {
 			return null;
+		}
 		StringBuilder sb = new StringBuilder();
 		for (Direction d : dirns) {
-			sb.append((isConnectedTo(d)) ? Integer.toString(magnitude) : "0");
+			sb.append(isConnectedTo(d) ? Integer.toString(magnitude) : "0");
 		}
 		return sb.toString();
 	}
@@ -295,12 +292,14 @@ public class TileImprovement extends TileItem implements Named {
 	 */
 	public Map<Direction, Integer> getConnections() {
 		List<Direction> dirns = getConnectionDirections();
-		if (dirns == null)
+		if (dirns == null) {
 			return Collections.<Direction, Integer>emptyMap();
+		}
 		Map<Direction, Integer> result = new EnumMap<>(Direction.class);
 		for (Direction d : dirns) {
-			if (isConnectedTo(d))
+			if (isConnectedTo(d)) {
 				result.put(d, magnitude);
+			}
 		}
 		return result;
 	}
@@ -314,7 +313,7 @@ public class TileImprovement extends TileItem implements Named {
 	 * @return A production <code>Modifier</code>, or null if none applicable.
 	 */
 	public Modifier getProductionModifier(GoodsType goodsType) {
-		return (isComplete()) ? type.getProductionModifier(goodsType) : null;
+		return isComplete() ? type.getProductionModifier(goodsType) : null;
 	}
 
 	/**
@@ -339,7 +338,7 @@ public class TileImprovement extends TileItem implements Named {
 	 *         improvement, or null if nothing changes.
 	 */
 	public TileType getChange(TileType tileType) {
-		return (isComplete()) ? type.getChange(tileType) : null;
+		return isComplete() ? type.getChange(tileType) : null;
 	}
 
 	/**
@@ -350,7 +349,7 @@ public class TileImprovement extends TileItem implements Named {
 	 * @return True if the supplied unit can build this improvement.
 	 */
 	public boolean isWorkerAllowed(Unit unit) {
-		return (unit == null || isComplete()) ? false : type.isWorkerAllowed(unit);
+		return unit != null && !isComplete() && type.isWorkerAllowed(unit);
 	}
 
 	/**
@@ -385,8 +384,9 @@ public class TileImprovement extends TileItem implements Named {
 	 * @return The actual encoded connections found.
 	 */
 	public String updateRiverConnections(String conns) {
-		if (!isRiver())
+		if (!isRiver()) {
 			return null;
+		}
 		final Tile tile = getTile();
 		int i = 0;
 		String ret = "";
@@ -402,8 +402,9 @@ public class TileImprovement extends TileItem implements Named {
 				}
 				setConnected(d, false);
 			} else {
-				if (river != null)
+				if (river != null) {
 					river.setConnected(dReverse, true);
+				}
 				setConnected(d, true);
 			}
 			ret += c;
@@ -420,8 +421,9 @@ public class TileImprovement extends TileItem implements Named {
 	 * @return A string encoding of the correct connections for this improvement.
 	 */
 	public String updateRoadConnections(boolean connect) {
-		if (!isRoad() || !isComplete())
+		if (!isRoad() || !isComplete()) {
 			return null;
+		}
 		final Tile tile = getTile();
 		String ret = "";
 		for (Direction d : Direction.values()) {
@@ -429,43 +431,31 @@ public class TileImprovement extends TileItem implements Named {
 			TileImprovement road = (t == null) ? null : t.getRoad();
 			if (road != null && road.isComplete()) {
 				road.setConnected(d.getReverseDirection(), connect);
-				this.setConnected(d, connect);
+				setConnected(d, connect);
 			}
 		}
 		return (style == null) ? null : style.getString();
 	}
 
-	// Interface Named
+	/** Interface Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getNameKey() {
 		return (type == null) ? null : type.getNameKey();
 	}
 
-	// Interface TileItem
+	/** Interface TileItem. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final int getZIndex() {
 		return type.getZIndex();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isTileTypeAllowed(TileType tileType) {
 		return type.isTileTypeAllowed(tileType);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int applyBonus(GoodsType goodsType, UnitType unitType, int potential) {
 		// Applies the production bonuses of this tile improvement to
@@ -484,9 +474,6 @@ public class TileImprovement extends TileItem implements Named {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canProduce(GoodsType goodsType, UnitType unitType) {
 		// TileImprovements provide bonuses, but do *not* allow a tile
@@ -494,15 +481,12 @@ public class TileImprovement extends TileItem implements Named {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Modifier> getProductionModifiers(GoodsType goodsType, UnitType unitType) {
 		if (goodsType != null) {
 			boolean disableUnattended = !isNatural() && unitType == null && !goodsType.isFoodType()
 					&& getSpecification().getBoolean(GameOptions.ONLY_NATURAL_IMPROVEMENTS);
-			Modifier modifier = (disableUnattended) ? null : getProductionModifier(goodsType);
+			Modifier modifier = disableUnattended ? null : getProductionModifier(goodsType);
 			if (modifier != null && isComplete()) {
 				List<Modifier> result = new ArrayList<>();
 				result.add(modifier);
@@ -512,27 +496,18 @@ public class TileImprovement extends TileItem implements Named {
 		return Collections.<Modifier>emptyList();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isNatural() {
 		return type.isNatural();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isComplete() {
 		return turnsToComplete <= 0;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int checkIntegrity(boolean fix) {
 		int result = super.checkIntegrity(fix);
@@ -540,11 +515,10 @@ public class TileImprovement extends TileItem implements Named {
 		// We check only if this improvement is not connected to a
 		// neighbour that *is* connected to this one, and connect this
 		// one.
-		//
 		// FIXME: drop this one day when we never have style
 		// discontinuities. This alas is not the case in 0.10.x.
 		String curr = (style == null) ? null : style.getString();
-		String found = (isRiver()) ? updateRiverConnections(curr)
+		String found = isRiver() ? updateRiverConnections(curr)
 				: (isRoad() && isComplete()) ? updateRoadConnections(true) : null;
 		if ((found == null && curr == null) || (found != null && curr != null && found.equals(curr))) {
 			result = Math.min(1, result);
@@ -565,7 +539,7 @@ public class TileImprovement extends TileItem implements Named {
 		return result;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String MAGNITUDE_TAG = "magnitude";
 	private static final String STYLE_TAG = "style";
@@ -574,9 +548,6 @@ public class TileImprovement extends TileItem implements Named {
 	private static final String TYPE_TAG = "type";
 	private static final String VIRTUAL_TAG = "virtual";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -589,16 +560,15 @@ public class TileImprovement extends TileItem implements Named {
 
 		xw.writeAttribute(MAGNITUDE_TAG, magnitude);
 
-		if (style != null)
+		if (style != null) {
 			xw.writeAttribute(STYLE_TAG, style);
+		}
 
-		if (virtual)
+		if (virtual) {
 			xw.writeAttribute(VIRTUAL_TAG, virtual);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -657,9 +627,6 @@ public class TileImprovement extends TileItem implements Named {
 		connected = getConnectionsFromStyle();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
@@ -667,15 +634,13 @@ public class TileImprovement extends TileItem implements Named {
 		if (turnsToComplete > 0) {
 			sb.append(" (").append(turnsToComplete).append(" turns left)");
 		}
-		if (style != null)
+		if (style != null) {
 			sb.append(' ').append(style.getString());
+		}
 		sb.append(']');
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

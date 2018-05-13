@@ -31,11 +31,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when asking for the skill taught at a settlement.
- */
+/** The message sent when asking for the skill taught at a settlement. */
 public class AskSkillMessage extends DOMMessage {
-
 	/** The identifier of the unit that is asking. */
 	private final String unitId;
 

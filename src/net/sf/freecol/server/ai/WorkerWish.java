@@ -33,11 +33,8 @@ import net.sf.freecol.common.util.LogBuilder;
 
 import org.w3c.dom.Element;
 
-/**
- * Represents the need for a worker within a <code>Colony</code>.
- */
+/** Represents the need for a worker within a <code>Colony</code>. */
 public class WorkerWish extends Wish {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(WorkerWish.class.getName());
 
@@ -138,8 +135,9 @@ public class WorkerWish extends Wish {
 		setValue(value);
 		this.unitType = unitType;
 		this.expertNeeded = expertNeeded;
-		if (transportable != null)
+		if (transportable != null) {
 			transportable.setTransportPriority(value);
+		}
 	}
 
 	/**
@@ -160,7 +158,7 @@ public class WorkerWish extends Wish {
 	 *         least matches in a land/naval sense if not.
 	 */
 	public boolean satisfiedBy(Unit unit) {
-		return (expertNeeded) ? unit.getType() == unitType : unit.getType().isNaval() == unitType.isNaval();
+		return expertNeeded ? unit.getType() == unitType : unit.getType().isNaval() == unitType.isNaval();
 	}
 
 	// Override AIObject
@@ -176,20 +174,18 @@ public class WorkerWish extends Wish {
 	@Override
 	public int checkIntegrity(boolean fix) {
 		int result = super.checkIntegrity(fix);
-		if (unitType == null)
+		if (unitType == null) {
 			result = -1;
+		}
 		return result;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String EXPERT_NEEDED_TAG = "expertNeeded";
 	private static final String TRANSPORTABLE_TAG = "transportable";
 	private static final String UNIT_TYPE_TAG = "unitType";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -199,9 +195,6 @@ public class WorkerWish extends Wish {
 		xw.writeAttribute(EXPERT_NEEDED_TAG, expertNeeded);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -210,7 +203,7 @@ public class WorkerWish extends Wish {
 		final Specification spec = getSpecification();
 
 		// Delegated from Wish
-		transportable = (xr.hasAttribute(TRANSPORTABLE_TAG))
+		transportable = xr.hasAttribute(TRANSPORTABLE_TAG)
 				? xr.makeAIObject(aiMain, TRANSPORTABLE_TAG, AIUnit.class, (AIUnit) null, true)
 				: null;
 
@@ -219,31 +212,23 @@ public class WorkerWish extends Wish {
 		expertNeeded = xr.getAttribute(EXPERT_NEEDED_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		super.readChildren(xr);
 
-		if (unitType != null)
+		if (unitType != null) {
 			uninitialized = false;
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		LogBuilder lb = new LogBuilder(64);
-		lb.add("[", getId(), " ", ((unitType == null) ? "null" : unitType.getSuffix()),
-				((expertNeeded) ? "/expert" : ""), " -> ", destination, " (", getValue(), ")]");
+		lb.add("[", getId(), " ", (unitType == null) ? "null" : unitType.getSuffix(),
+				expertNeeded ? "/expert" : "", " -> ", destination, " (", getValue(), ")]");
 		return lb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

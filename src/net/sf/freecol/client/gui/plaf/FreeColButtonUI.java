@@ -41,7 +41,6 @@ import net.sf.freecol.client.gui.ImageLibrary;
  * shading on the {@link #paintButtonPressed}.
  */
 public class FreeColButtonUI extends MetalButtonUI {
-
 	private static final FreeColButtonUI sharedInstance = new FreeColButtonUI();
 
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
@@ -87,7 +86,6 @@ public class FreeColButtonUI extends MetalButtonUI {
 			g2d.fillRect(0, 0, size.width, size.height);
 			g2d.setComposite(oldComposite);
 			g2d.setColor(oldColor);
-
 		}
 	}
 }

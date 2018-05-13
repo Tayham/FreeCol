@@ -51,10 +51,8 @@ import net.sf.freecol.common.resources.ResourceManager;
  * ---------------| | apProjectURL | | ---------------| | apLegal | |
  * ---------------| | apCopyright | | ---------------| | okButton | |
  * ---------------|
- * 
  */
 public final class AboutPanel extends FreeColPanel {
-
 	private static final Logger logger = Logger.getLogger(AboutPanel.class.getName());
 
 	public static final String SITE_URL = "http://www.freecol.org";
@@ -131,11 +129,8 @@ public final class AboutPanel extends FreeColPanel {
 		add(okButton, "newline 20, tag ok");
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final String url = ae.getActionCommand();

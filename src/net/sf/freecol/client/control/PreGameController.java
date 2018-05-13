@@ -36,11 +36,8 @@ import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.option.MapGeneratorOptions;
 import net.sf.freecol.common.option.OptionGroup;
 
-/**
- * The controller that will be used before the game starts.
- */
+/** The controller that will be used before the game starts. */
 public final class PreGameController {
-
 	private static final Logger logger = Logger.getLogger(PreGameController.class.getName());
 
 	/** The main client. */
@@ -90,7 +87,6 @@ public final class PreGameController {
 		if (freeColClient.getGame().allPlayersReadyToLaunch()) {
 			gui.showStatusPanel(Messages.message("status.startingGame"));
 			freeColClient.askServer().requestLaunch();
-
 		} else {
 			gui.showErrorMessage("server.notAllReady");
 		}
@@ -170,8 +166,9 @@ public final class PreGameController {
 		gui.initializeInGame((Tile) player.getEntryLocation());
 
 		InGameController igc = freeColClient.getInGameController();
-		if (freeColClient.currentPlayerIsMyPlayer())
+		if (freeColClient.currentPlayerIsMyPlayer()) {
 			igc.nextActiveUnit();
+		}
 
 		gui.setupMouseListeners();
 

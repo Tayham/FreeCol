@@ -37,7 +37,6 @@ import net.sf.freecol.common.model.Unit;
  * aboard that carrier.
  */
 public abstract class PortPanel extends FreeColPanel {
-
 	protected CargoPanel cargoPanel;
 	protected InPortPanel inPortPanel;
 	protected UnitLabel selectedUnitLabel;
@@ -132,20 +131,14 @@ public abstract class PortPanel extends FreeColPanel {
 	 */
 	public abstract List<Unit> getUnitList();
 
-	// Override JComponent
+	/** Override JComponent. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public TransferHandler getTransferHandler() {
 		return defaultTransferHandler;
 	}
 
-	// Override Component
-	/**
-	 * {@inheritDoc}
-	 */
+	/** Override Component. */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

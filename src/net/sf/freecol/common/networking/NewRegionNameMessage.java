@@ -29,11 +29,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when naming a new region.
- */
+/** The message sent when naming a new region. */
 public class NewRegionNameMessage extends DOMMessage {
-
 	/** The object identifier of the region being discovered. */
 	private final String regionId;
 

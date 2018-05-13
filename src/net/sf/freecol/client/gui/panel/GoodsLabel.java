@@ -44,7 +44,6 @@ import net.sf.freecol.common.resources.ResourceManager;
  * ideal to use for drag and drop purposes.
  */
 public final class GoodsLabel extends AbstractGoodsLabel implements Draggable {
-
 	GUI gui;
 
 	/**
@@ -85,9 +84,7 @@ public final class GoodsLabel extends AbstractGoodsLabel implements Draggable {
 		return ResourceManager.getColor(key);
 	}
 
-	/**
-	 * Initialize this label.
-	 */
+	/** Initialize this label. */
 	private void initialize() {
 		final Goods goods = getGoods();
 		final Location location = goods.getLocation();
@@ -95,8 +92,9 @@ public final class GoodsLabel extends AbstractGoodsLabel implements Draggable {
 		final GoodsType type = goods.getType();
 		final Specification spec = goods.getGame().getSpecification();
 
-		if (getAmount() < GoodsContainer.CARGO_SIZE)
+		if (getAmount() < GoodsContainer.CARGO_SIZE) {
 			setPartialChosen(true);
+		}
 
 		if (player == null || !type.isStorable() || player.canTrade(type)
 				|| (location instanceof Colony && spec.getBoolean(GameOptions.CUSTOM_IGNORE_BOYCOTT)
@@ -136,11 +134,8 @@ public final class GoodsLabel extends AbstractGoodsLabel implements Draggable {
 		setIcon(new ImageIcon(image));
 	}
 
-	// Implement Draggable
+	/** Implement Draggable. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isOnCarrier() {
 		Goods goods = getGoods();

@@ -20,7 +20,6 @@
 package net.sf.freecol.client.gui.panel;
 
 public class Parameters {
-
 	public final int distToLandFromHighSeas;
 
 	public final int maxDistanceToEdge;

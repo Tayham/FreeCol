@@ -27,16 +27,13 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TreeSet;
 
-/**
- * Document the state of the translations.
- */
+/** Document the state of the translations. */
 public class TranslationReport {
-
 	private static class LanguageStatsRecord {
 		String localFile = "";
-		int missingKeys = 0;
-		int missingVariables = 0;
-		int copiedKeys = 0;
+		int missingKeys;
+		int missingVariables;
+		int copiedKeys;
 		public int superfluousVariables;
 		public int superfluousKeys;
 	}
@@ -92,14 +89,11 @@ public class TranslationReport {
 					int lastIndex = 0;
 					boolean inVariable = false;
 
-					if (value.equalsIgnoreCase(masterValue)) {
-						// ignore some values which are most probably copies in many languages
-						if (!key.contains("newColonyName")
-								&& !(key.contains("foundingFather") && key.contains(".birthAndDeath"))
-								&& !(key.contains("foundingFather") && key.contains(".name"))) {
-							copiedFromMaster.add(key);
-						}
-					}
+					if (value.equalsIgnoreCase(masterValue) && !key.contains("newColonyName")
+							&& (!key.contains("foundingFather") || !key.contains(".birthAndDeath"))
+							&& (!key.contains("foundingFather") || !key.contains(".name"))) {
+copiedFromMaster.add(key);
+}
 
 					for (int index = 0; index < masterValue.length() - 1; index++) {
 						char current = masterValue.charAt(index);
@@ -215,52 +209,54 @@ public class TranslationReport {
 			statistics.add(lstat);
 		}
 
-		if (printSummary) {
-			System.out.println(stars);
-			System.out.println("*** Summary of translation efforts (" + master.size() + " keys in master file) ***");
-			System.out.println(stars);
-			for (LanguageStatsRecord stats : statistics) {
-				StringBuilder output = new StringBuilder();
-				output.append(shortenName(stats.localFile));
-				output.append(": ");
-				output.append(prettyPrint(stats.missingKeys));
-				output.append(" keys missing, ");
-				output.append(prettyPrint(stats.missingVariables));
-				output.append(" vars missing, ");
-				output.append(prettyPrint(stats.copiedKeys));
-				output.append(" entries copied, ");
-				output.append(prettyPrint(stats.superfluousKeys));
-				output.append(" redundant keys, ");
-				output.append(prettyPrint(stats.superfluousVariables));
-				output.append(" redundant vars. ");
+		System.out.println(stars);
+		System.out.println("*** Summary of translation efforts (" + master.size() + " keys in master file) ***");
+		System.out.println(stars);
+		for (LanguageStatsRecord stats : statistics) {
+			StringBuilder output = new StringBuilder();
+			output.append(shortenName(stats.localFile));
+			output.append(": ");
+			output.append(prettyPrint(stats.missingKeys));
+			output.append(" keys missing, ");
+			output.append(prettyPrint(stats.missingVariables));
+			output.append(" vars missing, ");
+			output.append(prettyPrint(stats.copiedKeys));
+			output.append(" entries copied, ");
+			output.append(prettyPrint(stats.superfluousKeys));
+			output.append(" redundant keys, ");
+			output.append(prettyPrint(stats.superfluousVariables));
+			output.append(" redundant vars. ");
 
-				float percentageDone = (100 * (master.size() - (stats.missingKeys + stats.copiedKeys)))
-						/ (float) master.size();
-				percentageDone = Math.round(percentageDone * 100) / 100f;
-				output.append(percentageDone).append("% finished.");
+			float percentageDone = (100 * (master.size() - (stats.missingKeys + stats.copiedKeys)))
+					/ (float) master.size();
+			percentageDone = Math.round(percentageDone * 100) / 100f;
+			output.append(percentageDone).append("% finished.");
 
-				System.out.println(output.toString());
-			}
+			System.out.println(output.toString());
 		}
 	}
 
 	private static StringBuilder shortenName(String localFile) {
 		StringBuilder out = new StringBuilder(5);
 		String temp = localFile.substring(16, localFile.indexOf('.'));
-		if (temp.length() < 5)
+		if (temp.length() < 5) {
 			out.append("   ");
+		}
 		out.append(temp);
 		return out;
 	}
 
 	private static StringBuilder prettyPrint(int number) {
 		StringBuilder output = new StringBuilder(4);
-		if (number < 10)
+		if (number < 10) {
 			output.append(" ");
-		if (number < 100)
+		}
+		if (number < 100) {
 			output.append(" ");
-		if (number < 1000)
+		}
+		if (number < 1000) {
 			output.append(" ");
+		}
 		output.append(number);
 		return output;
 	}
@@ -270,5 +266,4 @@ public class TranslationReport {
 		sorted.addAll(missingKeys);
 		return sorted;
 	}
-
 }

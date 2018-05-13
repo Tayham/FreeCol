@@ -29,7 +29,6 @@ import net.sf.freecol.server.generator.MapGenerator;
  * @see net.sf.freecol.common.option.OptionGroup
  */
 public class MapGeneratorOptions {
-
 	/** Map generator options import group. */
 	public static final String MAPGENERATOROPTIONS_IMPORT = "mapGeneratorOptions.import";
 

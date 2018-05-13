@@ -36,15 +36,10 @@ import org.w3c.dom.Element;
  * will be carried out in order.
  */
 public class CompoundMission extends AbstractMission {
-
-	/**
-	 * The individual missions this CompoundMission wraps.
-	 */
+	/** The individual missions this CompoundMission wraps. */
 	private List<Mission> missions;
 
-	/**
-	 * The index of the current mission.
-	 */
+	/** The index of the current mission. */
 	private int index;
 
 	/**
@@ -141,12 +136,9 @@ public class CompoundMission extends AbstractMission {
 	 */
 	@Override
 	public boolean isValid() {
-		return (super.isValid() && !missions.isEmpty()) ? all(missions, Mission::isValid) : false;
+		return super.isValid() && !missions.isEmpty() && all(missions, Mission::isValid);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MissionState doMission() {
 		MissionState state = missions.get(index).doMission();
@@ -167,13 +159,10 @@ public class CompoundMission extends AbstractMission {
 		return state;
 	}
 
-	// Serialization.
+	/** Serialization. */
 
-	private final static String INDEX_TAG = "index";
+	private static final String INDEX_TAG = "index";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -181,9 +170,6 @@ public class CompoundMission extends AbstractMission {
 		xw.writeAttribute(INDEX_TAG, index);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -193,9 +179,6 @@ public class CompoundMission extends AbstractMission {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -203,9 +186,6 @@ public class CompoundMission extends AbstractMission {
 		index = xr.getAttribute(INDEX_TAG, 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -213,14 +193,12 @@ public class CompoundMission extends AbstractMission {
 
 		while (xr.nextTag() != XMLStreamConstants.END_ELEMENT) {
 			Mission mission = MissionManager.getMission(getGame(), xr);
-			if (mission != null)
+			if (mission != null) {
 				missions.add(mission);
+			}
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return "TODO!";

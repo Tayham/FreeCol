@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for displaying a Requirements Report.
- */
+/** An action for displaying a Requirements Report. */
 public class ReportRequirementsAction extends FreeColAction {
-
 	public static final String id = "reportRequirementsAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ReportRequirementsAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().showReportRequirementsPanel();

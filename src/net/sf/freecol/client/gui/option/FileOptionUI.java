@@ -37,7 +37,6 @@ import net.sf.freecol.common.option.FileOption;
  * be both seen and changed.
  */
 public final class FileOptionUI extends OptionUI<FileOption> {
-
 	private final JPanel panel = new JPanel();
 	private final JTextField fileField;
 
@@ -90,39 +89,27 @@ public final class FileOptionUI extends OptionUI<FileOption> {
 		 * removeUpdate(DocumentEvent arg0) { editUpdate(); } private void editUpdate()
 		 * { } });
 		 */
-
 	}
 
-	/**
-	 * Sets the value of this UI's component.
-	 */
+	/** Sets the value of this UI's component. */
 	public void setValue(File f) {
 		getOption().setValue(f);
 		reset();
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JPanel getComponent() {
 		return panel;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		File f = (fileField.getText() == null || fileField.getText().isEmpty()) ? null : new File(fileField.getText());
 		getOption().setValue(f);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		File file = getOption().getValue();

@@ -28,9 +28,7 @@ import net.sf.freecol.common.networking.MessageHandler;
 
 import org.w3c.dom.Element;
 
-/**
- * Handles all network messages being sent to the metaserver.
- */
+/** Handles all network messages being sent to the metaserver. */
 public final class NetworkHandler implements MessageHandler {
 	private static final Logger logger = Logger.getLogger(NetworkHandler.class.getName());
 
@@ -118,7 +116,7 @@ public final class NetworkHandler implements MessageHandler {
 		int port = Integer.parseInt(element.getAttribute("port"));
 		int slotsAvailable = Integer.parseInt(element.getAttribute("slotsAvailable"));
 		int currentlyPlaying = Integer.parseInt(element.getAttribute("currentlyPlaying"));
-		boolean isGameStarted = Boolean.valueOf(element.getAttribute("isGameStarted"));
+		boolean isGameStarted = Boolean.parseBoolean(element.getAttribute("isGameStarted"));
 		String version = element.getAttribute("version");
 		int gameState = Integer.parseInt(element.getAttribute("gameState"));
 
@@ -147,7 +145,7 @@ public final class NetworkHandler implements MessageHandler {
 		int port = Integer.parseInt(element.getAttribute("port"));
 		int slotsAvailable = Integer.parseInt(element.getAttribute("slotsAvailable"));
 		int currentlyPlaying = Integer.parseInt(element.getAttribute("currentlyPlaying"));
-		boolean isGameStarted = Boolean.valueOf(element.getAttribute("isGameStarted"));
+		boolean isGameStarted = Boolean.parseBoolean(element.getAttribute("isGameStarted"));
 		String version = element.getAttribute("version");
 		int gameState = Integer.parseInt(element.getAttribute("gameState"));
 

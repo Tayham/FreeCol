@@ -26,7 +26,6 @@ import java.util.logging.Logger;
  * off any consequent property changes.
  */
 public class EuropeWas {
-
 	private static final Logger logger = Logger.getLogger(EuropeWas.class.getName());
 
 	private final Europe europe;
@@ -46,15 +45,17 @@ public class EuropeWas {
 	 * @return A new unit.
 	 */
 	public Unit getNewUnit() {
-		if (europe.getUnitCount() < unitCount + 1)
+		if (europe.getUnitCount() < unitCount + 1) {
 			return null;
+		}
 		Unit newUnit = null;
 		int idMax = 0;
 		final String unitPrefix = Unit.getXMLElementTagName() + ":";
 		for (Unit u : europe.getUnitList()) {
 			String uid = u.getId();
-			if (!uid.startsWith(unitPrefix))
+			if (!uid.startsWith(unitPrefix)) {
 				continue;
+			}
 			try {
 				int id = Integer.parseInt(uid.substring(unitPrefix.length()));
 				if (idMax < id) {

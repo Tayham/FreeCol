@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
  * GoodsType.
  */
 public final class LastSale extends FreeColObject {
-
 	/** When a sale was made. */
 	private Turn when;
 
@@ -124,11 +123,8 @@ public final class LastSale extends FreeColObject {
 		return where.getId() + "-" + what.getId();
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int compareTo(FreeColObject other) {
 		int cmp = 0;
@@ -136,19 +132,17 @@ public final class LastSale extends FreeColObject {
 			LastSale ls = (LastSale) other;
 			cmp = getWhen().getNumber() - ls.getWhen().getNumber();
 		}
-		if (cmp == 0)
+		if (cmp == 0) {
 			cmp = super.compareTo(other);
+		}
 		return cmp;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String PRICE_TAG = "price";
 	private static final String WHEN_TAG = "when";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -158,9 +152,6 @@ public final class LastSale extends FreeColObject {
 		xw.writeAttribute(PRICE_TAG, price);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -170,9 +161,6 @@ public final class LastSale extends FreeColObject {
 		price = xr.getAttribute(PRICE_TAG, 0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(32);
@@ -180,9 +168,6 @@ public final class LastSale extends FreeColObject {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

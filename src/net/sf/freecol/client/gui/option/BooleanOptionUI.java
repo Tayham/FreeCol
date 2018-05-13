@@ -29,7 +29,6 @@ import net.sf.freecol.common.option.BooleanOption;
  * to be both seen and changed.
  */
 public final class BooleanOptionUI extends OptionUI<BooleanOption> {
-
 	private final JCheckBox box = new JCheckBox();
 
 	/**
@@ -47,34 +46,23 @@ public final class BooleanOptionUI extends OptionUI<BooleanOption> {
 		initialize();
 	}
 
-	/**
-	 * Sets the value of this UI's component.
-	 */
+	/** Sets the value of this UI's component. */
 	public void setValue(boolean b) {
 		box.setSelected(b);
 	}
 
-	// Implement OptionUI
+	/** Implement OptionUI. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public JCheckBox getComponent() {
 		return box;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void updateOption() {
 		getOption().setValue(box.isSelected());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void reset() {
 		box.setSelected(getOption().getValue());

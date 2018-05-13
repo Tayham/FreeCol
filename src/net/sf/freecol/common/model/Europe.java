@@ -40,7 +40,6 @@ import net.sf.freecol.common.model.Unit.UnitState;
  * units, as well as sell and buy goods.
  */
 public class Europe extends UnitLocation implements Ownable, Named, TradeLocation {
-
 	private static final Logger logger = Logger.getLogger(Europe.class.getName());
 
 	/** The initial recruit price. */
@@ -62,10 +61,10 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 	 * refer to the index == slot-1 The following constant should be used when the
 	 * random choice behaviour is desired.
 	 */
-	public static enum MigrationType {
-		NORMAL, // Unit decided to migrate
-		RECRUIT, // Player is paying
-		FOUNTAIN, // As a result of a Fountain of Youth discovery
+	public enum MigrationType {
+		NORMAL, /** Unit decided to migrate. */
+		RECRUIT, /** Player is paying. */
+		FOUNTAIN, /** As a result of a Fountain of Youth discovery. */
 		SURVIVAL; // Emergency autorecruit in server
 
 		/** The number of recruitable unit types. */
@@ -77,9 +76,7 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		 */
 		private static final int CHOOSE_MIGRANT_SLOT = 0;
 
-		/**
-		 * The migrant slot to use when there is no reason to choose between them.
-		 */
+		/** The migrant slot to use when there is no reason to choose between them. */
 		private static final int DEFAULT_MIGRANT_SLOT = 1;
 
 		public static int getMigrantCount() {
@@ -217,8 +214,9 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 	 * @return The current price of the recruit in this <code>Europe</code>.
 	 */
 	public int getRecruitPrice() {
-		if (!owner.isColonial())
+		if (!owner.isColonial()) {
 			return -1;
+		}
 		int required = owner.getImmigrationRequired();
 		int immigration = owner.getImmigration();
 		int difference = Math.max(required - immigration, 0);
@@ -240,123 +238,101 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		final Specification spec = getSpecification();
 		int n = 0;
 		for (Unit u : getUnitList()) {
-			if (u.isPerson())
+			if (u.isPerson()) {
 				n++;
+			}
 		}
 		n *= spec.getInteger(GameOptions.EUROPEAN_UNIT_IMMIGRATION_PENALTY);
 		n += spec.getInteger(GameOptions.PLAYER_IMMIGRATION_BONUS);
 		// Do not allow total production to be negative.
-		if (n + production < 0)
+		if (n + production < 0) {
 			n = -production;
+		}
 		return n;
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public FeatureContainer getFeatureContainer() {
 		return featureContainer;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public FreeColGameObject getLinkTarget(Player player) {
 		return (getOwner() == player) ? this : null;
 	}
 
-	// Interface Location (from UnitLocation)
-	// Inheriting:
-	// FreeColObject.getId()
-	// UnitLocation.getTile
-	// UnitLocation.getLocationLabelFor
-	// UnitLocation.remove
-	// UnitLocation.contains
-	// UnitLocation.getUnitCount
-	// UnitLocation.getUnitList
-	// UnitLocation.getGoodsContainer
-	// UnitLocation.getSettlement
-
 	/**
-	 * {@inheritDoc}
+	 * Interface Location (from UnitLocation)
+	 * Inheriting:
+	 * FreeColObject.getId()
+	 * UnitLocation.getTile
+	 * UnitLocation.getLocationLabelFor
+	 * UnitLocation.remove
+	 * UnitLocation.contains
+	 * UnitLocation.getUnitCount
+	 * UnitLocation.getUnitList
+	 * UnitLocation.getGoodsContainer
+	 * UnitLocation.getSettlement
 	 */
+
 	@Override
 	public StringTemplate getLocationLabel() {
 		return StringTemplate.key(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean add(Locatable locatable) {
 		boolean result = super.add(locatable);
 		if (result && locatable instanceof Unit) {
 			Unit unit = (Unit) locatable;
-			unit.setState((unit.canCarryUnits()) ? UnitState.ACTIVE : UnitState.SENTRY);
+			unit.setState(unit.canCarryUnits() ? UnitState.ACTIVE : UnitState.SENTRY);
 		}
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean canAdd(Locatable locatable) {
-		if (locatable instanceof Goods)
-			return true; // Can always land goods.
-		return super.canAdd(locatable);
+		return locatable instanceof Goods || super.canAdd(locatable); // Can always land goods.
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location up() {
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getRank() {
 		return Location.LOCATION_RANK_EUROPE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toShortString() {
 		return "Europe";
 	}
 
-	// Interface UnitLocation
-	// Inheriting
-	// UnitLocation.getSpaceTaken
-	// UnitLocation.moveToFront
-	// UnitLocation.clearUnitList
-	// UnitLocation.getNoAddReason
-	// UnitLocation.getUnitCapacity
-
 	/**
-	 * {@inheritDoc}
+	 * Interface UnitLocation
+	 * Inheriting
+	 * UnitLocation.getSpaceTaken
+	 * UnitLocation.moveToFront
+	 * UnitLocation.clearUnitList
+	 * UnitLocation.getNoAddReason
+	 * UnitLocation.getUnitCapacity
 	 */
+
 	@Override
 	public int priceGoods(List<AbstractGoods> goods) {
 		Player player = getOwner();
 		Market market = player.getMarket();
 		int price = 0;
 		for (AbstractGoods ag : goods) {
-			if (ag.getAmount() <= 0)
+			if (ag.getAmount() <= 0) {
 				continue;
+			}
 			GoodsType goodsType = ag.getType();
 			// Refuse to trade in boycotted goods
 			if (!player.canTrade(goodsType)) {
@@ -368,90 +344,64 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		return price;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equipForRole(Unit unit, Role role, int roleCount) {
 		throw new RuntimeException("Only valid in the server.");
 	}
 
-	// Interface Named
+	/** Interface Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getNameKey() {
 		return getOwner().getEuropeNameKey();
 	}
 
-	// Interface Ownable
+	/** Interface Ownable. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Player getOwner() {
 		return owner;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setOwner(Player p) {
 		throw new UnsupportedOperationException();
 	}
 
-	// Interface TradeLocation
+	/** Interface TradeLocation. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getGoodsCount(GoodsType goodsType) {
 		return GoodsContainer.HUGE_CARGO_SIZE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getExportAmount(GoodsType goodsType, int turns) {
-		return (getOwner().canTrade(goodsType)) ? GoodsContainer.HUGE_CARGO_SIZE : 0;
+		return getOwner().canTrade(goodsType) ? GoodsContainer.HUGE_CARGO_SIZE : 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getImportAmount(GoodsType goodsType, int turns) {
-		return (getOwner().canTrade(goodsType)) ? GoodsContainer.HUGE_CARGO_SIZE : 0;
+		return getOwner().canTrade(goodsType) ? GoodsContainer.HUGE_CARGO_SIZE : 0;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void disposeResources() {
 		Player owner = getOwner();
 		if (owner != null) {
 			owner.setEurope(null);
 			HighSeas highSeas = owner.getHighSeas();
-			if (highSeas != null)
+			if (highSeas != null) {
 				highSeas.removeDestination(this);
+			}
 		}
 		super.disposeResources();
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Set<Ability> getAbilities(String id, FreeColGameObjectType fcgot, Turn turn) {
 		Set<Ability> result = super.getAbilities(id, fcgot, turn);
@@ -462,7 +412,7 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		return result;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String OWNER_TAG = "owner";
 	private static final String PRICE_TAG = "price";
@@ -472,13 +422,10 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 	private static final String RECRUIT_PRICE_TAG = "recruitPrice";
 	private static final String UNIT_PRICE_TAG = "unitPrice";
 	private static final String UNIT_TYPE_TAG = "unitType";
-	// @compat 0.10.0
+	/** @compat 0.10.0 */
 	private static final String UNITS_TAG = "units";
-	// end @compat 0.10.0
+	/** End @compat 0.10.0 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -492,15 +439,11 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
 		if (xw.validFor(getOwner())) {
-
 			for (Ability ability : getSortedAbilities()) {
 				ability.toXML(xw);
 			}
@@ -527,12 +470,9 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		}
 	}
 
-	// @compat 0.10.7
+	/** @compat 0.10.7 */
 	private boolean clearRecruitables = true;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -556,9 +496,6 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		recruitLowerCap = xr.getAttribute(RECRUIT_LOWER_CAP_TAG, LOWER_CAP_INITIAL);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -578,15 +515,13 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 		// Sometimes units in a Europe element have a missing
 		// location. It should always be this Europe instance.
 		for (Unit u : getUnitList()) {
-			if (u.getLocation() == null)
+			if (u.getLocation() == null) {
 				u.setLocationNoUpdate(this);
+			}
 		}
 		// end @compat
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -594,16 +529,14 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 
 		if (Ability.getXMLElementTagName().equals(tag)) {
 			addAbility(new Ability(xr, spec));
-
 		} else if (Modifier.getXMLElementTagName().equals(tag)) {
 			addModifier(new Modifier(xr, spec));
-
 		} else if (RECRUIT_TAG.equals(tag)) {
 			UnitType unitType = xr.getType(spec, RECRUIT_ID_TAG, UnitType.class, (UnitType) null);
-			if (unitType != null)
+			if (unitType != null) {
 				addRecruitable(unitType);
+			}
 			xr.closeTag(RECRUIT_TAG);
-
 		} else if (UNIT_PRICE_TAG.equals(tag)) {
 			UnitType unitType = xr.getType(spec, UNIT_TYPE_TAG, UnitType.class, (UnitType) null);
 
@@ -618,23 +551,16 @@ public class Europe extends UnitLocation implements Ownable, Named, TradeLocatio
 				super.readChild(xr);
 			}
 			// end @compat 0.10.0
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return "Europe";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

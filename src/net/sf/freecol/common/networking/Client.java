@@ -27,11 +27,8 @@ import net.sf.freecol.common.FreeColException;
 
 import org.w3c.dom.Element;
 
-/**
- * The client connection to a server.
- */
+/** The client connection to a server. */
 public final class Client {
-
 	private static final Logger logger = Logger.getLogger(Client.class.getName());
 
 	/**
@@ -111,9 +108,7 @@ public final class Client {
 		c.setMessageHandler(mh);
 	}
 
-	/**
-	 * Disconnects this client from the server.
-	 */
+	/** Disconnects this client from the server. */
 	public void disconnect() {
 		c.close();
 	}

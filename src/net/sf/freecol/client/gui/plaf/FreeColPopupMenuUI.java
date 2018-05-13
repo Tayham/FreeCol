@@ -32,7 +32,6 @@ import net.sf.freecol.client.gui.ImageLibrary;
  * colour is recommended.
  */
 public class FreeColPopupMenuUI extends BasicPopupMenuUI {
-
 	private static final FreeColPopupMenuUI sharedInstance = new FreeColPopupMenuUI();
 
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
@@ -40,10 +39,9 @@ public class FreeColPopupMenuUI extends BasicPopupMenuUI {
 	}
 
 	@Override
-	public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+	public void paint(java.awt.Graphics g, JComponent c) {
 		if (c.isOpaque()) {
 			ImageLibrary.drawTiledImage("image.background.FreeColPopupMenu", g, c, null);
 		}
 	}
-
 }

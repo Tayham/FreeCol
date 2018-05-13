@@ -30,11 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when declining to investigate strange mounds.
- */
+/** The message sent when declining to investigate strange mounds. */
 public class DeclineMoundsMessage extends DOMMessage {
-
 	/** The identifier of the unit that is exploring. */
 	private final String unitId;
 

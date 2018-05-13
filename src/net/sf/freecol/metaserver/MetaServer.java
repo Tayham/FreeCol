@@ -41,7 +41,6 @@ import net.sf.freecol.common.networking.Connection;
  * @see net.sf.freecol.common.networking
  */
 public final class MetaServer extends Thread {
-
 	private static final Logger logger = Logger.getLogger(MetaServer.class.getName());
 
 	private static final int REMOVE_DEAD_SERVERS_INTERVAL = 120000;
@@ -132,7 +131,7 @@ public final class MetaServer extends Thread {
 			Socket clientSocket = null;
 			try {
 				clientSocket = serverSocket.accept();
-				logger.info("Client connection from: " + clientSocket.getInetAddress().toString());
+				logger.info("Client connection from: " + clientSocket.getInetAddress());
 				Connection connection = new Connection(clientSocket, getNetworkHandler(), FreeCol.METASERVER_THREAD);
 				connections.put(clientSocket, connection);
 			} catch (IOException e) {
@@ -169,9 +168,7 @@ public final class MetaServer extends Thread {
 		return connections.values().iterator();
 	}
 
-	/**
-	 * Shuts down the server thread.
-	 */
+	/** Shuts down the server thread. */
 	public void shutdown() {
 		running = false;
 
@@ -182,8 +179,9 @@ public final class MetaServer extends Thread {
 		}
 
 		Connection c;
-		while ((c = connections.remove(0)) != null)
+		while ((c = connections.remove(0)) != null) {
 			c.close();
+		}
 		logger.info("Server shutdown.");
 	}
 

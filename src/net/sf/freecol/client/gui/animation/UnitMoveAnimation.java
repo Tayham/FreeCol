@@ -30,12 +30,9 @@ import net.sf.freecol.client.gui.SwingGUI;
 import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * Class for the animation of units movement.
- */
+/** Class for the animation of units movement. */
 final class UnitMoveAnimation {
-
-	/*
+	/**
 	 * Display delay between one frame and another, in milliseconds. 33ms == 30 fps
 	 */
 	private static final int ANIMATION_DELAY = 33;
@@ -64,17 +61,16 @@ final class UnitMoveAnimation {
 		this.destinationTile = destinationTile;
 	}
 
-	/**
-	 * Do the animation.
-	 */
+	/** Do the animation. */
 	public void animate() {
 		final int movementSpeed = freeColClient.getAnimationSpeed(unit.getOwner());
 		final SwingGUI gui = (SwingGUI) freeColClient.getGUI();
 		final Point srcP = gui.getTilePosition(sourceTile);
 		final Point dstP = gui.getTilePosition(destinationTile);
 
-		if (srcP == null || dstP == null || movementSpeed <= 0)
+		if (srcP == null || dstP == null || movementSpeed <= 0) {
 			return;
+		}
 
 		float scale = gui.getMapScale();
 		final int movementRatio = (int) (Math.pow(2, movementSpeed + 1) * scale);

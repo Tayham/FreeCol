@@ -36,7 +36,6 @@ import org.w3c.dom.Element;
  * <code>Scope</code> objects.
  */
 public class Modifier extends Feature {
-
 	public static final String AMPHIBIOUS_ATTACK = "model.modifier.amphibiousAttack";
 	public static final String ARTILLERY_AGAINST_RAID = "model.modifier.artilleryAgainstRaid";
 	public static final String ARTILLERY_IN_THE_OPEN = "model.modifier.artilleryInTheOpen";
@@ -83,9 +82,11 @@ public class Modifier extends Feature {
 
 	public static final int DEFAULT_MODIFIER_INDEX = 0;
 
-	// @compat 0.10.x
-	// These are now attached to modifiers in the spec, but
-	// Specification.fixup010x() still needs them for now.
+	/**
+	 * @compat 0.10.x
+	 * These are now attached to modifiers in the spec, but
+	 * Specification.fixup010x() still needs them for now.
+	 */
 	public static final int RESOURCE_PRODUCTION_INDEX = 10;
 	public static final int COLONY_PRODUCTION_INDEX = 20;
 	public static final int EXPERT_PRODUCTION_INDEX = 30;
@@ -96,17 +97,17 @@ public class Modifier extends Feature {
 	public static final int NATION_PRODUCTION_INDEX = 80;
 	public static final int PARTY_PRODUCTION_INDEX = 90;
 	public static final int DISASTER_PRODUCTION_INDEX = 100;
-	// end @compat 0.10.x
+	/** End @compat 0.10.x */
 	public static final int DEFAULT_PRODUCTION_INDEX = 100;
 
-	// Specific combat indicies
+	/** Specific combat indicies. */
 	public static final int BASE_COMBAT_INDEX = 10;
 	public static final int UNIT_ADDITIVE_COMBAT_INDEX = 20;
 	public static final int UNIT_NORMAL_COMBAT_INDEX = 40;
 	public static final int ROLE_COMBAT_INDEX = 30;
 	public static final int GENERAL_COMBAT_INDEX = 50;
 
-	public static enum ModifierType {
+	public enum ModifierType {
 		ADDITIVE, MULTIPLICATIVE, PERCENTAGE
 	}
 
@@ -128,9 +129,7 @@ public class Modifier extends Feature {
 	/** A sorting index. */
 	private int modifierIndex = DEFAULT_MODIFIER_INDEX;
 
-	/**
-	 * Deliberately empty constructor.
-	 */
+	/** Deliberately empty constructor. */
 	protected Modifier() {
 	}
 
@@ -500,18 +499,14 @@ public class Modifier extends Feature {
 	 * @return True if a negated person scope was added.
 	 */
 	public boolean requireNegatedPersonScope() {
-		if (hasScope())
+		if (hasScope()) {
 			return false;
+		}
 		addScope(Scope.makeNegatedPersonScope());
 		return true;
 	}
-	// end @compat 0.10.7
+	/** End @compat 0.10.7 Override FreeColObject */
 
-	// Override FreeColObject
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int compareTo(FreeColObject other) {
 		int cmp = 0;
@@ -525,20 +520,19 @@ public class Modifier extends Feature {
 				cmp = FreeColObject.compareIds(getSource(), modifier.getSource());
 			}
 		}
-		if (cmp == 0)
+		if (cmp == 0) {
 			cmp = super.compareTo(other);
+		}
 		return cmp;
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
-		if (o == this)
+		if (o == this) {
 			return true;
+		}
 		if (o instanceof Modifier) {
 			Modifier m = (Modifier) o;
 			return Utils.equals(this.modifierType, m.modifierType) && this.value == m.value
@@ -548,9 +542,6 @@ public class Modifier extends Feature {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -561,19 +552,16 @@ public class Modifier extends Feature {
 		return 31 * hash + modifierIndex;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String INCREMENT_TAG = "increment";
 	private static final String INCREMENT_TYPE_TAG = "increment-type";
 	private static final String INDEX_TAG = "index";
 	private static final String TYPE_TAG = "type";
-	// @compat 0.11.3
+	/** @compat 0.11.3 */
 	private static final String OLD_INCREMENT_TYPE_TAG = "incrementType";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -593,9 +581,6 @@ public class Modifier extends Feature {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -621,15 +606,12 @@ public class Modifier extends Feature {
 		modifierIndex = xr.getAttribute(INDEX_TAG, DEFAULT_MODIFIER_INDEX);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
 		sb.append("[Modifier ").append(getId());
 		if (getSource() != null) {
-			sb.append(" (" + getSource().getId() + ")");
+			sb.append(" (").append(getSource().getId()).append(")");
 		}
 		sb.append(' ').append(modifierType).append(' ').append(value);
 		if (modifierIndex >= DEFAULT_MODIFIER_INDEX) {
@@ -638,17 +620,15 @@ public class Modifier extends Feature {
 		List<Scope> scopes = getScopes();
 		if (!scopes.isEmpty()) {
 			sb.append(" [");
-			for (Scope s : scopes)
+			for (Scope s : scopes) {
 				sb.append(' ').append(s);
+			}
 			sb.append(" ]");
 		}
 		sb.append(']');
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for starting the Map Editor.
- */
+/** An action for starting the Map Editor. */
 public class MapEditorAction extends FreeColAction {
-
 	public static final String id = "mapEditorAction";
 
 	/**
@@ -40,11 +37,8 @@ public class MapEditorAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		freeColClient.getMapEditorController().startMapEditor();

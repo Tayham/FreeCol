@@ -29,11 +29,8 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicPanelUI;
 
-/**
- * Draws with partial transparency. Used in Europe.
- */
+/** Draws with partial transparency. Used in Europe. */
 public class FreeColSelectedPanelUI extends BasicPanelUI {
-
 	private static final FreeColSelectedPanelUI sharedInstance = new FreeColSelectedPanelUI();
 
 	public static ComponentUI createUI(@SuppressWarnings("unused") JComponent c) {
@@ -53,5 +50,4 @@ public class FreeColSelectedPanelUI extends BasicPanelUI {
 
 		// super.paintComponent(g);
 	}
-
 }

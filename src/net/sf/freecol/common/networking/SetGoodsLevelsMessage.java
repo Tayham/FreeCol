@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when setting goods levels.
- */
+/** The message sent when setting goods levels. */
 public class SetGoodsLevelsMessage extends DOMMessage {
-
 	/** The identifier of the colony where the goods levels are set. */
 	private final String colonyId;
 

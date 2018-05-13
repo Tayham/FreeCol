@@ -38,30 +38,29 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-/**
- * Represents an Indian settlement.
- */
+/** Represents an Indian settlement. */
 public class IndianSettlement extends Settlement implements TradeLocation {
-
 	private static final Logger logger = Logger.getLogger(IndianSettlement.class.getName());
 
 	/** The level of contact between a player and this settlement. */
-	public static enum ContactLevel {
-		UNCONTACTED, // Nothing known other than location?
-		CONTACTED, // Name, wanted-goods now visible
-		VISITED, // Skill now known
+	public enum ContactLevel {
+		UNCONTACTED, /** Nothing known other than location? */
+		CONTACTED, /** Name, wanted-goods now visible. */
+		VISITED, /** Skill now known. */
 		SCOUTED // Scouting bonus consumed
-	};
+	}
 
-	// When choosing what goods to sell, sort goods with new world
-	// goods first, then by price, then amount.
+	/**
+	 * When choosing what goods to sell, sort goods with new world
+	 * goods first, then by price, then amount.
+	 */
 	private final Comparator<Goods> exportGoodsComparator = new Comparator<Goods>() {
 		@Override
 		public int compare(Goods goods1, Goods goods2) {
 			int cmp;
 			GoodsType t1 = goods1.getType();
 			GoodsType t2 = goods2.getType();
-			cmp = (((t2.isNewWorldGoodsType()) ? 1 : 0) - ((t1.isNewWorldGoodsType()) ? 1 : 0));
+			cmp = (t2.isNewWorldGoodsType() ? 1 : 0) - (t1.isNewWorldGoodsType() ? 1 : 0);
 			if (cmp == 0) {
 				int a1 = Math.min(goods2.getAmount(), GoodsContainer.CARGO_SIZE);
 				int a2 = Math.min(goods1.getAmount(), GoodsContainer.CARGO_SIZE);
@@ -137,10 +136,10 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	protected Unit missionary = null;
 
 	/** Used for monitoring the progress towards creating a convert. */
-	protected int convertProgress = 0;
+	protected int convertProgress;
 
 	/** The number of the turn during which the last tribute was paid. */
-	protected int lastTribute = 0;
+	protected int lastTribute;
 
 	/** The most hated nation. */
 	protected Player mostHated = null;
@@ -283,7 +282,7 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 * @return A <code>StringTemplate</code> describing the perceived skill.
 	 */
 	public StringTemplate getLearnableSkillLabel(boolean visited) {
-		return StringTemplate.key((visited)
+		return StringTemplate.key(visited
 				? ((learnableSkill == null) ? "model.indianSettlement.skillNone" : learnableSkill.getNameKey())
 				: "model.indianSettlement.skillUnknown");
 	}
@@ -337,7 +336,7 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 */
 	public int getMissionaryLineOfSight() {
 		final boolean enhanced = getSpecification().getBoolean(GameOptions.ENHANCED_MISSIONARIES);
-		return (enhanced) ? getLineOfSight() : 1;
+		return enhanced ? getLineOfSight() : 1;
 	}
 
 	/**
@@ -400,9 +399,11 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 */
 	public int getWantedGoodsAmount() {
 		int n = 0;
-		for (GoodsType gt : wantedGoods)
-			if (gt != null)
+		for (GoodsType gt : wantedGoods) {
+			if (gt != null) {
 				n++;
+			}
+		}
 		return n;
 	}
 
@@ -423,8 +424,9 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 			} else {
 				ret = StringTemplate.label("").add(Messages.nameKey(wantedGoods[index]));
 				String sale = player.getLastSaleString(this, wantedGoods[index]);
-				if (sale != null)
+				if (sale != null) {
 					ret.addName(" " + sale);
+				}
 			}
 		} else {
 			ret = StringTemplate.key("model.indianSettlement.wantedGoodsUnknown");
@@ -463,7 +465,7 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 *         nation.
 	 */
 	public StringTemplate getMostHatedLabel(boolean contacted) {
-		return (contacted)
+		return contacted
 				? ((mostHated == null) ? StringTemplate.key("model.indianSettlement.mostHatedNone")
 						: mostHated.getCountryLabel())
 				: StringTemplate.key("model.indianSettlement.mostHatedUnknown");
@@ -523,8 +525,9 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 */
 	public boolean setVisited(Player player) {
 		if (!hasVisited(player)) {
-			if (!hasContacted(player))
+			if (!hasContacted(player)) {
 				initializeAlarm(player);
+			}
 			contactLevels.put(player, ContactLevel.VISITED);
 			return true;
 		}
@@ -554,8 +557,9 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 */
 	public boolean setScouted(Player player) {
 		if (!hasScouted(player)) {
-			if (!hasContacted(player))
+			if (!hasContacted(player)) {
 				initializeAlarm(player);
+			}
 			contactLevels.put(player, ContactLevel.SCOUTED);
 			return true;
 		}
@@ -641,8 +645,8 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 * @return The alarm message key.
 	 */
 	public String getAlarmLevelKey(Player player) {
-		return (!player.hasContacted(owner)) ? "model.indianSettlement.tension.wary"
-				: (!hasContacted(player)) ? "model.indianSettlement.tension.unknown" : getAlarm(player).getNameKey();
+		return !player.hasContacted(owner) ? "model.indianSettlement.tension.wary"
+				: !hasContacted(player) ? "model.indianSettlement.tension.unknown" : getAlarm(player).getNameKey();
 	}
 
 	/**
@@ -756,8 +760,9 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 
 		// But farmed goods are always less interesting.
 		// and small settlements are not interested in building.
-		if (type.isFarmed() || type.isRawBuildingMaterial())
+		if (type.isFarmed() || type.isRawBuildingMaterial()) {
 			unitPrice /= 2;
+		}
 
 		// Only pay for the portion that is valued.
 		return (unitPrice < 0) ? 0 : valued * unitPrice;
@@ -772,8 +777,9 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	 * @return The amount of goods wanted.
 	 */
 	protected int getWantedGoodsAmount(GoodsType type) {
-		if (getUnitCount() <= 0)
+		if (getUnitCount() <= 0) {
 			return 0;
+		}
 
 		final Specification spec = getSpecification();
 		final UnitType unitType = getFirstUnit().getType();
@@ -809,8 +815,9 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	private int getMilitaryGoodsPriceToBuy(GoodsType type, int amount) {
 		final int full = GOODS_BASE_PRICE + getType().getTradeBonus();
 		int required = getWantedGoodsAmount(type);
-		if (required == 0)
-			return 0; // Do not pay military price
+		if (required == 0) {
+			return 0;
+		} // Do not pay military price
 
 		// If the settlement can use more than half of the goods on offer,
 		// then pay top dollar for the lot. Otherwise only pay the premium
@@ -897,12 +904,14 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 
 		int count = 0;
 		for (Goods goods : settlementGoods) {
-			if (!willSell(goods.getType()))
+			if (!willSell(goods.getType())) {
 				continue;
+			}
 			int amount = goods.getAmount();
 			int retain = getWantedGoodsAmount(goods.getType());
-			if (retain >= amount)
+			if (retain >= amount) {
 				continue;
+			}
 			amount -= retain;
 			if (amount > GoodsContainer.CARGO_SIZE) {
 				amount = GoodsContainer.CARGO_SIZE;
@@ -911,12 +920,14 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 				amount = Math.round(applyModifiers((float) amount, getGame().getTurn(),
 						unit.getModifiers(Modifier.TRADE_VOLUME_PENALTY)));
 			}
-			if (amount < TRADE_MINIMUM_SIZE)
+			if (amount < TRADE_MINIMUM_SIZE) {
 				continue;
+			}
 			result.add(new Goods(getGame(), this, goods.getType(), amount));
 			count++;
-			if (count >= limit)
+			if (count >= limit) {
 				break;
+			}
 		}
 		return result;
 	}
@@ -973,15 +984,17 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		final java.util.Map<GoodsType, Integer> prices = new HashMap<>();
 		for (GoodsType gt : spec.getGoodsTypeList()) {
 			// The natives do not trade military or non-storable goods.
-			if (gt.isMilitaryGoods() || !gt.isStorable())
+			if (gt.isMilitaryGoods() || !gt.isStorable()) {
 				continue;
+			}
 			prices.put(gt, getNormalGoodsPriceToBuy(gt, GoodsContainer.CARGO_SIZE));
 		}
 		int wantedIndex = 0;
 		for (Entry<GoodsType, Integer> e : mapEntriesByValue(prices, descendingIntegerComparator)) {
 			GoodsType goodsType = e.getKey();
-			if (e.getValue() <= GoodsContainer.CARGO_SIZE * TRADE_MINIMUM_PRICE || wantedIndex >= wantedGoods.length)
+			if (e.getValue() <= GoodsContainer.CARGO_SIZE * TRADE_MINIMUM_PRICE || wantedIndex >= wantedGoods.length) {
 				break;
+			}
 			wantedGoods[wantedIndex] = goodsType;
 			wantedIndex++;
 		}
@@ -1029,9 +1042,8 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 						Math.min(randomInt(logger, "Gift amount", random, n) + GIFT_MINIMUM, GIFT_MAXIMUM));
 				goodsList.add(goods);
 			}
-
 		}
-		return (goodsList.isEmpty()) ? null : getRandomMember(logger, "Gift type", goodsList, random);
+		return goodsList.isEmpty() ? null : getRandomMember(logger, "Gift type", goodsList, random);
 	}
 
 	/**
@@ -1054,11 +1066,13 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		double d = randomInt(logger, "Goods at " + getName(), random, 10) * 0.1 + 1.0;
 		for (Entry<GoodsType, Integer> e : goodsMap.entrySet()) {
 			int i = e.getValue();
-			if (!e.getKey().isFoodType())
+			if (!e.getKey().isFoodType()) {
 				i = (int) Math.round(d * e.getValue());
+			}
 			i = Math.min(i, GoodsContainer.CARGO_SIZE);
-			if (i > 0)
+			if (i > 0) {
 				addGoods(e.getKey(), i);
+			}
 		}
 	}
 
@@ -1072,11 +1086,8 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		return getType().getMinimumSize() - 1;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void disposeResources() {
 		// Orphan the units whose home settlement this is.
@@ -1086,31 +1097,27 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		super.disposeResources();
 	}
 
-	// Interface Location (from Settlement via GoodsLocation via UnitLocation)
-	// Inherits
-	// FreeColObject.getId()
-	// Settlement.getTile
-	// Settlement.getLocationLabel
-	// GoodsLocation.remove
-	// GoodsLocation.contains
-	// UnitLocation.canAdd
-	// UnitLocation.getUnitCount
-	// UnitLocation.getUnitList
-	// Settlement.getSettlement
-	// final Settlement.getRank
-
 	/**
-	 * {@inheritDoc}
+	 * Interface Location (from Settlement via GoodsLocation via UnitLocation)
+	 * Inherits
+	 * FreeColObject.getId()
+	 * Settlement.getTile
+	 * Settlement.getLocationLabel
+	 * GoodsLocation.remove
+	 * GoodsLocation.contains
+	 * UnitLocation.canAdd
+	 * UnitLocation.getUnitCount
+	 * UnitLocation.getUnitList
+	 * Settlement.getSettlement
+	 * final Settlement.getRank
 	 */
+
 	@Override
 	public StringTemplate getLocationLabelFor(Player player) {
-		return (hasContacted(player)) ? StringTemplate.name(getName())
+		return hasContacted(player) ? StringTemplate.name(getName())
 				: StringTemplate.key("model.indianSettlement.nameUnknown");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean add(Locatable locatable) {
 		boolean result = super.add(locatable);
@@ -1124,59 +1131,47 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location up() {
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toShortString() {
 		return getName();
 	}
 
-	// UnitLocation
-	// Inherits
-	// UnitLocation.getSpaceTaken
-	// UnitLocation.moveToFront
-	// UnitLocation.clearUnitList
-	// Settlement.getNoAddReason
-	// UnitLocation.getUnitCapacity
-
-	// GoodsLocation
-	// Inherits
-	// GoodsLocation.addGoods
-	// GoodsLocation.removeGoods
-
 	/**
-	 * {@inheritDoc}
+	 * UnitLocation
+	 * Inherits
+	 * UnitLocation.getSpaceTaken
+	 * UnitLocation.moveToFront
+	 * UnitLocation.clearUnitList
+	 * Settlement.getNoAddReason
+	 * UnitLocation.getUnitCapacity
+
+	 * GoodsLocation
+	 * Inherits
+	 * GoodsLocation.addGoods
+	 * GoodsLocation.removeGoods
 	 */
+
 	@Override
 	public int getGoodsCapacity() {
 		return getType().getWarehouseCapacity();
 	}
 
-	// Settlement
+	/** Settlement. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getImageKey() {
 		String key = getType().getId();
-		if (hasMissionary())
+		if (hasMissionary()) {
 			key += ".mission";
+		}
 		return "image.tileitem." + key;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Unit getDefendingUnit(Unit attacker) {
 		Unit defender = null;
@@ -1191,56 +1186,39 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		return defender;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double getDefenceRatio() {
 		return getUnitCount() * 2.0 / (getType().getMinimumSize() + getType().getMaximumSize());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isBadlyDefended() {
 		return getUnitCount() < getRequiredDefenders();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public RandomRange getPlunderRange(Unit attacker) {
 		return getType().getPlunderRange(attacker);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getSoL() {
 		// Native settlements do not generate SoL.
 		return 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getUpkeep() {
 		// Native settlements do not require upkeep.
 		return 0;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getTotalProductionOf(GoodsType type) {
 		if (type.isRefined()) {
-			if (type != goodsToMake())
+			if (type != goodsToMake()) {
 				return 0;
+			}
 			// Pretend 1/3 of the units present make the item with
 			// basic production of 3.
 			return getUnitCount();
@@ -1274,29 +1252,21 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		return potential;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public boolean hasContacted(Player player) {
 		return player != null && (player.isIndian() || getContactLevel(player) != ContactLevel.UNCONTACTED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public StringTemplate getAlarmLevelLabel(Player player) {
-		String key = (!player.hasContacted(owner)) ? "model.indianSettlement.tension.wary"
-				: (!hasContacted(player)) ? "model.indianSettlement.tension.unknown"
+		String key = !player.hasContacted(owner) ? "model.indianSettlement.tension.wary"
+				: !hasContacted(player) ? "model.indianSettlement.tension.unknown"
 						: "model.indianSettlement." + getAlarm(player).getKey();
 		return StringTemplate.template(key).addStringTemplate("%nation%", getOwner().getNationLabel());
 	}
 
-	// Interface TradeLocation
-	// getGoodsCount provided by GoodsLocation
+	/** Interface TradeLocation getGoodsCount provided by GoodsLocation. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getExportAmount(GoodsType goodsType, int turns) {
 		int present = Math.max(0, getGoodsCount(goodsType) + turns * getTotalProductionOf(goodsType));
@@ -1304,30 +1274,25 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		return present - wanted;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getImportAmount(GoodsType goodsType, int turns) {
-		if (goodsType.limitIgnored())
+		if (goodsType.limitIgnored()) {
 			return Integer.MAX_VALUE;
+		}
 
 		int present = Math.max(0, getGoodsCount(goodsType) - turns * getTotalProductionOf(goodsType));
 		int capacity = getWarehouseCapacity();
 		return capacity - present;
 	}
 
-	// Override FreeColGameObject
+	/** Override FreeColGameObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int checkIntegrity(boolean fix) {
 		return super.checkIntegrity(fix);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String ALARM_TAG = "alarm";
 	private static final String CONTACT_LEVEL_TAG = "contactLevel";
@@ -1340,17 +1305,16 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 	private static final String NAME_TAG = "name";
 	private static final String OWNED_UNITS_TAG = "ownedUnits";
 	private static final String PLAYER_TAG = "player";
-	// Public for now while 0.10.7 backward compatibility code in Tile
-	// for PlayerExploredTile needs to check these.
+	/**
+	 * Public for now while 0.10.7 backward compatibility code in Tile
+	 * for PlayerExploredTile needs to check these.
+	 */
 	public static final String LEARNABLE_SKILL_TAG = "learnableSkill";
 	public static final String WANTED_GOODS_TAG = "wantedGoods";
-	// @compat 0.10.1
+	/** @compat 0.10.1 */
 	public static final String OLD_UNITS_TAG = "units";
-	// end @compat
+	/** End @compat. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -1362,7 +1326,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		}
 
 		if (xw.validFor(getOwner())) {
-
 			xw.writeAttribute(LAST_TRIBUTE_TAG, lastTribute);
 
 			xw.writeAttribute(CONVERT_PROGRESS_TAG, convertProgress);
@@ -1378,13 +1341,11 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 			}
 		}
 
-		if (hated != null)
+		if (hated != null) {
 			xw.writeAttribute(MOST_HATED_TAG, hated);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -1398,7 +1359,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		}
 
 		if (xw.validFor(getOwner())) {
-
 			for (Player p : getSortedCopy(contactLevels.keySet())) {
 				xw.writeStartElement(CONTACT_LEVEL_TAG);
 
@@ -1426,7 +1386,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 
 				xw.writeEndElement();
 			}
-
 		} else {
 			Player client = xw.getClientPlayer();
 
@@ -1454,9 +1413,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -1476,9 +1432,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -1493,15 +1446,12 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		for (Unit u : getUnitList()) {
 			if (u.getLocation() != this) {
 				u.setLocationNoUpdate(this);
-				logger.warning("Fixing unit location" + " from " + u.getLocation() + " to " + this.getId());
+				logger.warning("Fixing unit location" + " from " + u.getLocation() + " to " + getId());
 			}
 		}
 		// end @compat
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Game game = getGame();
@@ -1518,7 +1468,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 			// end @compat
 			alarm.put(player, new Tension(xr.getAttribute(VALUE_TAG, 0)));
 			xr.closeTag(ALARM_TAG);
-
 		} else if (CONTACT_LEVEL_TAG.equals(tag)) {
 			ContactLevel cl = xr.getAttribute(LEVEL_TAG, ContactLevel.class, ContactLevel.UNCONTACTED);
 			Player player = xr.findFreeColGameObject(game, PLAYER_TAG, Player.class, (Player) null, true);
@@ -1531,7 +1480,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 			setScouted(player);
 			xr.closeTag(IS_VISITED_TAG);
 			// end @compat
-
 		} else if (MISSIONARY_TAG.equals(tag)) {
 			xr.nextTag();
 			missionary = xr.readFreeColGameObject(game, Unit.class);
@@ -1544,20 +1492,15 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 				super.readChild(xr);
 			}
 			// end @compat
-
 		} else if (OWNED_UNITS_TAG.equals(tag)) {
 			Unit unit = xr.makeFreeColGameObject(game, ID_ATTRIBUTE_TAG, Unit.class, true);
 			addOwnedUnit(unit);
 			xr.closeTag(OWNED_UNITS_TAG);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
@@ -1565,9 +1508,6 @@ public class IndianSettlement extends Settlement implements TradeLocation {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

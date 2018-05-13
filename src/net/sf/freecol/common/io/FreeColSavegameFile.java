@@ -26,11 +26,8 @@ import java.io.BufferedInputStream;
 
 import net.sf.freecol.FreeCol;
 
-/**
- * Represents a FreeCol savegame.
- */
+/** Represents a FreeCol savegame. */
 public class FreeColSavegameFile extends FreeColDataFile {
-
 	/** The tag for the version string in the saved game. */
 	public static final String VERSION_TAG = "version";
 
@@ -81,11 +78,10 @@ public class FreeColSavegameFile extends FreeColDataFile {
 	 * @return The saved game version, or negative on error.
 	 */
 	public int getSavegameVersion() {
-		try (FreeColXMLReader xr = this.getFreeColXMLReader();) {
+		try (FreeColXMLReader xr = getFreeColXMLReader()) {
 			xr.nextTag();
 			return xr.getAttribute(VERSION_TAG, -1);
 		} catch (Exception e) {
-			; // Just fail
 		}
 		return -1;
 	}

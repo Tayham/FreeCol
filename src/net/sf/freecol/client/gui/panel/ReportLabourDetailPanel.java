@@ -37,11 +37,8 @@ import net.sf.freecol.common.model.Location;
 import net.sf.freecol.common.model.TypeCountMap;
 import net.sf.freecol.common.model.UnitType;
 
-/**
- * This panel displays the Labour Report.
- */
+/** This panel displays the Labour Report. */
 public final class ReportLabourDetailPanel extends ReportPanel implements ActionListener {
-
 	private final Map<UnitType, Map<Location, Integer>> data;
 	private final TypeCountMap<UnitType> unitCount;
 	private final List<Colony> colonies;

@@ -37,7 +37,7 @@ public enum Direction implements Named {
 	N(0, -2, 0, -2), NE(1, -1, 0, -1), E(1, 0, 1, 0), SE(1, 1, 0, 1), S(0, 2, 0, 2), SW(0, 1, -1, 1), W(-1, 0, -1,
 			0), NW(0, -1, -1, -1);
 
-	public final static int NUMBER_OF_DIRECTIONS = values().length;
+	public static final int NUMBER_OF_DIRECTIONS = values().length;
 
 	public static final List<Direction> allDirections = makeUnmodifiableList(Direction.N, Direction.NE, Direction.E,
 			Direction.SE, Direction.S, Direction.SW, Direction.W, Direction.NW);
@@ -208,15 +208,15 @@ public enum Direction implements Named {
 
 		int step = 1, mask = 1;
 		for (int i = 1; i < NUMBER_OF_DIRECTIONS - 1; i += 2) {
-			Direction dr = this.rotate(step);
-			Direction dl = this.rotate(NUMBER_OF_DIRECTIONS - step);
+			Direction dr = rotate(step);
+			Direction dl = rotate(NUMBER_OF_DIRECTIONS - step);
 			ret[i] = ((r & mask) == 0) ? dr : dl;
 			ret[i + 1] = ((r & mask) == 0) ? dl : dr;
 			step += 1;
 			mask *= 2;
 		}
 
-		ret[NUMBER_OF_DIRECTIONS - 1] = this.getReverseDirection();
+		ret[NUMBER_OF_DIRECTIONS - 1] = getReverseDirection();
 		return ret;
 	}
 
@@ -240,11 +240,8 @@ public enum Direction implements Named {
 		return "direction." + this; // Deliberately retain upper case
 	}
 
-	// Implement Named
+	/** Implement Named. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getNameKey() {
 		return Messages.nameKey("model." + getKey());

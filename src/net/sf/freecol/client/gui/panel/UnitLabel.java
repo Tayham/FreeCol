@@ -62,12 +62,14 @@ public final class UnitLabel extends JLabel implements ActionListener, Draggable
 	private static final Logger logger = Logger.getLogger(UnitLabel.class.getName());
 
 	public static enum UnitAction {
-		ASSIGN, CLEAR_SPECIALITY, ACTIVATE_UNIT, FORTIFY, SENTRY, COLOPEDIA, LEAVE_TOWN, WORK_COLONYTILE, // Must match
-																											// the
-																											// WorkLocation
-																											// actual
-																											// type
-		WORK_BUILDING, // Must match the WorkLocation actual type
+		ASSIGN, CLEAR_SPECIALITY, ACTIVATE_UNIT, FORTIFY, SENTRY, COLOPEDIA, LEAVE_TOWN, WORK_COLONYTILE, /**
+ * Must match
+																											 * the
+																											 * WorkLocation
+																											 * actual
+																											 * type
+																											 */
+		WORK_BUILDING, /** Must match the WorkLocation actual type */
 		CLEAR_ORDERS, ASSIGN_TRADE_ROUTE, LEAVE_SHIP, UNLOAD,
 	}
 
@@ -307,9 +309,7 @@ public final class UnitLabel extends JLabel implements ActionListener, Draggable
 		}
 	}
 
-	/**
-	 * Update the icon for this unit label.
-	 */
+	/** Update the icon for this unit label. */
 	public void updateIcon() {
 		setDescriptionLabel(unit.getDescription(Unit.UnitLabelType.FULL));
 		setSmall(isSmall);
@@ -341,9 +341,6 @@ public final class UnitLabel extends JLabel implements ActionListener, Draggable
 
 	// Interface Draggable
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isOnCarrier() {
 		return unit != null && unit.isOnCarrier();
@@ -351,9 +348,6 @@ public final class UnitLabel extends JLabel implements ActionListener, Draggable
 
 	// Interface ActionListener
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final Game game = freeColClient.getGame();

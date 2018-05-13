@@ -25,21 +25,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 
-/**
- * Generate a desktop entry file.
- */
+/** Generate a desktop entry file. */
 public class DesktopEntry {
-
 	private static final File SOURCE_DIRECTORY = new File("data", "strings");
 
 	private static final String GENERIC_NAME = "freecol.desktopEntry.GenericName";
 	private static final String COMMENT = "freecol.desktopEntry.Comment";
 
-	/**
-	 * Pass the desktop entry file to create as first argument.
-	 */
+	/** Pass the desktop entry file to create as first argument. */
 	public static void main(String[] args) throws Exception {
-
 		try (FileWriter result = new FileWriter(new File(args[0]))) {
 			result.append("[Desktop Entry]\n");
 			result.append("Version=1.0\n");
@@ -57,7 +51,6 @@ public class DesktopEntry {
 			});
 
 			for (String name : sourceFiles) {
-
 				System.out.println("Processing source file: " + name);
 
 				String languageCode = null;
@@ -76,7 +69,7 @@ public class DesktopEntry {
 					int index = line.indexOf('=');
 					if (index >= 0) {
 						String key = line.substring(0, index).trim();
-						if (null != key)
+						if (null != key) {
 							switch (key) {
 							case GENERIC_NAME:
 								result.append("GenericName");
@@ -90,6 +83,7 @@ public class DesktopEntry {
 								line = bufferedReader.readLine();
 								continue;
 							}
+						}
 						if (languageCode != null) {
 							result.append("[" + languageCode + "]");
 						}
@@ -106,6 +100,5 @@ public class DesktopEntry {
 
 			result.flush();
 		}
-
 	}
 }

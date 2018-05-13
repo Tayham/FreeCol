@@ -24,11 +24,8 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Player;
 
-/**
- * An action for retiring from the game.
- */
+/** An action for retiring from the game. */
 public class RetireAction extends FreeColAction {
-
 	public static final String id = "retireAction";
 
 	/**
@@ -41,22 +38,16 @@ public class RetireAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		Player player = freeColClient.getMyPlayer();
 		return super.shouldBeEnabled() && player != null && player.getPlayerType() != Player.PlayerType.RETIRED;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		freeColClient.retire();

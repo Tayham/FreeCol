@@ -32,14 +32,10 @@ import java.util.logging.Logger;
  * @see Resource
  */
 public class ResourceFactory {
-
 	private static final Logger logger = Logger.getLogger(ResourceFactory.class.getName());
 
-	/**
-	 * Takes a newly produced Resource.
-	 */
+	/** Takes a newly produced Resource. */
 	public interface ResourceSink {
-
 		void add(ColorResource r);
 
 		void add(FontResource r);
@@ -55,7 +51,6 @@ public class ResourceFactory {
 		void add(VideoResource r);
 
 		void add(ImageResource r);
-
 	}
 
 	/**
@@ -162,8 +157,9 @@ public class ResourceFactory {
 	 *            been created, or a new instance if not.
 	 */
 	public static void createResource(URI uri, ResourceSink output) {
-		if (findResource(uri, output))
+		if (findResource(uri, output)) {
 			return;
+		}
 
 		try {
 			if ("urn".equals(uri.getScheme())) {
@@ -216,5 +212,4 @@ public class ResourceFactory {
 			logger.log(Level.WARNING, "Failed to create resource with URI: " + uri, e);
 		}
 	}
-
 }

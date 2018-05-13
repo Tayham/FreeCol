@@ -28,11 +28,8 @@ import javax.swing.SwingUtilities;
 import net.sf.freecol.FreeCol;
 import net.sf.freecol.common.model.Direction;
 
-/**
- * Scrolls the view of the Map by moving its focus.
- */
+/** Scrolls the view of the Map by moving its focus. */
 public class ScrollThread extends Thread {
-
 	private static final Logger logger = Logger.getLogger(ScrollThread.class.getName());
 
 	/** Delay between scroll steps. */
@@ -65,9 +62,7 @@ public class ScrollThread extends Thread {
 		direction = d;
 	}
 
-	/**
-	 * Performs the actual scrolling. Run until interrupted or scrolling fails.
-	 */
+	/** Performs the actual scrolling. Run until interrupted or scrolling fails. */
 	@Override
 	public void run() {
 		while (direction != null) {

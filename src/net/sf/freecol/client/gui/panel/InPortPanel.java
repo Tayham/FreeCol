@@ -29,7 +29,6 @@ import net.sf.freecol.common.model.Unit;
  * @see PortPanel
  */
 public abstract class InPortPanel extends UnitPanel {
-
 	/**
 	 * Create an InPortPanel.
 	 *
@@ -44,16 +43,14 @@ public abstract class InPortPanel extends UnitPanel {
 		super(portPanel, name, editable);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void selectLabel() {
 		// Keep the previous selected unit if possible, otherwise default
 		// on the last carrier.
 		PortPanel portPanel = getPortPanel();
-		if (portPanel == null)
+		if (portPanel == null) {
 			return;
+		}
 		Unit selectedUnit = portPanel.getSelectedUnit();
 		UnitLabel lastCarrier = null;
 		for (Component component : getComponents()) {
@@ -75,11 +72,8 @@ public abstract class InPortPanel extends UnitPanel {
 		// No revalidate+repaint as this is done in setSelectedUnitLabel
 	}
 
-	// Override JLabel
+	/** Override JLabel. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getUIClassID() {
 		return "InPortPanelUI";

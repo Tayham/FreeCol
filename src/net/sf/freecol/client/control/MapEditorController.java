@@ -49,11 +49,8 @@ import net.sf.freecol.server.FreeColServer;
 import net.sf.freecol.server.generator.MapGenerator;
 import net.sf.freecol.server.model.ServerPlayer;
 
-/**
- * The map editor controller.
- */
+/** The map editor controller. */
 public final class MapEditorController {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(MapEditorController.class.getName());
 
@@ -62,15 +59,13 @@ public final class MapEditorController {
 	private final GUI gui;
 
 	public interface IMapTransform {
-
 		/**
 		 * Applies this transformation to the given tile.
 		 * 
 		 * @param t
 		 *            The <code>Tile</code> to be transformed,
 		 */
-		public abstract void transform(Tile t);
-
+		void transform(Tile t);
 	}
 
 	/**
@@ -178,8 +173,9 @@ public final class MapEditorController {
 
 		gui.removeInGameComponents();
 		OptionGroup mgo = gui.showMapGeneratorOptionsDialog(true);
-		if (mgo == null)
+		if (mgo == null) {
 			return;
+		}
 		game.setMapGeneratorOptions(mgo);
 		Map map = freeColClient.getFreeColServer().getMapGenerator().createMap(new LogBuilder(-1));
 		requireNativeNations(game);
@@ -193,8 +189,9 @@ public final class MapEditorController {
 	 */
 	public void saveGame() {
 		File file = gui.showSaveDialog(FreeColDirectories.getSaveDirectory(), FreeColDirectories.MAP_FILE_NAME);
-		if (file != null)
+		if (file != null) {
 			saveGame(file);
+		}
 	}
 
 	/**
@@ -236,8 +233,9 @@ public final class MapEditorController {
 	 */
 	public void loadGame() {
 		File file = gui.showLoadSaveFileDialog();
-		if (file != null)
+		if (file != null) {
 			loadGame(file);
+		}
 	}
 
 	/**

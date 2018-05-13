@@ -42,11 +42,8 @@ import java.util.Arrays;
  * bits 5-7: overlays 0: nothing 1: hill 2: minor river 3: hill + minor river
  * (extremely rare) 4: nothing 5: mountain 6: major river 7: mountain + major
  * river (never seen)
- *
- *
  */
 public class ColonizationMapReader {
-
 	public static final int WIDTH = 0;
 	public static final int HEIGHT = 2;
 
@@ -91,15 +88,16 @@ public class ColonizationMapReader {
 	private static byte[] layer1;
 
 	public static void main(String[] args) throws Exception {
-
 		if ("--palette".equals(args[0])) {
 			RandomAccessFile writer = new RandomAccessFile(args[1], "rw");
 			byte width = 58;
 			byte height = 72;
 			int size = width * height * 3 + header.length;
 			layer1 = new byte[size];
-			for (int i = 0; i < header.length; i++) {
-				layer1[i] = header[i];
+			try {
+				System.arraycopy(header, 0, layer1, 0, header.length);
+			} catch (IndexOutOfBoundsException e) {
+				throw new ArrayIndexOutOfBoundsException(e.getMessage());
 			}
 			Arrays.fill(layer1, header.length, header.length + width * height, (byte) 25); // fill with ocean
 			int ROWS = 32;
@@ -156,7 +154,6 @@ public class ColonizationMapReader {
 					default:
 						break;
 					}
-					;
 					System.out.print(terrain);
 					index++;
 				}
@@ -165,5 +162,4 @@ public class ColonizationMapReader {
 			System.out.println("\n");
 		}
 	}
-
 }

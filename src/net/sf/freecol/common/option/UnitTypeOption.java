@@ -31,18 +31,13 @@ import net.sf.freecol.common.model.Ability;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.UnitType;
 
-/**
- * Option wrapping a UnitType.
- */
+/** Option wrapping a UnitType. */
 public class UnitTypeOption extends AbstractOption<UnitType> {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(UnitTypeOption.class.getName());
 
-	/**
-	 * FIXME: replace with Predicates.
-	 */
-	public static enum TypeSelector {
+	/** FIXME: replace with Predicates. */
+	public enum TypeSelector {
 		UNITS, IMMIGRANTS, LAND_UNITS, NAVAL_UNITS
 	}
 
@@ -107,11 +102,8 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		return selector;
 	}
 
-	// Interface Option
+	/** Interface Option. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public UnitTypeOption clone() {
 		UnitTypeOption result = new UnitTypeOption(getId(), getSpecification());
@@ -150,11 +142,8 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		isDefined = true;
 	}
 
-	// Override AbstractOption
+	/** Override AbstractOption. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void setValue(String valueString, String defaultValueString) {
 		if (valueString != null) {
@@ -166,17 +155,11 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isNullValueOK() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void generateChoices() {
 		if (selector == null) {
@@ -216,15 +199,12 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		}
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String ADD_NONE_TAG = "addNone";
 	private static final String CHOICE_TAG = "choice";
 	private static final String GENERATE_TAG = "generate";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -242,9 +222,6 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -260,9 +237,6 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr); // value is read here
@@ -272,9 +246,6 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		addNone = xr.getAttribute(ADD_NONE_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -283,9 +254,6 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -294,15 +262,11 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		if (CHOICE_TAG.equals(tag)) {
 			choices.add(xr.getType(spec, VALUE_TAG, UnitType.class, (UnitType) null));
 			xr.closeTag(CHOICE_TAG);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
@@ -311,9 +275,6 @@ public class UnitTypeOption extends AbstractOption<UnitType> {
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

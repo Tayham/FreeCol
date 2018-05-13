@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * An action for zooming in on the main map.
- */
+/** An action for zooming in on the main map. */
 public class ZoomInAction extends FreeColAction {
-
 	public static final String id = "zoomInAction";
 
 	/**
@@ -40,27 +37,15 @@ public class ZoomInAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
-		if (!super.shouldBeEnabled())
-			return false;
-
-		if (!getGUI().isMapboardActionsEnabled())
-			return false;
-
-		return getGUI().canZoomInMap();
+		return super.shouldBeEnabled() && getGUI().isMapboardActionsEnabled() && getGUI().canZoomInMap();
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		getGUI().zoomInMap();

@@ -71,20 +71,14 @@ import net.sf.freecol.common.model.TradeRoute;
 import net.sf.freecol.common.model.TradeRouteStop;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
-/**
- * Allows the user to edit trade routes.
- */
+/** Allows the user to edit trade routes. */
 public final class TradeRouteInputPanel extends FreeColPanel implements ListSelectionListener {
-
 	private static final Logger logger = Logger.getLogger(TradeRouteInputPanel.class.getName());
 
 	public static final DataFlavor STOP_FLAVOR = new DataFlavor(TradeRouteStop.class, "Stop");
 
-	/**
-	 * Special label for cargo-to-carry type.
-	 */
+	/** Special label for cargo-to-carry type. */
 	private class CargoLabel extends JLabel {
-
 		private final GoodsType goodsType;
 
 		public CargoLabel(GoodsType type) {
@@ -109,10 +103,7 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 	 * ColonyPanel, the EuropePanel and the CaptureGoodsDialog?
 	 */
 	private class CargoPanel extends JPanel {
-
 		public CargoPanel() {
-			super();
-
 			setOpaque(false);
 			setBorder(Utility.localizedBorder("cargoOnCarrier"));
 			addMouseListener(TradeRouteInputPanel.this.dropListener);
@@ -138,30 +129,21 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 	 * DefaultTransferHandler.
 	 */
 	private class CargoHandler extends TransferHandler {
-
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		protected Transferable createTransferable(JComponent c) {
 			return new ImageSelection((CargoLabel) c);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public int getSourceActions(JComponent c) {
 			return COPY_OR_MOVE;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public boolean importData(JComponent target, Transferable data) {
-			if (!canImport(target, data.getTransferDataFlavors()))
+			if (!canImport(target, data.getTransferDataFlavors())) {
 				return false;
+			}
 			try {
 				CargoLabel label = (CargoLabel) data.getTransferData(DefaultTransferHandler.flavor);
 				if (target instanceof CargoPanel) {
@@ -183,9 +165,6 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 			return false;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		protected void exportDone(JComponent source, Transferable data, int action) {
 			try {
@@ -221,14 +200,10 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 	}
 
 	private class DestinationCellRenderer extends JLabel implements ListCellRenderer<String> {
-
 		public DestinationCellRenderer() {
 			setOpaque(true);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getListCellRendererComponent(JList<? extends String> list, String value, int index,
 				boolean isSelected, boolean cellHasFocus) {
@@ -238,17 +213,14 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 			} else {
 				setText(value);
 			}
-			setForeground((isSelected) ? list.getSelectionForeground() : list.getForeground());
-			setBackground((isSelected) ? list.getSelectionBackground() : list.getBackground());
+			setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+			setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
 			return this;
 		}
 	}
 
-	/**
-	 * Panel for all types of goods that can be loaded onto a carrier.
-	 */
+	/** Panel for all types of goods that can be loaded onto a carrier. */
 	private class GoodsPanel extends JPanel {
-
 		public GoodsPanel() {
 			super(new GridLayout(0, 4, MARGIN, MARGIN));
 
@@ -263,9 +235,6 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 			addMouseListener(TradeRouteInputPanel.this.dropListener);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void setEnabled(boolean enable) {
 			super.setEnabled(enable);
@@ -278,7 +247,6 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 	}
 
 	private static class StopListTransferable implements Transferable {
-
 		private final List<TradeRouteStop> stops;
 
 		public StopListTransferable(List<TradeRouteStop> stops) {
@@ -289,49 +257,31 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 			return stops;
 		}
 
-		// Interface Transferable
+		/** Interface Transferable. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Object getTransferData(DataFlavor flavor) {
 			return (flavor == STOP_FLAVOR) ? stops : null;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public DataFlavor[] getTransferDataFlavors() {
 			return new DataFlavor[] { STOP_FLAVOR };
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			return flavor == STOP_FLAVOR;
 		}
 	}
 
-	/**
-	 * TransferHandler for Stops.
-	 */
+	/** TransferHandler for Stops. */
 	private class StopListHandler extends TransferHandler {
-
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public boolean canImport(JComponent c, DataFlavor[] flavors) {
 			return any(flavors, f -> f.equals(STOP_FLAVOR));
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		protected Transferable createTransferable(JComponent c) {
 			JList list = (JList) c;
@@ -343,17 +293,11 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 			return new StopListTransferable(stops);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public int getSourceActions(JComponent c) {
 			return MOVE;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public boolean importData(JComponent target, Transferable data) {
 			JList<TradeRouteStop> stl = TradeRouteInputPanel.this.stopList;
@@ -376,9 +320,6 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 			return false;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		protected void exportDone(JComponent source, Transferable data, int action) {
 			try {
@@ -396,7 +337,6 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 	}
 
 	private class StopRenderer implements ListCellRenderer<TradeRouteStop> {
-
 		private final JPanel SELECTED_COMPONENT = new JPanel();
 		private final JPanel NORMAL_COMPONENT = new JPanel();
 
@@ -408,13 +348,10 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 			SELECTED_COMPONENT.setUI((PanelUI) FreeColSelectedPanelUI.createUI(SELECTED_COMPONENT));
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getListCellRendererComponent(JList<? extends TradeRouteStop> list, TradeRouteStop value,
 				int index, boolean isSelected, boolean hasFocus) {
-			JPanel panel = (isSelected) ? SELECTED_COMPONENT : NORMAL_COMPONENT;
+			JPanel panel = isSelected ? SELECTED_COMPONENT : NORMAL_COMPONENT;
 			panel.removeAll();
 			panel.setForeground(list.getForeground());
 			panel.setFont(list.getFont());
@@ -522,7 +459,7 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-			} // Ignore
+			} /** Ignore. */
 
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -600,9 +537,7 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 		getGUI().restoreSavedSize(this, getPreferredSize());
 	}
 
-	/**
-	 * Add any stops selected in the destination selector.
-	 */
+	/** Add any stops selected in the destination selector. */
 	private void addSelectedStops() {
 		int startIndex = -1;
 		int endIndex = -1;
@@ -636,9 +571,7 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 		}
 	}
 
-	/**
-	 * Delete any stops currently selected in the stop list.
-	 */
+	/** Delete any stops currently selected in the stop list. */
 	private void deleteCurrentlySelectedStops() {
 		int count = 0;
 		int lastIndex = 0;
@@ -704,20 +637,19 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 		return true;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		final String command = ae.getActionCommand();
-		if (command == null)
+		if (command == null) {
 			return;
+		}
 		switch (command) {
 		case OK:
-			if (!verifyNewTradeRoute())
+			if (!verifyNewTradeRoute()) {
 				return;
+			}
 			// Return to TradeRoutePanel, which will add the route
 			// if needed, and it is valid.
 			super.actionPerformed(ae);
@@ -731,15 +663,13 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 		}
 	}
 
-	// Interface ListSelectionListener
+	/** Interface ListSelectionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting())
+		if (e.getValueIsAdjusting()) {
 			return;
+		}
 		int[] idx = this.stopList.getSelectedIndices();
 		if (idx.length > 0) {
 			TradeRouteStop stop = this.stopListModel.get(idx[0]);
@@ -751,11 +681,8 @@ public final class TradeRouteInputPanel extends FreeColPanel implements ListSele
 		updateButtons();
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		this.cargoHandler = null;

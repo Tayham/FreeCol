@@ -28,11 +28,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when naming a new land.
- */
+/** The message sent when naming a new land. */
 public class NewLandNameMessage extends DOMMessage {
-
 	/** The unit that has come ashore. */
 	private final String unitId;
 

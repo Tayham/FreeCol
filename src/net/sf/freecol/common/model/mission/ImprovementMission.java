@@ -37,10 +37,7 @@ import org.w3c.dom.Element;
  * Tile.
  */
 public class ImprovementMission extends AbstractMission {
-
-	/**
-	 * The improvement of this Mission.
-	 */
+	/** The improvement of this Mission. */
 	private TileImprovement improvement;
 
 	/**
@@ -111,9 +108,6 @@ public class ImprovementMission extends AbstractMission {
 		this.improvement = newImprovement;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MissionState doMission() {
 		// FIXME: get rid of magic numbers: either add a pioneerWork
@@ -148,13 +142,10 @@ public class ImprovementMission extends AbstractMission {
 		return any(spec.getTileImprovementTypeList(), ti -> ti.isWorkerAllowed(unit));
 	}
 
-	// Serialization.
+	/** Serialization. */
 
 	private static final String IMPROVEMENT_TAG = "improvement";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -162,9 +153,6 @@ public class ImprovementMission extends AbstractMission {
 		xw.writeAttribute(IMPROVEMENT_TAG, improvement);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -172,9 +160,6 @@ public class ImprovementMission extends AbstractMission {
 		improvement = xr.makeFreeColGameObject(getGame(), IMPROVEMENT_TAG, TileImprovement.class, true);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();
@@ -188,5 +173,4 @@ public class ImprovementMission extends AbstractMission {
 	public static String getXMLElementTagName() {
 		return "improvementMission";
 	}
-
 }

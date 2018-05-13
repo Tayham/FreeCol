@@ -25,16 +25,13 @@ import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.client.ClientOptions;
 import net.sf.freecol.common.model.Player;
 
-/**
- * An action for selecting one of several options.
- */
+/** An action for selecting one of several options. */
 public abstract class SelectableAction extends MapboardAction {
-
 	public static final String id = "selectableAction";
 
 	private final String optionId;
 
-	protected boolean selected = false;
+	protected boolean selected;
 
 	/**
 	 * Creates this action.
@@ -78,8 +75,9 @@ public abstract class SelectableAction extends MapboardAction {
 	 */
 	public final void setOption(boolean value) {
 		ClientOptions co = freeColClient.getClientOptions();
-		if (co != null && optionId != null)
+		if (co != null && optionId != null) {
 			co.setBoolean(optionId, value);
+		}
 	}
 
 	/**
@@ -112,11 +110,8 @@ public abstract class SelectableAction extends MapboardAction {
 		return getOption();
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		final Player player = getFreeColClient().getMyPlayer();
@@ -124,9 +119,6 @@ public abstract class SelectableAction extends MapboardAction {
 				&& player.getNewModelMessages().isEmpty();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void update() {
 		super.update();

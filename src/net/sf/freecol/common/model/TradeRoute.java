@@ -38,7 +38,6 @@ import org.w3c.dom.Element;
  * A TradeRoute holds all information for a unit to follow along a trade route.
  */
 public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
-
 	private static final Logger logger = Logger.getLogger(TradeRoute.class.getName());
 
 	/** The name of this trade route. */
@@ -55,7 +54,7 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 	private final List<TradeRouteStop> stops = new ArrayList<>();
 
 	/** Silence the messaging for this trade route. */
-	private boolean silent = false;
+	private boolean silent;
 
 	/**
 	 * Creates a new <code>TradeRoute</code> instance.
@@ -177,13 +176,15 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 	 */
 	public List<TradeRouteStop> getStopSublist(TradeRouteStop start, TradeRouteStop end) {
 		int i0 = getIndex(start), in = getIndex(end);
-		if (i0 < 0 || in < 0)
+		if (i0 < 0 || in < 0) {
 			return null;
+		}
 		List<TradeRouteStop> result = new ArrayList<>();
 		while (i0 != in) {
 			result.add(stops.get(i0));
-			if (++i0 >= stops.size())
+			if (++i0 >= stops.size()) {
 				i0 = 0;
+			}
 		}
 		return result;
 	}
@@ -218,16 +219,15 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 	public int getIndex(TradeRouteStop stop) {
 		int i = 0;
 		for (TradeRouteStop trs : stops) {
-			if (trs == stop)
+			if (trs == stop) {
 				return i;
+			}
 			i++;
 		}
 		return -1;
 	}
 
-	/**
-	 * Clear the stops in this trade route.
-	 */
+	/** Clear the stops in this trade route. */
 	public void clearStops() {
 		stops.clear();
 	}
@@ -251,7 +251,7 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 	 * @return True if the stop is valid.
 	 */
 	public static boolean isStopValid(Unit unit, TradeRouteStop stop) {
-		return TradeRoute.isStopValid(unit.getOwner(), stop);
+		return isStopValid(unit.getOwner(), stop);
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 	 * @return True if the stop is valid.
 	 */
 	public static boolean isStopValid(Player player, TradeRouteStop stop) {
-		return (stop == null) ? false : stop.isValid(player);
+		return stop != null && stop.isValid(player);
 	}
 
 	/**
@@ -295,15 +295,17 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 		Set<GoodsType> always = new HashSet<>(stops.get(0).getCargo());
 		boolean empty = true;
 		for (TradeRouteStop stop : stops) {
-			if (!TradeRoute.isStopValid(owner, stop)) {
+			if (!isStopValid(owner, stop)) {
 				return stop.invalidStopLabel(owner);
 			}
-			if (!stop.getCargo().isEmpty())
+			if (!stop.getCargo().isEmpty()) {
 				empty = false;
+			}
 			always.retainAll(stop.getCargo());
 		}
-		if (empty)
+		if (empty) {
 			return StringTemplate.template("model.tradeRoute.allEmpty");
+		}
 		if (!always.isEmpty()) {
 			return StringTemplate.template("model.tradeRoute.alwaysPresent").addNamed("%goodsType%",
 					always.iterator().next());
@@ -335,15 +337,12 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 		this.owner = newOwner;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String NAME_TAG = "name";
 	private static final String OWNER_TAG = "owner";
 	private static final String SILENT_TAG = "silent";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -355,20 +354,15 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 		xw.writeAttribute(SILENT_TAG, isSilent());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
-		for (TradeRouteStop stop : stops)
+		for (TradeRouteStop stop : stops) {
 			stop.toXML(xw);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -380,9 +374,6 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 		silent = xr.getAttribute(SILENT_TAG, false);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -391,40 +382,32 @@ public class TradeRoute extends FreeColGameObject implements Nameable, Ownable {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final String tag = xr.getLocalName();
 
 		if (TradeRouteStop.getXMLElementTagName().equals(tag)) {
 			stops.add(new TradeRouteStop(getGame(), xr));
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(64);
 		sb.append('[').append(getXMLTagName()).append(" \"").append(name).append('"');
-		if (owner != null)
+		if (owner != null) {
 			sb.append(" owner=").append(owner.getId());
-		sb.append(" silent=").append(Boolean.toString(silent));
-		for (TradeRouteStop stop : getStops())
+		}
+		sb.append(" silent=").append(silent);
+		for (TradeRouteStop stop : getStops()) {
 			sb.append(' ').append(stop);
+		}
 		sb.append(']');
 		return sb.toString();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

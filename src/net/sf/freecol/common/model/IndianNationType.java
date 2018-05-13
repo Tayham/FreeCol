@@ -32,11 +32,8 @@ import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.util.RandomChoice;
 
-/**
- * Represents one of the native nations present in the game.
- */
+/** Represents one of the native nations present in the game. */
 public class IndianNationType extends NationType {
-
 	/** Stores the ids of the skills taught by this Nation. */
 	private List<RandomChoice<UnitType>> skills = null;
 
@@ -93,7 +90,7 @@ public class IndianNationType extends NationType {
 	 * @return A suitable message id.
 	 */
 	public final String getSettlementTypeKey(boolean plural) {
-		return getSettlementType(false).getId() + ((plural) ? ".plural" : "");
+		return getSettlementType(false).getId() + (plural ? ".plural" : "");
 	}
 
 	/**
@@ -112,8 +109,9 @@ public class IndianNationType extends NationType {
 	 *            The object identifier.
 	 */
 	private void addRegion(String id) {
-		if (regions == null)
+		if (regions == null) {
 			regions = new ArrayList<>();
+		}
 		regions.add(id);
 	}
 
@@ -160,8 +158,9 @@ public class IndianNationType extends NationType {
 	 *            The probability of the skill.
 	 */
 	private void addSkill(UnitType unitType, int probability) {
-		if (skills == null)
+		if (skills == null) {
 			skills = new ArrayList<>();
+		}
 		skills.add(new RandomChoice<>(unitType, probability));
 	}
 
@@ -198,14 +197,11 @@ public class IndianNationType extends NationType {
 		return scaledSkills;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String PROBABILITY_TAG = "probability";
 	private static final String SKILL_TAG = "skill";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -229,9 +225,6 @@ public class IndianNationType extends NationType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -244,14 +237,16 @@ public class IndianNationType extends NationType {
 		IndianNationType parent = xr.getType(spec, EXTENDS_TAG, IndianNationType.class, this);
 		if (parent != this) {
 			if (parent.skills != null && !parent.skills.isEmpty()) {
-				if (skills == null)
+				if (skills == null) {
 					skills = new ArrayList<>();
+				}
 				skills.addAll(parent.skills);
 			}
 
 			if (parent.regions != null && !parent.regions.isEmpty()) {
-				if (regions == null)
+				if (regions == null) {
 					regions = new ArrayList<>();
+				}
 				regions.addAll(parent.regions);
 			}
 		}
@@ -259,9 +254,6 @@ public class IndianNationType extends NationType {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -271,19 +263,14 @@ public class IndianNationType extends NationType {
 			addSkill(xr.getType(spec, ID_ATTRIBUTE_TAG, UnitType.class, (UnitType) null),
 					xr.getAttribute(PROBABILITY_TAG, 0));
 			xr.closeTag(SKILL_TAG);
-
 		} else if (Region.getXMLElementTagName().equals(tag)) {
 			addRegion(xr.readId());
 			xr.closeTag(Region.getXMLElementTagName());
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

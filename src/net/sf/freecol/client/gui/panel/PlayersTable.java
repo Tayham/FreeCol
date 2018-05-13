@@ -64,16 +64,10 @@ import net.sf.freecol.common.model.Player;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.StringTemplate;
 
-/**
- * The table of players.
- */
+/** The table of players. */
 public final class PlayersTable extends JTable {
-
-	/**
-	 * A table cell editor that can be used to select a nation.
-	 */
+	/** A table cell editor that can be used to select a nation. */
 	private class AdvantageCellEditor extends DefaultCellEditor {
-
 		private final JComboBox<EuropeanNationType> box;
 
 		/**
@@ -100,11 +94,8 @@ public final class PlayersTable extends JTable {
 			this.box.setRenderer(new FreeColComboBoxRenderer<EuropeanNationType>());
 		}
 
-		// Implement DefaultCellEditor
+		/** Implement DefaultCellEditor. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Object getCellEditorValue() {
 			return ((JComboBox) getComponent()).getSelectedItem();
@@ -112,7 +103,6 @@ public final class PlayersTable extends JTable {
 	}
 
 	private class AdvantageCellRenderer extends JLabel implements TableCellRenderer {
-
 		/** The national advantages type. */
 		private final Advantages advantages;
 
@@ -126,16 +116,13 @@ public final class PlayersTable extends JTable {
 			this.advantages = advantages;
 		}
 
-		// Implement TableCellRenderer
+		/** Implement TableCellRenderer. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
-			final Player player = (Player) table.getValueAt(row, PlayersTable.PLAYER_COLUMN);
-			final NationType nationType = ((Nation) table.getValueAt(row, PlayersTable.NATION_COLUMN)).getType();
+			final Player player = (Player) table.getValueAt(row, PLAYER_COLUMN);
+			final NationType nationType = ((Nation) table.getValueAt(row, NATION_COLUMN)).getType();
 			JLabel label;
 			switch (advantages) {
 			case SELECTABLE:
@@ -156,21 +143,15 @@ public final class PlayersTable extends JTable {
 	}
 
 	private static class AvailableCellRenderer extends JLabel implements TableCellRenderer {
-
 		private final JComboBox<NationState> box = new JComboBox<>(NationState.values());
 
-		/**
-		 * The default constructor.
-		 */
+		/** The default constructor. */
 		public AvailableCellRenderer() {
 			box.setRenderer(new NationStateRenderer());
 		}
 
-		// Implement TableCellRenderer
+		/** Implement TableCellRenderer. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
@@ -182,7 +163,6 @@ public final class PlayersTable extends JTable {
 	}
 
 	private final class AvailableCellEditor extends AbstractCellEditor implements TableCellEditor {
-
 		private final JComboBox<NationState> aiStateBox = new JComboBox<>(
 				new NationState[] { NationState.AI_ONLY, NationState.NOT_AVAILABLE });
 		private final JComboBox<NationState> allStateBox = new JComboBox<>(NationState.values());
@@ -199,11 +179,8 @@ public final class PlayersTable extends JTable {
 			allStateBox.addActionListener(listener);
 		}
 
-		// Implement AbstractCellEditor
+		/** Implement AbstractCellEditor. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
 				int column) {
@@ -219,7 +196,6 @@ public final class PlayersTable extends JTable {
 	}
 
 	private static class HeaderListener extends MouseAdapter {
-
 		private final JTableHeader header;
 
 		private final HeaderRenderer renderer;
@@ -244,7 +220,6 @@ public final class PlayersTable extends JTable {
 	}
 
 	private static class HeaderRenderer implements TableCellRenderer {
-
 		private static final int NO_COLUMN = -1;
 		private int pressedColumn = NO_COLUMN;
 		private final Component[] components;
@@ -253,16 +228,13 @@ public final class PlayersTable extends JTable {
 			this.components = components;
 		}
 
-		// Implement TableCellEditor
+		/** Implement TableCellEditor. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
 			if (components[column] instanceof JButton) {
-				boolean isPressed = (column == pressedColumn);
+				boolean isPressed = column == pressedColumn;
 				((JButton) components[column]).getModel().setPressed(isPressed);
 				((JButton) components[column]).getModel().setArmed(isPressed);
 			}
@@ -275,12 +247,8 @@ public final class PlayersTable extends JTable {
 	}
 
 	private class NationCellRenderer extends JLabel implements TableCellRenderer {
+		/** Implement TableCellEditor. */
 
-		// Implement TableCellEditor
-
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
@@ -293,12 +261,8 @@ public final class PlayersTable extends JTable {
 	}
 
 	private static class NationStateRenderer extends JLabel implements ListCellRenderer<NationState> {
+		/** Implement ListCellEditor<NationState>. */
 
-		// Implement ListCellEditor<NationState>
-
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getListCellRendererComponent(JList<? extends NationState> list, NationState value, int index,
 				boolean isSelected, boolean cellHasFocus) {
@@ -308,7 +272,6 @@ public final class PlayersTable extends JTable {
 	}
 
 	private static class PlayerCellRenderer implements TableCellRenderer {
-
 		private final JLabel label = new JLabel();
 		private final JButton button = Utility.localizedButton("select");
 
@@ -317,11 +280,8 @@ public final class PlayersTable extends JTable {
 			Utility.padBorder(button, 5, 10, 5, 10);
 		}
 
-		// Implement TableCellRenderer
+		/** Implement TableCellRenderer. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
@@ -344,7 +304,6 @@ public final class PlayersTable extends JTable {
 	}
 
 	private final class PlayerCellEditor extends AbstractCellEditor implements TableCellEditor {
-
 		private final JButton button = Utility.localizedButton("select");
 
 		public PlayerCellEditor() {
@@ -353,9 +312,6 @@ public final class PlayersTable extends JTable {
 			});
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
 				int column) {
@@ -368,11 +324,8 @@ public final class PlayersTable extends JTable {
 		}
 	}
 
-	/**
-	 * The TableModel for the players table.
-	 */
+	/** The TableModel for the players table. */
 	private static class PlayersTableModel extends AbstractTableModel {
-
 		private final PreGameController preGameController;
 
 		private final NationOptions nationOptions;
@@ -400,8 +353,9 @@ public final class PlayersTable extends JTable {
 			nations = new ArrayList<>();
 			players = new HashMap<>();
 			for (Nation nation : thisPlayer.getSpecification().getNations()) {
-				if (nation.isUnknownEnemy())
+				if (nation.isUnknownEnemy()) {
 					continue;
+				}
 				NationState state = nationOptions.getNations().get(nation);
 				if (state != null) {
 					nations.add(nation);
@@ -434,7 +388,7 @@ public final class PlayersTable extends JTable {
 			case NATION_COLUMN:
 				return Nation.class;
 			case AVAILABILITY_COLUMN:
-				return NationOptions.NationState.class;
+				return NationState.class;
 			case ADVANTAGE_COLUMN:
 				return NationType.class;
 			case COLOR_COLUMN:
@@ -601,8 +555,6 @@ public final class PlayersTable extends JTable {
 	 *            The client <code>Player</code>.
 	 */
 	public PlayersTable(final FreeColClient freeColClient, NationOptions nationOptions, Player myPlayer) {
-		super();
-
 		gui = freeColClient.getGUI();
 		final Specification spec = freeColClient.getGame().getSpecification();
 
@@ -648,11 +600,10 @@ public final class PlayersTable extends JTable {
 			advantagesColumn.setCellEditor(new AdvantageCellEditor(spec.getEuropeanNationTypes()));
 			break;
 		case FIXED:
+		default:
 			break; // Do nothing
 		case NONE:
 			spec.clearEuropeanNationalAdvantages();
-			break;
-		default:
 			break;
 		}
 		advantagesColumn.setCellRenderer(new AdvantageCellRenderer(nationOptions.getNationalAdvantages()));

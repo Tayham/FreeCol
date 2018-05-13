@@ -46,11 +46,8 @@ import net.sf.freecol.common.model.GoodsType;
 import net.sf.freecol.common.model.Specification;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * This panel displays the classic version of the colony report.
- */
+/** This panel displays the classic version of the colony report. */
 public final class ReportClassicColonyPanel extends ReportPanel implements ActionListener {
-
 	private static final int COLONISTS_PER_ROW = 20;
 	private static final int UNITS_PER_ROW = 14;
 	private static final int GOODS_PER_ROW = 10;
@@ -140,8 +137,9 @@ public final class ReportClassicColonyPanel extends ReportPanel implements Actio
 			List<Building> buildingList = colony.getBuildings();
 			Collections.sort(buildingList);
 			for (Building building : buildingList) {
-				if (building.getType().isAutomaticBuild())
+				if (building.getType().isAutomaticBuild()) {
 					continue;
+				}
 				JLabel buildingLabel = new JLabel(new ImageIcon(lib.getSmallBuildingImage(building)));
 				buildingLabel.setToolTipText(Messages.getName(building));
 				buildingsPanel.add(buildingLabel);

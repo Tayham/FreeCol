@@ -30,11 +30,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when negotiating a sale at an IndianSettlement.
- */
+/** The message sent when negotiating a sale at an IndianSettlement. */
 public class SellPropositionMessage extends DOMMessage {
-
 	/** The object identifier of the unit that is selling. */
 	private final String unitId;
 

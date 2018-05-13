@@ -30,7 +30,6 @@ import net.sf.freecol.common.util.Utils;
  * A change in a tile type, including some bonus production when this occurs.
  */
 public class TileTypeChange implements Comparable<TileTypeChange> {
-
 	/** The original tile type. */
 	private TileType from;
 
@@ -100,38 +99,30 @@ public class TileTypeChange implements Comparable<TileTypeChange> {
 		this.production = production;
 	}
 
-	// Interface Comparable<TileTypeChange>
+	/** Interface Comparable<TileTypeChange>. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int compareTo(TileTypeChange other) {
 		int cmp;
 		cmp = (from == null) ? ((other.from == null) ? 0 : -1)
 				: (other.from == null) ? 1 : FreeColObject.compareIds(from, other.from);
-		if (cmp != 0)
+		if (cmp != 0) {
 			return cmp;
+		}
 		return (to == null) ? ((other.to == null) ? 0 : -1)
 				: (other.to == null) ? 1 : FreeColObject.compareIds(to, other.to);
 	}
 
-	// Override Object
+	/** Override Object. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof TileTypeChange) {
-			return this.compareTo((TileTypeChange) other) == 0;
+			return compareTo((TileTypeChange) other) == 0;
 		}
 		return super.equals(other);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		int hash = super.hashCode();
@@ -140,7 +131,7 @@ public class TileTypeChange implements Comparable<TileTypeChange> {
 		return 37 * hash + Utils.hashCode(production);
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String FROM_TAG = "from";
 	private static final String GOODS_TYPE_TAG = "goods-type";
@@ -202,7 +193,6 @@ public class TileTypeChange implements Comparable<TileTypeChange> {
 				production = new AbstractGoods(type, amount);
 
 				xr.closeTag(PRODUCTION_TAG);
-
 			} else {
 				throw new XMLStreamException("Bogus TileTypeChange tag: " + tag);
 			}

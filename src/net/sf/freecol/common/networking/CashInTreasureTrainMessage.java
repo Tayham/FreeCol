@@ -27,11 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when cashing in a treasure train.
- */
+/** The message sent when cashing in a treasure train. */
 public class CashInTreasureTrainMessage extends DOMMessage {
-
 	/** The identifier of the treasure train unit. */
 	private final String unitId;
 

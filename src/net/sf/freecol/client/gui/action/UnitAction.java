@@ -25,7 +25,6 @@ import net.sf.freecol.client.FreeColClient;
  * Super class for all actions that should be disabled when no unit is selected.
  */
 public abstract class UnitAction extends MapboardAction {
-
 	/**
 	 * Creates a new <code>UnitAction</code>.
 	 *
@@ -38,11 +37,8 @@ public abstract class UnitAction extends MapboardAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		return super.shouldBeEnabled() && getGUI().getActiveUnit() != null

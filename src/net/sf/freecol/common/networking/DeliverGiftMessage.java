@@ -29,11 +29,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when delivering a gift to a Settlement.
- */
+/** The message sent when delivering a gift to a Settlement. */
 public class DeliverGiftMessage extends DOMMessage {
-
 	/** The object identifier of the unit that is delivering the gift. */
 	private final String unitId;
 

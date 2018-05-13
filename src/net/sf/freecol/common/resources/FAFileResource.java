@@ -29,7 +29,6 @@ import java.net.URL;
  * @see FAFile
  */
 public class FAFileResource extends Resource {
-
 	private final FAFile FAFile;
 
 	public FAFileResource(FAFile FAFile) {

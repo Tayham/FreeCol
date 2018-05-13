@@ -23,11 +23,8 @@ import java.awt.event.ActionEvent;
 
 import net.sf.freecol.client.FreeColClient;
 
-/**
- * Show turn messages in report panel.
- */
+/** Show turn messages in report panel. */
 public class ReportTurnAction extends FreeColAction {
-
 	public static final String id = "reportTurnAction";
 
 	/**
@@ -40,11 +37,8 @@ public class ReportTurnAction extends FreeColAction {
 		super(freeColClient, id);
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		igc().displayTurnReportMessages();

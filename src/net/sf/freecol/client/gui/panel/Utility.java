@@ -57,11 +57,8 @@ import net.sf.freecol.common.model.StringTemplate;
 import net.sf.freecol.common.model.Unit;
 import net.sf.freecol.common.resources.ResourceManager;
 
-/**
- * Static utilities for panels and dialogs.
- */
+/** Static utilities for panels and dialogs. */
 public final class Utility {
-
 	/** The color to use for borders. */
 	public static final Color BORDER_COLOR = ResourceManager.getColor("color.border.LookAndFeel");
 
@@ -94,7 +91,7 @@ public final class Utility {
 	public static final Border SIMPLE_LINE_BORDER = BorderFactory.createCompoundBorder(TRIVIAL_LINE_BORDER,
 			blankBorder(5, 5, 5, 5));
 
-	// The borders to use for table cells
+	/** The borders to use for table cells. */
 	public static final Border TOPCELLBORDER = BorderFactory.createCompoundBorder(
 			BorderFactory.createMatteBorder(1, 0, 1, 1, BORDER_COLOR), BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
@@ -174,17 +171,15 @@ public final class Utility {
 		FreeColGameObject link = null;
 		if ("%colony%".equals(key) || key.endsWith("Colony%")) {
 			Settlement settlement = player.getGame().getSettlementByName(val);
-			link = (settlement == null) ? null : (player.owns(settlement)) ? settlement : settlement.getTile();
+			link = (settlement == null) ? null : player.owns(settlement) ? settlement : settlement.getTile();
 		} else if ("%europe%".equals(key) || "%market%".equals(key)) {
 			link = player.getEurope();
 		} else if ("%location%".equals(key) || key.endsWith("Location%")) {
 			if (source instanceof Location) {
 				link = source.getLinkTarget(player);
 			}
-		} else if ("%unit%".equals(key) || key.endsWith("Unit%")) {
-			if (source instanceof Unit) {
-				link = source.getLinkTarget(player);
-			}
+		} else if (("%unit%".equals(key) || key.endsWith("Unit%")) && source instanceof Unit) {
+			link = source.getLinkTarget(player);
 		}
 		return (link == null) ? null : getLinkButton(val, null, link.getId());
 	}
@@ -395,7 +390,7 @@ public final class Utility {
 	 */
 	public static JLabel localizedHeader(String key, boolean small) {
 		JLabel header = localizedHeaderLabel(key, SwingConstants.CENTER,
-				(small ? FontLibrary.FontSize.SMALL : FontLibrary.FontSize.BIG));
+				small ? FontLibrary.FontSize.SMALL : FontLibrary.FontSize.BIG);
 		header.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 		return header;
 	}
@@ -641,5 +636,4 @@ public final class Utility {
 		comp.setToolTipText(Messages.message(template));
 		return comp;
 	}
-
 }

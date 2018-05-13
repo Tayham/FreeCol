@@ -24,11 +24,8 @@ import java.awt.event.ActionEvent;
 import net.sf.freecol.client.FreeColClient;
 import net.sf.freecol.common.model.Unit;
 
-/**
- * An action for assigning a trade route to the currently selected unit.
- */
+/** An action for assigning a trade route to the currently selected unit. */
 public class AssignTradeRouteAction extends UnitAction {
-
 	public static final String id = "assignTradeRouteAction";
 
 	/**
@@ -41,29 +38,24 @@ public class AssignTradeRouteAction extends UnitAction {
 		super(freeColClient, id);
 	}
 
-	// Override FreeColAction
+	/** Override FreeColAction. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean shouldBeEnabled() {
 		if (super.shouldBeEnabled()) {
 			Unit unit = getGUI().getActiveUnit();
-			return (unit != null && unit.isCarrier());
+			return unit != null && unit.isCarrier();
 		}
 		return false;
 	}
 
-	// Interface ActionListener
+	/** Interface ActionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		Unit unit = getGUI().getActiveUnit();
-		if (unit != null)
+		if (unit != null) {
 			getGUI().showTradeRoutePanel(unit);
+		}
 	}
 }

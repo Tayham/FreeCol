@@ -39,12 +39,9 @@ import net.sf.freecol.common.model.Tile;
 import net.sf.freecol.common.model.TileImprovement;
 import net.sf.freecol.server.generator.TerrainGenerator;
 
-/**
- * Listens to the mouse being moved at the level of the Canvas.
- */
+/** Listens to the mouse being moved at the level of the Canvas. */
 public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 		implements MouseListener, MouseMotionListener {
-
 	private static final Logger logger = Logger.getLogger(CanvasMapEditorMouseListener.class.getName());
 
 	private Point endPoint;
@@ -71,7 +68,7 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 
 	/**
 	 * This method can be called to make sure the map is loaded There is no point
-	 * executing mouse events if the map is not loaded
+	 * executing mouse events if the map is not loaded.
 	 */
 	private Map getMap() {
 		return (freeColClient.getGame() == null) ? null : freeColClient.getGame().getMap();
@@ -89,8 +86,9 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 	 */
 	private void drawBox(JComponent component, Point startPoint, Point endPoint) {
 		if (startPoint == null || endPoint == null || startPoint.distance(endPoint) == 0
-				|| freeColClient.getMapEditorController() == null)
+				|| freeColClient.getMapEditorController() == null) {
 			return;
+		}
 
 		Graphics2D graphics = (Graphics2D) component.getGraphics();
 		graphics.setColor(Color.WHITE);
@@ -101,15 +99,13 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 		graphics.drawRect(x, y, width, height);
 	}
 
-	// Implement MouseListener
+	/** Implement MouseListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (getMap() == null)
+		if (getMap() == null) {
 			return;
+		}
 
 		try {
 			if (e.getClickCount() > 1) {
@@ -122,26 +118,23 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (getMap() == null || !e.getComponent().isEnabled())
+		if (getMap() == null || !e.getComponent().isEnabled()) {
 			return;
+		}
 
 		try {
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				Tile tile = canvas.convertToMapTile(e.getX(), e.getY());
-				if (tile != null)
+				if (tile != null) {
 					getGUI().setSelectedTile(tile);
+				}
 				startPoint = endPoint = null;
-
 			} else if (e.getButton() == MouseEvent.BUTTON2) {
 				startPoint = e.getPoint();
 				JComponent component = (JComponent) e.getSource();
 				drawBox(component, startPoint, endPoint);
-
 			} else if (e.getButton() == MouseEvent.BUTTON3 || e.isPopupTrigger()) {
 				startPoint = e.getPoint();
 				Tile tile = canvas.convertToMapTile(e.getX(), e.getY());
@@ -149,12 +142,12 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 					if (tile.hasRiver()) {
 						TileImprovement river = tile.getRiver();
 						String style = canvas.showRiverStyleDialog(tile);
-						if (style == null) {
-							// cancelled
-						} else if (RiverStyleDialog.DELETE.equals(style)) {
-							tile.getTileItemContainer().removeTileItem(river);
-						} else {
-							river.updateRiverConnections(style);
+						if (style != null) {
+							if (RiverStyleDialog.DELETE.equals(style)) {
+								tile.getTileItemContainer().removeTileItem(river);
+							} else {
+								river.updateRiverConnections(style);
+							}
 						}
 					}
 					if (tile.getIndianSettlement() != null) {
@@ -169,20 +162,19 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (getMap() == null || e.getButton() == MouseEvent.BUTTON1 || getGUI().getFocus() == null)
+		if (getMap() == null || e.getButton() == MouseEvent.BUTTON1 || getGUI().getFocus() == null) {
 			return;
+		}
 		final JComponent component = (JComponent) e.getSource();
 		final MapEditorController controller = freeColClient.getMapEditorController();
 		final boolean isTransformActive = controller.getMapTransform() != null;
 
 		endPoint = e.getPoint();
-		if (startPoint == null)
+		if (startPoint == null) {
 			startPoint = endPoint;
+		}
 		drawBox(component, startPoint, endPoint);
 		Tile start = canvas.convertToMapTile(startPoint.x, startPoint.y);
 		Tile end = (startPoint == endPoint) ? start : canvas.convertToMapTile(endPoint.x, endPoint.y);
@@ -237,29 +229,19 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 		canvas.requestFocus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {
-	} // Ignore for now.
+	} /** Ignore for now. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
-	} // Ignore for now.
+	} /** Ignore for now. Implement MouseMotionListener */
 
-	// Implement MouseMotionListener
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (getMap() == null)
+		if (getMap() == null) {
 			return;
+		}
 		final JComponent component = (JComponent) e.getSource();
 
 		drawBox(component, startPoint, endPoint);
@@ -271,13 +253,11 @@ public final class CanvasMapEditorMouseListener extends AbstractCanvasListener
 		getGUI().refresh();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if (getMap() == null || e.getY() < AUTO_SCROLL_SPACE)
+		if (getMap() == null || e.getY() < AUTO_SCROLL_SPACE) {
 			return;
+		}
 
 		performAutoScrollIfActive(e);
 	}

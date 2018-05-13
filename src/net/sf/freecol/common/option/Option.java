@@ -31,20 +31,19 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
  * @see net.sf.freecol.common.model.GameOptions
  */
 public interface Option<T> extends Cloneable, ObjectWithId {
-
 	/**
 	 * Clone this option.
 	 *
 	 * @return A clone of this option.
 	 */
-	public Option<T> clone() throws CloneNotSupportedException;
+	Option<T> clone() throws CloneNotSupportedException;
 
 	/**
 	 * Gets the value of this option.
 	 *
 	 * @return The value of this <code>Option</code>.
 	 */
-	public T getValue();
+	T getValue();
 
 	/**
 	 * Sets the value of this option.
@@ -52,7 +51,7 @@ public interface Option<T> extends Cloneable, ObjectWithId {
 	 * @param value
 	 *            The new value of this <code>Option</code>.
 	 */
-	public void setValue(T value);
+	void setValue(T value);
 
 	/**
 	 * Initializes this object from an XML-representation of this object.
@@ -62,7 +61,7 @@ public interface Option<T> extends Cloneable, ObjectWithId {
 	 * @throws XMLStreamException
 	 *             if there are any problems reading the stream.
 	 */
-	public void readFromXML(FreeColXMLReader xr) throws XMLStreamException;
+	void readFromXML(FreeColXMLReader xr) throws XMLStreamException;
 
 	/**
 	 * Makes an XML-representation of this object.
@@ -72,11 +71,7 @@ public interface Option<T> extends Cloneable, ObjectWithId {
 	 * @throws XMLStreamException
 	 *             if there are any problems writing the stream.
 	 */
-	public void toXML(FreeColXMLWriter xw) throws XMLStreamException;
+	void toXML(FreeColXMLWriter xw) throws XMLStreamException;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString();
+	@Override String toString();
 }

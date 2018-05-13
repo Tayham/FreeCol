@@ -43,7 +43,6 @@ import net.sf.freecol.common.util.Utils;
  * the available language files in the i18n directory.
  */
 public class LanguageOption extends AbstractOption<LanguageOption.Language> {
-
 	private static final Logger logger = Logger.getLogger(LanguageOption.class.getName());
 
 	/** Extra languages with alternate names. */
@@ -58,7 +57,6 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 	}
 
 	public static class Language implements Comparable<Language> {
-
 		/** The language name. */
 		private String key;
 
@@ -108,25 +106,20 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 			this.locale = newLocale;
 		}
 
-		// Implement Comparable<Language>
+		/** Implement Comparable<Language>. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public int compareTo(Language l) {
 			return toString().compareTo(l.toString());
 		}
 
-		// Override Object
+		/** Override Object. */
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public boolean equals(Object o) {
-			if (this == o)
+			if (this == o) {
 				return true;
+			}
 			if (o instanceof Language) {
 				Language l = (Language) o;
 				return Utils.equals(this.key, l.key) && super.equals(o);
@@ -134,18 +127,12 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 			return false;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public int hashCode() {
 			int hash = super.hashCode();
 			return 31 * hash + Utils.hashCode(this.key);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public String toString() {
 			if (Messages.AUTOMATIC.equals(getKey())) {
@@ -184,12 +171,11 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 		initializeLanguages();
 	}
 
-	/**
-	 * Initialize the languages list.
-	 */
+	/** Initialize the languages list. */
 	private static void initializeLanguages() {
-		if (!languages.isEmpty())
+		if (!languages.isEmpty()) {
 			return;
+		}
 
 		File i18nDirectory = FreeColDirectories.getI18nDirectory();
 		File[] files = i18nDirectory.listFiles();
@@ -206,8 +192,9 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 		for (File file : files) {
 			String nam = file.getName();
 			if (nam == null || !nam.startsWith(Messages.MESSAGE_FILE_PREFIX)
-					|| !nam.endsWith(Messages.MESSAGE_FILE_SUFFIX))
+					|| !nam.endsWith(Messages.MESSAGE_FILE_SUFFIX)) {
 				continue;
+			}
 			String languageId = nam.substring(Messages.MESSAGE_FILE_PREFIX.length(),
 					nam.length() - Messages.MESSAGE_FILE_SUFFIX.length());
 			if ("".equals(languageId)) { // FreeColMessages.properties
@@ -245,11 +232,8 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 		return new ArrayList<>(languages);
 	}
 
-	// Interface Option
+	/** Interface Option. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public LanguageOption clone() {
 		LanguageOption result = new LanguageOption(getSpecification());
@@ -257,17 +241,11 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final Language getValue() {
 		return value;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final void setValue(final Language newValue) {
 		final Language oldValue = this.value;
@@ -278,11 +256,8 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 		}
 	}
 
-	// Override AbstractOption
+	/** Override AbstractOption. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void setValue(String valueString, String defaultValueString) {
 		Language l = null;
@@ -298,11 +273,8 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 		setValue(l);
 	}
 
-	// Serialization
+	/** Serialization. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -310,9 +282,6 @@ public class LanguageOption extends AbstractOption<LanguageOption.Language> {
 		xw.writeAttribute(VALUE_TAG, getValue().getKey());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

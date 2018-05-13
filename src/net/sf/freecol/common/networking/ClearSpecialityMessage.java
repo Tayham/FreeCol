@@ -27,11 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when clearing a unit speciality.
- */
+/** The message sent when clearing a unit speciality. */
 public class ClearSpecialityMessage extends DOMMessage {
-
 	/** The identifier of the unit to be cleared. */
 	private final String unitId;
 

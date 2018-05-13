@@ -36,7 +36,6 @@ import net.sf.freecol.common.model.Game;
  * @see net.sf.freecol.client.gui.action.ActionManager
  */
 public class MissionManager {
-
 	private static final Logger logger = Logger.getLogger(MissionManager.class.getName());
 
 	private static final Map<String, Constructor<? extends Mission>> missionMap = new HashMap<>();
@@ -49,7 +48,6 @@ public class MissionManager {
 					GoToMission.class.getConstructor(Game.class, FreeColXMLReader.class));
 			missionMap.put(ImprovementMission.getXMLElementTagName(),
 					ImprovementMission.class.getConstructor(Game.class, FreeColXMLReader.class));
-
 		} catch (NoSuchMethodException e) {
 			logger.log(Level.WARNING, "Missing constructor", e);
 		}

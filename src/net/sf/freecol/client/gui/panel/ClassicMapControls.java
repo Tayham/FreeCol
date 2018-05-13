@@ -41,7 +41,6 @@ import net.sf.freecol.common.resources.ResourceManager;
  * a JComponent in order to be usable.
  */
 public final class ClassicMapControls extends MapControls {
-
 	private final JPanel panel;
 	private final Font arrowFont;
 	private final ActionManager am;
@@ -114,9 +113,7 @@ public final class ClassicMapControls extends MapControls {
 		canvas.removeFromCanvas(panel);
 	}
 
-	/**
-	 * Repaint
-	 */
+	/** Repaint. */
 	@Override
 	public void repaint() {
 		panel.repaint();

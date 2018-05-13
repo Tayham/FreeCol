@@ -35,11 +35,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Collection of small static helper methods.
- */
+/** Collection of small static helper methods. */
 public class Utils {
-
 	private static final Logger logger = Logger.getLogger(Utils.class.getName());
 
 	/** Hex constant digits for get/restoreRandomState. */
@@ -103,8 +100,9 @@ public class Utils {
 	 * @return The restored <code>Random</code>.
 	 */
 	public static synchronized Random restoreRandomState(String state) {
-		if (state == null || state.isEmpty())
+		if (state == null || state.isEmpty()) {
 			return null;
+		}
 		ByteArrayInputStream bis = inputBytes(state);
 		try {
 			ObjectInputStream ois = new ObjectInputStream(bis);
@@ -117,8 +115,7 @@ public class Utils {
 
 	private static ByteArrayInputStream inputBytes(String state) {
 		byte[] bytes = assignBytes(state);
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		return bis;
+		return new ByteArrayInputStream(bytes);
 	}
 
 	private static byte[] assignBytes(String state) {

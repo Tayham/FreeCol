@@ -54,12 +54,11 @@ import net.sf.freecol.server.ai.AIMain;
  * stream. Adds on many useful utilities for reading XML and FreeCol values.
  */
 public class FreeColXMLReader extends StreamReaderDelegate implements Closeable {
-
 	private static final Logger logger = Logger.getLogger(FreeColXMLReader.class.getName());
 
-	public static enum ReadScope {
-		SERVER, // Loading the game in the server
-		NORMAL, // Normal interning read
+	public enum ReadScope {
+		SERVER, /** Loading the game in the server. */
+		NORMAL, /** Normal interning read. */
 		NOINTERN, // Do not intern any object that are read
 	}
 
@@ -82,8 +81,6 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 *                if thrown while creating the <code>XMLStreamReader</code>.
 	 */
 	public FreeColXMLReader(InputStream inputStream) throws IOException {
-		super();
-
 		try {
 			XMLInputFactory xif = XMLInputFactory.newInstance();
 			setParent(xif.createXMLStreamReader(inputStream, "UTF-8"));
@@ -104,8 +101,6 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 *                if thrown while creating the <code>FreeColXMLReader</code>.
 	 */
 	public FreeColXMLReader(Reader reader) throws IOException {
-		super();
-
 		try {
 			XMLInputFactory xif = XMLInputFactory.newInstance();
 			setParent(xif.createXMLStreamReader(reader));
@@ -142,7 +137,7 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public void setReadScope(ReadScope readScope) {
 		this.readScope = readScope;
-		this.uninterned = (shouldIntern()) ? null : new HashMap<String, FreeColObject>();
+		this.uninterned = shouldIntern() ? null : new HashMap<String, FreeColObject>();
 	}
 
 	/**
@@ -156,7 +151,7 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 * @return The <code>FreeColObject</code> found, or null if none.
 	 */
 	private FreeColObject lookup(Game game, String id) {
-		FreeColObject fco = (shouldIntern()) ? null : uninterned.get(id);
+		FreeColObject fco = shouldIntern() ? null : uninterned.get(id);
 		return (fco != null) ? fco : game.getFreeColGameObject(id);
 	}
 
@@ -409,15 +404,15 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public <T extends FreeColObject> T getAttribute(Game game, String attributeName, Class<T> returnClass,
 			T defaultValue) throws XMLStreamException {
-
 		final String attrib =
 				// @compat 0.10.7
-				(FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName)) ? readId() :
+				FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName) ? readId() :
 				// end @compat
 						getAttribute(attributeName, (String) null);
 
-		if (attrib == null)
+		if (attrib == null) {
 			return defaultValue;
+		}
 		FreeColObject fco = lookup(game, attrib);
 		try {
 			return returnClass.cast(fco);
@@ -443,7 +438,7 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 			T defaultValue) {
 		final String attrib =
 				// @compat 0.10.7
-				(FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName)) ? readId() :
+				FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName) ? readId() :
 				// end @compat
 						getAttribute(attributeName, (String) null);
 
@@ -463,13 +458,13 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 * @return The <code>Location</code> found.
 	 */
 	public Location getLocationAttribute(Game game, String attributeName, boolean make) throws XMLStreamException {
-
-		if (attributeName == null)
+		if (attributeName == null) {
 			return null;
+		}
 
 		final String attrib =
 				// @compat 0.10.7
-				(FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName)) ? readId() :
+				FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName) ? readId() :
 				// end @compat
 						getAttribute(attributeName, (String) null);
 
@@ -481,8 +476,9 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 					fco = makeFreeColGameObject(game, attributeName, c, getReadScope() == ReadScope.SERVER);
 				}
 			}
-			if (fco instanceof Location)
+			if (fco instanceof Location) {
 				return (Location) fco;
+			}
 			logger.warning("Not a location: " + attrib);
 		}
 		return null;
@@ -501,12 +497,12 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 *                if a problem was encountered during parsing.
 	 */
 	public <T> List<T> readList(String tag, Class<T> type) throws XMLStreamException {
-
 		expectTag(tag);
 
 		final int length = getAttribute(FreeColObject.ARRAY_SIZE_TAG, -1);
-		if (length < 0)
+		if (length < 0) {
 			return Collections.<T>emptyList();
+		}
 
 		List<T> list = new ArrayList<>(length);
 		for (int x = 0; x < length; x++) {
@@ -544,18 +540,19 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public <T extends FreeColGameObjectType> List<T> readList(Specification spec, String tag, Class<T> type)
 			throws XMLStreamException {
-
 		expectTag(tag);
 
 		final int length = getAttribute(FreeColObject.ARRAY_SIZE_TAG, -1);
-		if (length < 0)
+		if (length < 0) {
 			return Collections.<T>emptyList();
+		}
 
 		List<T> list = new ArrayList<>(length);
 		for (int x = 0; x < length; x++) {
 			T value = getType(spec, "x" + x, type, (T) null);
-			if (value == null)
+			if (value == null) {
 				logger.warning("Null list value(" + x + ")");
+			}
 			list.add(value);
 		}
 
@@ -583,9 +580,8 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public <T extends FreeColGameObject> T findFreeColGameObject(Game game, String attributeName, Class<T> returnClass,
 			T defaultValue, boolean required) throws XMLStreamException {
-
 		T ret = getAttribute(game, attributeName, returnClass, (T) null);
-		if (ret == (T) null) {
+		if (ret == null) {
 			if (required) {
 				throw new XMLStreamException(
 						"Missing " + attributeName + " for " + returnClass.getName() + ": " + currentTag());
@@ -618,7 +614,7 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 			boolean required) throws XMLStreamException {
 		final String id =
 				// @compat 0.10.7
-				(FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName)) ? readId() :
+				FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName) ? readId() :
 				// end @compat
 						getAttribute(attributeName, (String) null);
 
@@ -669,10 +665,10 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 *                if there is problem reading the stream.
 	 */
 	private <T extends FreeColGameObject> T internedRead(Game game, Class<T> returnClass) throws XMLStreamException {
-
 		T ret = makeFreeColGameObject(game, FreeColObject.ID_ATTRIBUTE_TAG, returnClass, false);
-		if (ret != null)
+		if (ret != null) {
 			ret.readFromXML(this);
+		}
 		return ret;
 	}
 
@@ -689,7 +685,6 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 *                if there is problem reading the stream.
 	 */
 	private <T extends FreeColObject> T uninternedRead(Game game, Class<T> returnClass) throws XMLStreamException {
-
 		T ret;
 		try {
 			ret = game.newInstance(returnClass, false);
@@ -724,7 +719,7 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public <T extends FreeColGameObject> T readFreeColGameObject(Game game, Class<T> returnClass)
 			throws XMLStreamException {
-		return (shouldIntern()) ? internedRead(game, returnClass) : uninternedRead(game, returnClass);
+		return shouldIntern() ? internedRead(game, returnClass) : uninternedRead(game, returnClass);
 	}
 
 	/**
@@ -746,9 +741,8 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public <T extends AIObject> T findAIObject(AIMain aiMain, String attributeName, Class<T> returnClass,
 			T defaultValue, boolean required) throws XMLStreamException {
-
 		T ret = getAttribute(aiMain, attributeName, returnClass, (T) null);
-		if (ret == (T) null) {
+		if (ret == null) {
 			if (required) {
 				throw new XMLStreamException(
 						"Missing " + attributeName + " for " + returnClass.getName() + ": " + currentTag());
@@ -780,10 +774,9 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public <T extends AIObject> T makeAIObject(AIMain aiMain, String attributeName, Class<T> returnClass,
 			T defaultValue, boolean required) throws XMLStreamException {
-
 		final String id =
 				// @compat 0.10.7
-				(FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName)) ? readId() :
+				FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName) ? readId() :
 				// end @compat
 						getAttribute(attributeName, (String) null);
 
@@ -846,21 +839,19 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 */
 	public <T extends FreeColGameObjectType> T getType(Specification spec, String attributeName, Class<T> returnClass,
 			T defaultValue) {
-
 		final String attrib =
 				// @compat 0.10.7
-				(FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName)) ? readId() :
+				FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName) ? readId() :
 				// end @compat
 						getAttribute(attributeName, (String) null);
 
 		return (attrib == null) ? defaultValue : spec.getType(attrib, returnClass);
 	}
 
-	// @compat 0.10.7
+	/** @compat 0.10.7 */
 	public <T extends FreeColGameObjectType> T getRole(Specification spec, String attributeName, Class<T> returnClass,
 			T defaultValue) {
-
-		String attrib = (FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName)) ? readId()
+		String attrib = FreeColObject.ID_ATTRIBUTE_TAG.equals(attributeName) ? readId()
 				: getAttribute(attributeName, (String) null);
 
 		if (attrib == null) {
@@ -885,7 +876,6 @@ public class FreeColXMLReader extends StreamReaderDelegate implements Closeable 
 	 *                if there is problem reading the stream.
 	 */
 	public <T extends FreeColObject> T copy(Game game, Class<T> returnClass) throws XMLStreamException {
-
 		setReadScope(ReadScope.NOINTERN);
 		nextTag();
 		return uninternedRead(game, returnClass);

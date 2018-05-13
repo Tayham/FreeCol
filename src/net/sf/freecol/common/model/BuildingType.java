@@ -35,7 +35,6 @@ import net.sf.freecol.common.model.UnitLocation.NoAddReason;
  * produces and consumes.
  */
 public final class BuildingType extends BuildableType {
-
 	/** The level of building. */
 	private int level = 1;
 
@@ -48,7 +47,7 @@ public final class BuildingType extends BuildableType {
 	private int maxSkill = INFINITY;
 
 	/** Upkeep per turn for buildings ot this type. */
-	private int upkeep = 0;
+	private int upkeep;
 
 	/** Consumption order. */
 	private int priority = Consumer.BUILDING_PRIORITY;
@@ -123,7 +122,7 @@ public final class BuildingType extends BuildableType {
 	 */
 	public NoAddReason getNoAddReason(UnitType unitType) {
 		return (workPlaces == 0) ? NoAddReason.CAPACITY_EXCEEDED
-				: (!unitType.hasSkill()) ? NoAddReason.MISSING_SKILL
+				: !unitType.hasSkill() ? NoAddReason.MISSING_SKILL
 						: (unitType.getSkill() < minSkill) ? NoAddReason.MINIMUM_SKILL
 								: (unitType.getSkill() > maxSkill) ? NoAddReason.MAXIMUM_SKILL : NoAddReason.NONE;
 	}
@@ -195,8 +194,9 @@ public final class BuildingType extends BuildableType {
 	 *            The <code>ProductionType</code> to add.
 	 */
 	public void addProductionType(ProductionType productionType) {
-		if (productionType != null)
+		if (productionType != null) {
 			productionTypes.add(productionType);
+		}
 	}
 
 	/**
@@ -236,10 +236,11 @@ public final class BuildingType extends BuildableType {
 	 * @return The consumed <code>GoodsType</code>.
 	 */
 	private GoodsType getConsumedGoodsType() {
-		if (productionTypes.isEmpty())
+		if (productionTypes.isEmpty()) {
 			return null;
+		}
 		List<AbstractGoods> inputs = productionTypes.get(0).getInputs();
-		return (inputs.isEmpty()) ? null : inputs.get(0).getType();
+		return inputs.isEmpty() ? null : inputs.get(0).getType();
 	}
 	// end @compat
 
@@ -249,10 +250,11 @@ public final class BuildingType extends BuildableType {
 	 * @return The produced <code>GoodsType</code>.
 	 */
 	public GoodsType getProducedGoodsType() {
-		if (productionTypes.isEmpty())
+		if (productionTypes.isEmpty()) {
 			return null;
+		}
 		List<AbstractGoods> outputs = productionTypes.get(0).getOutputs();
-		return (outputs.isEmpty()) ? null : outputs.get(0).getType();
+		return outputs.isEmpty() ? null : outputs.get(0).getType();
 	}
 
 	/**
@@ -293,14 +295,16 @@ public final class BuildingType extends BuildableType {
 	 * @return The amount of goods produced.
 	 */
 	public int getBaseProduction(ProductionType productionType, GoodsType goodsType, UnitType unitType) {
-		if (goodsType == null)
+		if (goodsType == null) {
 			return 0;
+		}
 		if (productionType == null) {
 			productionType = ProductionType.getBestProductionType(goodsType,
 					getAvailableProductionTypes(unitType == null));
 		}
-		if (productionType == null)
+		if (productionType == null) {
 			return 0;
+		}
 		AbstractGoods best = productionType.getOutput(goodsType);
 		return (best == null) ? 0 : best.getAmount();
 	}
@@ -317,18 +321,16 @@ public final class BuildingType extends BuildableType {
 	 * @return The amount of goods produced.
 	 */
 	public int getPotentialProduction(GoodsType goodsType, UnitType unitType) {
-		if (goodsType == null)
+		if (goodsType == null) {
 			return 0;
+		}
 		int amount = getBaseProduction(null, goodsType, unitType);
 		amount = (int) applyModifiers(amount, null, goodsType.getId(), unitType);
 		return (amount < 0) ? 0 : amount;
 	}
 
-	// Override FreeColObject
+	/** Override FreeColObject. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int compareTo(FreeColObject other) {
 		int cmp = 0;
@@ -338,12 +340,13 @@ public final class BuildingType extends BuildableType {
 			// which they are defined in the specification.
 			cmp = getIndex() - bt.getIndex();
 		}
-		if (cmp == 0)
+		if (cmp == 0) {
 			cmp = super.compareTo(other);
+		}
 		return cmp;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String MAXIMUM_SKILL_TAG = "maximum-skill";
 	private static final String MINIMUM_SKILL_TAG = "minimum-skill";
@@ -352,20 +355,19 @@ public final class BuildingType extends BuildableType {
 	private static final String UPGRADES_FROM_TAG = "upgrades-from";
 	private static final String UPKEEP_TAG = "upkeep";
 	private static final String WORKPLACES_TAG = "workplaces";
-	// @compat 0.10.6
+	/** @compat 0.10.6 */
 	private static final String BASIC_PRODUCTION_TAG = "basicProduction";
 	private static final String CONSUMES_TAG = "consumes";
 	private static final String PRODUCES_TAG = "produces";
-	// end @compat 0.10.6
-	// @compat 0.11.3
+	/**
+	 * End @compat 0.10.6
+	 * @compat 0.11.3
+	 */
 	private static final String OLD_MAX_SKILL_TAG = "maxSkill";
 	private static final String OLD_MIN_SKILL_TAG = "minSkill";
 	private static final String OLD_UPGRADES_FROM_TAG = "upgradesFrom";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -391,12 +393,8 @@ public final class BuildingType extends BuildableType {
 		if (priority != Consumer.BUILDING_PRIORITY) {
 			xw.writeAttribute(PRIORITY_TAG, priority);
 		}
-
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
@@ -406,9 +404,6 @@ public final class BuildingType extends BuildableType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -420,9 +415,9 @@ public final class BuildingType extends BuildableType {
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_UPGRADES_FROM_TAG)) {
 			upgradesFrom = xr.getType(spec, OLD_UPGRADES_FROM_TAG, BuildingType.class, (BuildingType) null);
-		} else
-			// end @compat 0.11.3
+		} else {
 			upgradesFrom = xr.getType(spec, UPGRADES_FROM_TAG, BuildingType.class, (BuildingType) null);
+		}
 		if (upgradesFrom == null) {
 			level = 1;
 		} else {
@@ -435,16 +430,16 @@ public final class BuildingType extends BuildableType {
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_MIN_SKILL_TAG)) {
 			minSkill = xr.getAttribute(OLD_MIN_SKILL_TAG, parent.minSkill);
-		} else
-			// end @compat 0.11.3
+		} else {
 			minSkill = xr.getAttribute(MINIMUM_SKILL_TAG, parent.minSkill);
+		}
 
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_MAX_SKILL_TAG)) {
 			maxSkill = xr.getAttribute(OLD_MAX_SKILL_TAG, parent.maxSkill);
-		} else
-			// end @compat 0.11.3
+		} else {
 			maxSkill = xr.getAttribute(MAXIMUM_SKILL_TAG, parent.maxSkill);
+		}
 
 		upkeep = xr.getAttribute(UPKEEP_TAG, parent.upkeep);
 
@@ -471,9 +466,6 @@ public final class BuildingType extends BuildableType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -483,19 +475,14 @@ public final class BuildingType extends BuildableType {
 			if (xr.getAttribute(DELETE_TAG, false)) {
 				productionTypes.clear();
 				xr.closeTag(PRODUCTION_TAG);
-
 			} else {
 				addProductionType(new ProductionType(xr, spec));
 			}
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

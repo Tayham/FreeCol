@@ -27,11 +27,8 @@ import net.sf.freecol.server.model.ServerPlayer;
 
 import org.w3c.dom.Element;
 
-/**
- * The message sent when paying for a building.
- */
+/** The message sent when paying for a building. */
 public class PayForBuildingMessage extends DOMMessage {
-
 	/** The identifier of the colony that is building. */
 	private final String colonyId;
 

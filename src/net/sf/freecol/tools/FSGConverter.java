@@ -38,7 +38,6 @@ import net.sf.freecol.FreeCol;
  * @see #getFSGConverter()
  */
 public class FSGConverter {
-
 	/**
 	 * A singleton object of this class.
 	 * 
@@ -46,9 +45,7 @@ public class FSGConverter {
 	 */
 	private static FSGConverter singleton;
 
-	/**
-	 * Creates an instance of <code>FSGConverter</code>
-	 */
+	/** Creates an instance of <code>FSGConverter</code>. */
 	private FSGConverter() {
 		// Nothing to initialize;
 	}
@@ -86,7 +83,7 @@ public class FSGConverter {
 	 *             if thrown while reading or writing the files.
 	 */
 	public void convertToXML(File in, File out) throws FileNotFoundException, IOException {
-		try (FileInputStream fis = new FileInputStream(in); FileOutputStream fos = new FileOutputStream(out);) {
+		try (FileInputStream fis = new FileInputStream(in); FileOutputStream fos = new FileOutputStream(out)) {
 			convertToXML(fis, fos);
 		}
 	}
@@ -128,7 +125,8 @@ public class FSGConverter {
 			int i;
 			while ((i = in.read()) != -1) {
 				char c = (char) i;
-				if (c == '<') {
+				switch (c) {
+				case '<':
 					i = in.read();
 					char b = (char) i;
 					if (b == '/') {
@@ -144,7 +142,8 @@ public class FSGConverter {
 					if (b != '/' && b != '?') {
 						indent += 4;
 					}
-				} else if (c == '/') {
+					break;
+				case '/':
 					out.write(c);
 					i = in.read();
 					c = (char) i;
@@ -153,23 +152,25 @@ public class FSGConverter {
 						out.write(c);
 						out.write('\n');
 					}
-				} else if (c == '>') {
+					break;
+				case '>':
 					out.write(c);
 					out.write('\n');
-				} else if (c != '\n' && c != '\r') {
-					out.write(c);
+					break;
+				default:
+					if (c != '\n' && c != '\r') {
+						out.write(c);
+					}
+					break;
 				}
 			}
-
 		} finally {
 			in.close();
 			out.close();
 		}
 	}
 
-	/**
-	 * Prints the usage of this program to standard out.
-	 */
+	/** Prints the usage of this program to standard out. */
 	private static void printUsage() {
 		System.out.println("A program for converting FreeCol Savegames.");
 		System.out.println();
@@ -206,7 +207,7 @@ public class FSGConverter {
 				out = new File(filename);
 			}
 			try {
-				FSGConverter fsgc = FSGConverter.getFSGConverter();
+				FSGConverter fsgc = getFSGConverter();
 				fsgc.convertToXML(in, out);
 			} catch (IOException e) {
 				System.out.println("An error occured while converting the file.");

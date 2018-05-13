@@ -34,11 +34,8 @@ import net.sf.freecol.common.io.FreeColXMLWriter;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import static net.sf.freecol.common.util.RandomUtils.*;
 
-/**
- * Represents one of the nations present in the game.
- */
+/** Represents one of the nations present in the game. */
 public class Nation extends FreeColGameObjectType {
-
 	/** The unknown enemy id. */
 	public static final String UNKNOWN_NATION_ID = "model.nation.unknownEnemy";
 
@@ -101,7 +98,7 @@ public class Nation extends FreeColGameObjectType {
 	private Nation refNation;
 
 	/** The preferred starting latitude for this nation. */
-	private int preferredLatitude = 0;
+	private int preferredLatitude;
 
 	/** Whether this nation starts on the East coast by default. */
 	private boolean startsOnEastCoast = true;
@@ -266,7 +263,7 @@ public class Nation extends FreeColGameObjectType {
 		return "";
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String COLOR_TAG = "color";
 	private static final String NATION_TYPE_TAG = "nation-type";
@@ -274,14 +271,11 @@ public class Nation extends FreeColGameObjectType {
 	private static final String REF_TAG = "ref";
 	private static final String SELECTABLE_TAG = "selectable";
 	private static final String STARTS_ON_EAST_COAST_TAG = "starts-on-east-coast";
-	// @compat 0.11.3
+	/** @compat 0.11.3 */
 	private static final String OLD_PREFERRED_LATITUDE_TAG = "preferredLatitude";
 	private static final String OLD_STARTS_ON_EAST_COAST_TAG = "startsOnEastCoast";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -294,16 +288,15 @@ public class Nation extends FreeColGameObjectType {
 
 		xw.writeAttribute(STARTS_ON_EAST_COAST_TAG, startsOnEastCoast);
 
-		if (refNation != null)
+		if (refNation != null) {
 			xw.writeAttribute(REF_TAG, refNation);
+		}
 
-		if (color != null)
+		if (color != null) {
 			xw.writeAttribute(COLOR_TAG, color.getRGB());
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -317,27 +310,25 @@ public class Nation extends FreeColGameObjectType {
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_PREFERRED_LATITUDE_TAG)) {
 			preferredLatitude = xr.getAttribute(OLD_PREFERRED_LATITUDE_TAG, 0);
-		} else
-			// end @compat 0.11.3
+		} else {
 			preferredLatitude = xr.getAttribute(PREFERRED_LATITUDE_TAG, 0);
+		}
 
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_STARTS_ON_EAST_COAST_TAG)) {
 			startsOnEastCoast = xr.getAttribute(OLD_STARTS_ON_EAST_COAST_TAG, true);
-		} else
-			// end @compat 0.11.3
+		} else {
 			startsOnEastCoast = xr.getAttribute(STARTS_ON_EAST_COAST_TAG, true);
+		}
 
 		refNation = xr.getType(spec, REF_TAG, Nation.class, (Nation) null);
 
 		int rgb = xr.getAttribute(COLOR_TAG, UNDEFINED);
-		if (rgb != UNDEFINED)
+		if (rgb != UNDEFINED) {
 			setColor(new Color(rgb));
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();

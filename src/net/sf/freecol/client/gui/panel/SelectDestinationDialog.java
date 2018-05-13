@@ -75,11 +75,8 @@ import net.sf.freecol.common.resources.ResourceManager;
 import static net.sf.freecol.common.util.CollectionUtils.*;
 import net.sf.freecol.common.util.LogBuilder;
 
-/**
- * Select a location as the destination for a given unit.
- */
+/** Select a location as the destination for a given unit. */
 public final class SelectDestinationDialog extends FreeColDialog<Location> implements ListSelectionListener {
-
 	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(SelectDestinationDialog.class.getName());
 
@@ -88,7 +85,6 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 	 * characteristics.
 	 */
 	private class Destination {
-
 		public final Unit unit;
 		public final Location location;
 		public final int turns;
@@ -169,65 +165,62 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 					lb.add(Messages.getName(goodsType), " ", market.getSalePrice(goodsType, 1), sep);
 					dropSep = true;
 				}
-
-			} else if (loc instanceof Settlement && owner.owns((Settlement) loc)) {
-				; // Do nothing
-
-			} else if (loc instanceof Settlement && ((Settlement) loc).getOwner().atWarWith(owner)) {
-				lb.add("[", Messages.getName(Stance.WAR), "]");
-
-			} else if (loc instanceof Settlement) {
-				if (loc instanceof IndianSettlement) {
-					// Show skill if relevant
-					IndianSettlement is = (IndianSettlement) loc;
-					UnitType sk = is.getLearnableSkill();
-					if (sk != null) {
-						Unit up = (unit.getType().canBeUpgraded(sk, ChangeType.NATIVES)) ? unit : null;
-						if (unit.isCarrier()) {
-							up = find(unit.getUnitList(), u -> u.getType().canBeUpgraded(sk, ChangeType.NATIVES));
-						}
-						if (up != null) {
-							lb.add("[", Messages.getName(sk), "]");
-						}
-					}
-				}
-				if (!goodsTypes.isEmpty()) {
-					// Show goods prices if relevant
-					for (GoodsType g : goodsTypes) {
-						String sale = owner.getLastSaleString(loc, g);
-						String more = null;
-						if (loc instanceof IndianSettlement) {
-							GoodsType[] wanted = ((IndianSettlement) loc).getWantedGoods();
-							if (wanted.length > 0 && g == wanted[0]) {
-								more = "***";
-							} else if (wanted.length > 1 && g == wanted[1]) {
-								more = "**";
-							} else if (wanted.length > 2 && g == wanted[2]) {
-								more = "*";
+			} else if (!(loc instanceof Settlement) || !owner.owns((Settlement) loc)) {
+				if (loc instanceof Settlement && ((Settlement) loc).getOwner().atWarWith(owner)) {
+					lb.add("[", Messages.getName(Stance.WAR), "]");
+				} else if (loc instanceof Settlement) {
+					if (loc instanceof IndianSettlement) {
+						// Show skill if relevant
+						IndianSettlement is = (IndianSettlement) loc;
+						UnitType sk = is.getLearnableSkill();
+						if (sk != null) {
+							Unit up = unit.getType().canBeUpgraded(sk, ChangeType.NATIVES) ? unit : null;
+							if (unit.isCarrier()) {
+								up = find(unit.getUnitList(), u -> u.getType().canBeUpgraded(sk, ChangeType.NATIVES));
+							}
+							if (up != null) {
+								lb.add("[", Messages.getName(sk), "]");
 							}
 						}
-						if (sale != null && more != null) {
-							lb.add(Messages.getName(g), " ", sale, more, sep);
-							dropSep = true;
+					}
+					if (!goodsTypes.isEmpty()) {
+						// Show goods prices if relevant
+						for (GoodsType g : goodsTypes) {
+							String sale = owner.getLastSaleString(loc, g);
+							String more = null;
+							if (loc instanceof IndianSettlement) {
+								GoodsType[] wanted = ((IndianSettlement) loc).getWantedGoods();
+								if (wanted.length > 0 && g == wanted[0]) {
+									more = "***";
+								} else if (wanted.length > 1 && g == wanted[1]) {
+									more = "**";
+								} else if (wanted.length > 2 && g == wanted[2]) {
+									more = "*";
+								}
+							}
+							if (sale != null && more != null) {
+								lb.add(Messages.getName(g), " ", sale, more, sep);
+								dropSep = true;
+							}
 						}
 					}
 				}
 			} // else do nothing
 
-			if (dropSep)
+			if (dropSep) {
 				lb.shrink(sep);
+			}
 			return lb.toString();
 		}
 
 		private int calculateScore() {
 			return (location instanceof Europe || location instanceof Map) ? 10
-					: (location instanceof Colony) ? ((unit.getOwner().owns((Colony) location)) ? 20 : 30)
+					: (location instanceof Colony) ? (unit.getOwner().owns((Colony) location) ? 20 : 30)
 							: (location instanceof IndianSettlement) ? 40 : 100;
 		}
 	}
 
 	private class DestinationComparator implements Comparator<Destination> {
-
 		protected final Player owner;
 
 		public DestinationComparator(Player player) {
@@ -250,10 +243,12 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		 *            The second <code>Location</code>.
 		 */
 		protected int compareNames(Location loc1, Location loc2) {
-			if (!(loc1 instanceof Settlement))
+			if (!(loc1 instanceof Settlement)) {
 				return -1;
-			if (!(loc2 instanceof Settlement))
+			}
+			if (!(loc2 instanceof Settlement)) {
 				return 1;
+			}
 			Settlement s1 = (Settlement) loc1;
 			String name1 = Messages.message(s1.getLocationLabelFor(owner));
 			Settlement s2 = (Settlement) loc2;
@@ -263,14 +258,10 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 	}
 
 	private class NameComparator extends DestinationComparator {
-
 		public NameComparator(Player player) {
 			super(player);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public int compare(Destination choice1, Destination choice2) {
 			return compareNames(choice1.location, choice2.location);
@@ -278,14 +269,10 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 	}
 
 	private class DistanceComparator extends DestinationComparator {
-
 		public DistanceComparator(Player player) {
 			super(player);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public int compare(Destination choice1, Destination choice2) {
 			int result = choice1.turns - choice2.turns;
@@ -294,14 +281,11 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 	}
 
 	private static class LocationRenderer extends FreeColComboBoxRenderer<Destination> {
-
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public void setLabelValues(JLabel label, Destination value) {
-			if (value.icon != null)
+			if (value.icon != null) {
 				label.setIcon(value.icon);
+			}
 			label.setText(value.text);
 		}
 	}
@@ -354,11 +338,13 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		this.destinationList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() != 2)
+				if (e.getClickCount() != 2) {
 					return;
+				}
 				Destination d = destinationList.getSelectedValue();
-				if (d != null)
+				if (d != null) {
 					setValue(options.get(0));
+				}
 			}
 		});
 		updateDestinationList();
@@ -418,8 +404,9 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		final Map map = game.getMap();
 		int turns;
 
-		if (unit.isInEurope() && !unit.getType().canMoveToHighSeas())
+		if (unit.isInEurope() && !unit.getType().canMoveToHighSeas()) {
 			return;
+		}
 
 		if (unit.isInEurope()) {
 			this.destinations.add(new Destination(map, unit.getSailTurns(), unit, goodsTypes));
@@ -429,35 +416,39 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		}
 
 		for (Settlement s : player.getSettlements()) {
-			if (s == inSettlement)
+			if (s == inSettlement) {
 				continue;
-			if (unit.isNaval()) {
-				if (!s.isConnectedPort())
-					continue;
-			} else {
-				if (!Map.isSameContiguity(unit.getLocation(), s.getTile()))
-					continue;
 			}
-			if ((turns = unit.getTurnsToReach(s)) < Unit.MANY_TURNS) {
+			if (unit.isNaval()) {
+				if (!s.isConnectedPort()) {
+					continue;
+				}
+			} else if (!Map.isSameContiguity(unit.getLocation(), s.getTile())) {
+				continue;
+			}
+			turns = unit.getTurnsToReach(s);
+			if (turns < Unit.MANY_TURNS) {
 				this.destinations.add(new Destination(s, turns, unit, goodsTypes));
 			}
 		}
 
 		List<Location> locs = new ArrayList<>();
 		for (Player p : game.getLivePlayers(player)) {
-			if (!p.hasContacted(player) || (p.isEuropean() && !canTrade))
+			if (!p.hasContacted(player) || (p.isEuropean() && !canTrade)) {
 				continue;
+			}
 
 			for (Settlement s : p.getSettlements()) {
 				if (unit.isNaval()) {
-					if (!s.isConnectedPort())
+					if (!s.isConnectedPort()) {
 						continue;
-				} else {
-					if (!Map.isSameContiguity(unit.getLocation(), s.getTile()))
-						continue;
-				}
-				if (s instanceof IndianSettlement && !((IndianSettlement) s).hasContacted(player))
+					}
+				} else if (!Map.isSameContiguity(unit.getLocation(), s.getTile())) {
 					continue;
+				}
+				if (s instanceof IndianSettlement && !((IndianSettlement) s).hasContacted(player)) {
+					continue;
+				}
 				locs.add(s.getTile());
 			}
 		}
@@ -468,10 +459,12 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 			Settlement s = e.getKey().getTile().getSettlement();
 			PathNode p = e.getValue();
 			turns = p.getTotalTurns();
-			if (unit.isInEurope())
+			if (unit.isInEurope()) {
 				turns += unit.getSailTurns();
-			if (p.getMovesLeft() < unit.getInitialMovesLeft())
+			}
+			if (p.getMovesLeft() < unit.getInitialMovesLeft()) {
 				turns++;
+			}
 			this.destinations.add(new Destination(s, turns, unit, goodsTypes));
 		}
 
@@ -481,9 +474,7 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		Collections.sort(this.destinations, this.destinationComparator);
 	}
 
-	/**
-	 * Reset the destinations in the model.
-	 */
+	/** Reset the destinations in the model. */
 	private void updateDestinationList() {
 		final Player player = getMyPlayer();
 		Destination selected = this.destinationList.getSelectedValue();
@@ -518,9 +509,7 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		}
 	}
 
-	/**
-	 * Set the selected destination comparator.
-	 */
+	/** Set the selected destination comparator. */
 	private void updateDestinationComparator() {
 		final Player player = getMyPlayer();
 		switch (this.comparatorBox.getSelectedIndex()) {
@@ -537,39 +526,32 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		}
 	}
 
-	// Interface ListSelectionListener
+	/** Interface ListSelectionListener. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting())
+		if (e.getValueIsAdjusting()) {
 			return;
+		}
 		recenter(this.destinationList.getSelectedValue());
 	}
 
-	// Implement FreeColDialog
+	/** Implement FreeColDialog. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Location getResponse() {
 		Object value = getValue();
 		if (options.get(0).equals(value)) {
 			Destination d = this.destinationList.getSelectedValue();
-			if (d != null)
+			if (d != null) {
 				return d.location;
+			}
 		}
 		return null;
 	}
 
-	// Override Component
+	/** Override Component. */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
@@ -580,9 +562,6 @@ public final class SelectDestinationDialog extends FreeColDialog<Location> imple
 		this.comparatorBox = null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void requestFocus() {
 		this.destinationList.requestFocus();

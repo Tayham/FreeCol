@@ -29,16 +29,13 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 
-/**
- * A special game event.
- */
+/** A special game event. */
 public class Event extends FreeColGameObjectType {
-
 	/** A restriction on the scope of the event. */
 	private String value;
 
 	/** The score value of this event. */
-	private int scoreValue = 0;
+	private int scoreValue;
 
 	/** Limits on this event. */
 	private Map<String, Limit> limits = null;
@@ -117,8 +114,9 @@ public class Event extends FreeColGameObjectType {
 	 *            The <code>Limit</code> to add.
 	 */
 	private void addLimit(Limit limit) {
-		if (limits == null)
+		if (limits == null) {
 			limits = new HashMap<>();
+		}
 		limits.put(limit.getId(), limit);
 	}
 
@@ -141,16 +139,13 @@ public class Event extends FreeColGameObjectType {
 		this.scoreValue = newScoreValue;
 	}
 
-	// Serialization
+	/** Serialization. */
 
 	private static final String SCORE_VALUE_TAG = "score-value";
-	// @compat 0.11.3
+	/** @compat 0.11.3 */
 	private static final String OLD_SCORE_VALUE_TAG = "scoreValue";
-	// end @compat 0.11.3
+	/** End @compat 0.11.3 */
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeAttributes(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeAttributes(xw);
@@ -164,20 +159,15 @@ public class Event extends FreeColGameObjectType {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void writeChildren(FreeColXMLWriter xw) throws XMLStreamException {
 		super.writeChildren(xw);
 
-		for (Limit limit : getLimits())
+		for (Limit limit : getLimits()) {
 			limit.toXML(xw);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readAttributes(FreeColXMLReader xr) throws XMLStreamException {
 		super.readAttributes(xr);
@@ -187,14 +177,11 @@ public class Event extends FreeColGameObjectType {
 		// @compat 0.11.3
 		if (xr.hasAttribute(OLD_SCORE_VALUE_TAG)) {
 			scoreValue = xr.getAttribute(OLD_SCORE_VALUE_TAG, 0);
-		} else
-			// end @compat 0.11.3
+		} else {
 			scoreValue = xr.getAttribute(SCORE_VALUE_TAG, 0);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChildren(FreeColXMLReader xr) throws XMLStreamException {
 		// Clear containers.
@@ -205,9 +192,6 @@ public class Event extends FreeColGameObjectType {
 		super.readChildren(xr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void readChild(FreeColXMLReader xr) throws XMLStreamException {
 		final Specification spec = getSpecification();
@@ -222,15 +206,11 @@ public class Event extends FreeColGameObjectType {
 			}
 			// end @compat
 			addLimit(limit);
-
 		} else {
 			super.readChild(xr);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getXMLTagName() {
 		return getXMLElementTagName();
